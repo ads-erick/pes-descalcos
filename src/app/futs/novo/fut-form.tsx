@@ -1,0 +1,154 @@
+"use client";
+
+import Link from "next/link";
+import { useActionState, useState } from "react";
+import { criarFutAction, type CriarFutState } from "@/app/futs/actions";
+
+export type JogadorEscalavel = { id: string; nome: string; numero: number | null };
+
+const inputClass =
+  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 dark:border-zinc-700 dark:bg-zinc-900";
+
+export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
+  const [state, action, pending] = useActionState<CriarFutState, FormData>(criarFutAction, {});
+  const [times, setTimes] = useState<Record<string, "branco" | "preto" | "">>({});
+
+  return (
+    <form action={action} className="space-y-6">
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label htmlFor="data" className="mb-1 block text-sm font-medium">
+            Data
+          </label>
+          <input
+            id="data"
+            name="data"
+            type="date"
+            required
+            defaultValue={new Date().toISOString().slice(0, 10)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="placarBranco" className="mb-1 block text-sm font-medium">
+            Gols branco
+          </label>
+          <input
+            id="placarBranco"
+            name="placarBranco"
+            type="number"
+            min={0}
+            max={99}
+            defaultValue={0}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="placarPreto" className="mb-1 block text-sm font-medium">
+            Gols preto
+          </label>
+          <input
+            id="placarPreto"
+            name="placarPreto"
+            type="number"
+            min={0}
+            max={99}
+            defaultValue={0}
+            className={inputClass}
+          />
+        </div>
+      </div>
+
+      <fieldset>
+        <legend className="mb-2 text-sm font-medium">Quem jogou</legend>
+        <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+          {jogadores.map((jogador) => {
+            const escalado = times[jogador.id] !== undefined && times[jogador.id] !== "";
+            return (
+              <li key={jogador.id} className="flex flex-wrap items-center gap-3 p-3">
+                <label className="flex min-w-32 flex-1 items-center gap-2 text-sm font-medium">
+                  <input
+                    type="checkbox"
+                    name="escalado"
+                    value={jogador.id}
+                    checked={escalado}
+                    onChange={(e) =>
+                      setTimes((atual) => ({
+                        ...atual,
+                        [jogador.id]: e.target.checked ? "branco" : "",
+                      }))
+                    }
+                    className="size-4"
+                  />
+                  {jogador.numero !== null && (
+                    <span className="text-zinc-400">{jogador.numero}</span>
+                  )}
+                  {jogador.nome}
+                </label>
+
+                {escalado && (
+                  <div className="flex items-center gap-2">
+                    <select
+                      name={`time_${jogador.id}`}
+                      value={times[jogador.id]}
+                      onChange={(e) =>
+                        setTimes((atual) => ({
+                          ...atual,
+                          [jogador.id]: e.target.value as "branco" | "preto",
+                        }))
+                      }
+                      aria-label={`Time de ${jogador.nome}`}
+                      className="rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                    >
+                      <option value="branco">Branco</option>
+                      <option value="preto">Preto</option>
+                    </select>
+                    <input
+                      name={`gols_${jogador.id}`}
+                      type="number"
+                      min={0}
+                      max={99}
+                      defaultValue={0}
+                      aria-label={`Gols de ${jogador.nome}`}
+                      className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                    />
+                    <span className="text-xs text-zinc-500">G</span>
+                    <input
+                      name={`assistencias_${jogador.id}`}
+                      type="number"
+                      min={0}
+                      max={99}
+                      defaultValue={0}
+                      aria-label={`Assistências de ${jogador.nome}`}
+                      className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                    />
+                    <span className="text-xs text-zinc-500">A</span>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </fieldset>
+
+      {state.erro && (
+        <p role="alert" className="text-sm text-red-600">
+          {state.erro}
+        </p>
+      )}
+
+      <div className="flex items-center justify-end gap-3">
+        <Link href="/futs" className="px-4 py-2 text-sm text-zinc-500 hover:underline">
+          Cancelar
+        </Link>
+        <button
+          type="submit"
+          disabled={pending}
+          className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+        >
+          {pending ? "Salvando..." : "Salvar fut"}
+        </button>
+      </div>
+    </form>
+  );
+}
