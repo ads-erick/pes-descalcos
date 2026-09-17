@@ -38,6 +38,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/jogadores" className="hover:underline">
                 Jogadores
               </Link>
+              <Link href="/futs" className="hover:underline">
+                Futs
+              </Link>
               {admin ? (
                 <form action={logoutAction}>
                   <button type="submit" className="text-zinc-500 hover:underline">
