@@ -22,11 +22,41 @@ Não existe uma tabela de "times": os lados de cada fut são só `branco`/`preto
 
 ```bash
 npm install
-cp .env.example .env.local   # preencher com as credenciais do Supabase
+cp .env.example .env.local   # preencher as variáveis (ver abaixo)
 npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000).
+
+### Variáveis de ambiente
+
+| Variável | Onde pegar |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Connect |
+| `DATABASE_URL` | Supabase → Connect → Connection String (URI). Caracteres especiais da senha precisam ser codificados (`@` → `%40`) |
+| `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
+| `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
+
+### Banco de dados
+
+As migrações ficam em `supabase/migrations/` e são aplicadas em ordem:
+
+```bash
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrations/0001_init.sql
+```
+
+As tabelas têm RLS ativado sem policies: a chave publishable do Supabase não lê nem escreve nada. Todo acesso passa pelo servidor do Next.js (`src/data/`), usando a `DATABASE_URL`.
+
+## Estrutura
+
+- `src/app/` — rotas e Server Actions
+- `src/data/` — camada de acesso a dados (só roda no servidor): queries, autenticação de admin
+- `src/components/` — componentes visuais (ex: cartinha do jogador)
+- `src/lib/` — constantes e helpers compartilhados entre servidor e cliente
+
+## Admin
+
+A lista de jogadores é pública. Para cadastrar, entre em `/admin/login` com a `ADMIN_PASSWORD`. A sessão fica num cookie assinado por 30 dias.
 
 ## Workflow de contribuição
 

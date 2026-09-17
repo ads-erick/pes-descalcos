@@ -1,0 +1,57 @@
+import type { JogadorResumo } from "@/data/jogadores";
+import { POSICAO_SIGLA, iniciais, raridade, type Raridade } from "@/lib/jogador";
+
+const ESTILO_RARIDADE: Record<Raridade, string> = {
+  ouro: "from-amber-200 via-yellow-400 to-amber-600 text-amber-950",
+  prata: "from-slate-100 via-slate-300 to-slate-500 text-slate-900",
+  bronze: "from-orange-200 via-orange-400 to-amber-800 text-orange-950",
+};
+
+export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
+  const tier = raridade(jogador.gols, jogador.assistencias);
+  const nomeNaCarta = jogador.apelido ?? jogador.nome;
+
+  return (
+    <article
+      className={`flex aspect-[3/4] flex-col rounded-2xl bg-linear-to-br p-4 shadow-lg ${ESTILO_RARIDADE[tier]}`}
+    >
+      <div className="flex items-start justify-between">
+        <div className="leading-none">
+          <p className="text-4xl font-black">{jogador.numero ?? "–"}</p>
+          <p className="mt-1 text-sm font-bold tracking-wide">
+            {jogador.posicao ? POSICAO_SIGLA[jogador.posicao] : "–"}
+          </p>
+        </div>
+        <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest">
+          {tier}
+        </span>
+      </div>
+
+      <div className="mx-auto my-3 flex size-16 items-center justify-center rounded-full bg-black/10 text-2xl font-black sm:size-20">
+        {iniciais(nomeNaCarta)}
+      </div>
+
+      <h2 className="truncate text-center text-lg font-extrabold uppercase">
+        {nomeNaCarta}
+      </h2>
+      {jogador.apelido && (
+        <p className="truncate text-center text-xs opacity-75">{jogador.nome}</p>
+      )}
+
+      <dl className="mt-auto grid grid-cols-3 border-t border-black/15 pt-2 text-center">
+        <Stat label="JOG" valor={jogador.jogos} />
+        <Stat label="GOL" valor={jogador.gols} />
+        <Stat label="AST" valor={jogador.assistencias} />
+      </dl>
+    </article>
+  );
+}
+
+function Stat({ label, valor }: { label: string; valor: number }) {
+  return (
+    <div>
+      <dt className="text-[10px] font-semibold opacity-70">{label}</dt>
+      <dd className="text-xl font-black">{valor}</dd>
+    </div>
+  );
+}
