@@ -1,5 +1,6 @@
 import type { JogadorResumo } from "@/data/jogadores";
-import { POSICAO_SIGLA, iniciais, raridade, type Raridade } from "@/lib/jogador";
+import { POSICAO_SIGLA, iniciais } from "@/lib/jogador";
+import { raridade, type Raridade } from "@/lib/nivel";
 
 const ESTILO_RARIDADE: Record<Raridade, string> = {
   ouro: "from-amber-200 via-yellow-400 to-amber-600 text-amber-950",
@@ -8,7 +9,7 @@ const ESTILO_RARIDADE: Record<Raridade, string> = {
 };
 
 export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
-  const tier = raridade(jogador.gols, jogador.assistencias);
+  const tier = raridade(jogador.nivel);
   const nomeNaCarta = jogador.apelido ?? jogador.nome;
 
   return (
@@ -17,14 +18,21 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
     >
       <div className="flex items-start justify-between">
         <div className="leading-none">
-          <p className="text-4xl font-black">{jogador.numero ?? "–"}</p>
+          <p className="text-4xl font-black tabular-nums" title="Nível">
+            {jogador.nivel}
+          </p>
           <p className="mt-1 text-sm font-bold tracking-wide">
             {jogador.posicao ? POSICAO_SIGLA[jogador.posicao] : "–"}
           </p>
         </div>
-        <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest">
-          {tier}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest">
+            {tier}
+          </span>
+          {jogador.numero !== null && (
+            <span className="text-sm font-bold tabular-nums opacity-75">#{jogador.numero}</span>
+          )}
+        </div>
       </div>
 
       <div className="mx-auto my-3 flex size-16 items-center justify-center rounded-full bg-black/10 text-2xl font-black sm:size-20">

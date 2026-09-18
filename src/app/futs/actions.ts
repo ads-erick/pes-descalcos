@@ -59,7 +59,7 @@ function lerFut(formData: FormData): { erro: string } | { fut: NovoFut } {
 }
 
 function revalidarFuts() {
-  revalidatePath("/futs");
+  revalidatePath("/futs", "layout");
   revalidatePath("/jogadores");
 }
 
@@ -87,7 +87,7 @@ export async function editarFutAction(
 
   await atualizarFut(id, lido.fut);
   revalidarFuts();
-  redirect("/futs");
+  redirect(`/futs/${id}`);
 }
 
 export async function excluirFutAction(formData: FormData) {

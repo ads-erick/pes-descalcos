@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:teste": "node --env-file=.env.local scripts/seed-teste.mjs",
+    "seed:limpar": "node --env-file=.env.local scripts/seed-teste.mjs --limpar"
   },
   "dependencies": {
     "next": "16.3.5",

@@ -16,15 +16,6 @@ export const POSICAO_SIGLA: Record<Posicao, string> = {
   atacante: "ATA",
 };
 
-export type Raridade = "bronze" | "prata" | "ouro";
-
-export function raridade(gols: number, assistencias: number): Raridade {
-  const participacoesEmGol = gols + assistencias;
-  if (participacoesEmGol >= 30) return "ouro";
-  if (participacoesEmGol >= 10) return "prata";
-  return "bronze";
-}
-
 export function iniciais(nome: string) {
   return nome
     .trim()

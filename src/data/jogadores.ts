@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
 import type { Posicao } from "@/lib/jogador";
+import { nivel } from "@/lib/nivel";
 
 export type JogadorResumo = {
   id: string;
@@ -13,6 +14,7 @@ export type JogadorResumo = {
   jogos: number;
   gols: number;
   assistencias: number;
+  nivel: number;
 };
 
 export type JogadorEscalavel = { id: string; nome: string; numero: number | null };
@@ -26,18 +28,34 @@ export type NovoJogador = {
 
 export async function listarJogadores(): Promise<JogadorResumo[]> {
   await connection();
-  return sql<JogadorResumo[]>`
+  const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number })[]>`
     select
       j.id, j.nome, j.apelido, j.numero, j.posicao,
       count(p.id) filter (where p.presente)::int as jogos,
       coalesce(sum(p.gols), 0)::int as gols,
-      coalesce(sum(p.assistencias), 0)::int as assistencias
+      coalesce(sum(p.assistencias), 0)::int as assistencias,
+      coalesce(sum(
+        case p.cor_time
+          when 'branco' then f.placar_branco - f.placar_preto
+          when 'preto' then f.placar_preto - f.placar_branco
+        end
+      ), 0)::int as saldo
     from jogador j
     left join participacao p on p.jogador_id = j.id
+    left join fut f on f.id = p.fut_id
     where j.ativo
     group by j.id
-    order by gols desc, assistencias desc, j.nome
   `;
+
+  return jogadores
+    .map(({ saldo, ...j }) => ({ ...j, nivel: nivel({ ...j, saldo }, j.posicao) }))
+    .sort(
+      (a, b) =>
+        b.nivel - a.nivel ||
+        b.gols - a.gols ||
+        b.assistencias - a.assistencias ||
+        a.nome.localeCompare(b.nome, "pt-BR"),
+    );
 }
 
 export async function criarJogador(jogador: NovoJogador) {
