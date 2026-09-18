@@ -53,11 +53,21 @@ export default async function FutsPage() {
                   )}
                 </p>
               </div>
-              <p className="text-lg font-black tabular-nums">
-                <span title="Time branco">{fut.placarBranco}</span>
-                <span className="mx-2 text-zinc-400">x</span>
-                <span title="Time preto">{fut.placarPreto}</span>
-              </p>
+              <div className="flex items-center gap-4">
+                <p className="text-lg font-black tabular-nums">
+                  <span title="Time branco">{fut.placarBranco}</span>
+                  <span className="mx-2 text-zinc-400">x</span>
+                  <span title="Time preto">{fut.placarPreto}</span>
+                </p>
+                {admin && (
+                  <Link
+                    href={`/futs/${fut.id}/editar`}
+                    className="text-sm text-zinc-500 hover:underline"
+                  >
+                    Editar
+                  </Link>
+                )}
+              </div>
             </li>
           ))}
         </ul>

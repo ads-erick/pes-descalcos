@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/data/auth";
-import { JogadorForm } from "./jogador-form";
+import { JogadorForm } from "@/app/jogadores/jogador-form";
 
 export const metadata: Metadata = { title: "Novo jogador" };
 
