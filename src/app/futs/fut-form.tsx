@@ -2,19 +2,37 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { criarFutAction, type CriarFutState } from "@/app/futs/actions";
+import { criarFutAction, editarFutAction, type FutFormState } from "@/app/futs/actions";
+import type { NovoFut } from "@/data/futs";
+import type { JogadorEscalavel } from "@/data/jogadores";
 
-export type JogadorEscalavel = { id: string; nome: string; numero: number | null };
+type Time = "branco" | "preto";
+type FutExistente = NovoFut & { id: string };
 
 const inputClass =
   "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 dark:border-zinc-700 dark:bg-zinc-900";
 
-export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
-  const [state, action, pending] = useActionState<CriarFutState, FormData>(criarFutAction, {});
-  const [times, setTimes] = useState<Record<string, "branco" | "preto" | "">>({});
+export function FutForm({
+  jogadores,
+  fut,
+  children,
+}: {
+  jogadores: JogadorEscalavel[];
+  fut?: FutExistente;
+  children?: React.ReactNode;
+}) {
+  const [state, action, pending] = useActionState<FutFormState, FormData>(
+    fut ? editarFutAction : criarFutAction,
+    {},
+  );
+  const salvos = new Map(fut?.participacoes.map((p) => [p.jogadorId, p]));
+  const [times, setTimes] = useState<Record<string, Time | "">>(() =>
+    Object.fromEntries(fut?.participacoes.map((p) => [p.jogadorId, p.corTime]) ?? []),
+  );
 
   return (
     <form action={action} className="space-y-6">
+      {fut && <input type="hidden" name="id" value={fut.id} />}
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label htmlFor="data" className="mb-1 block text-sm font-medium">
@@ -25,7 +43,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
             name="data"
             type="date"
             required
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            defaultValue={fut?.data ?? new Date().toISOString().slice(0, 10)}
             className={inputClass}
           />
         </div>
@@ -39,7 +57,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
             type="number"
             min={0}
             max={99}
-            defaultValue={0}
+            defaultValue={fut?.placarBranco ?? 0}
             className={inputClass}
           />
         </div>
@@ -53,7 +71,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
             type="number"
             min={0}
             max={99}
-            defaultValue={0}
+            defaultValue={fut?.placarPreto ?? 0}
             className={inputClass}
           />
         </div>
@@ -94,7 +112,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
                       onChange={(e) =>
                         setTimes((atual) => ({
                           ...atual,
-                          [jogador.id]: e.target.value as "branco" | "preto",
+                          [jogador.id]: e.target.value as Time,
                         }))
                       }
                       aria-label={`Time de ${jogador.nome}`}
@@ -108,7 +126,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
                       type="number"
                       min={0}
                       max={99}
-                      defaultValue={0}
+                      defaultValue={salvos.get(jogador.id)?.gols ?? 0}
                       aria-label={`Gols de ${jogador.nome}`}
                       className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
                     />
@@ -118,7 +136,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
                       type="number"
                       min={0}
                       max={99}
-                      defaultValue={0}
+                      defaultValue={salvos.get(jogador.id)?.assistencias ?? 0}
                       aria-label={`Assistências de ${jogador.nome}`}
                       className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
                     />
@@ -138,6 +156,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
       )}
 
       <div className="flex items-center justify-end gap-3">
+        {children && <div className="mr-auto">{children}</div>}
         <Link href="/futs" className="px-4 py-2 text-sm text-zinc-500 hover:underline">
           Cancelar
         </Link>
@@ -146,7 +165,7 @@ export function FutForm({ jogadores }: { jogadores: JogadorEscalavel[] }) {
           disabled={pending}
           className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
         >
-          {pending ? "Salvando..." : "Salvar fut"}
+          {pending ? "Salvando..." : fut ? "Salvar alterações" : "Salvar fut"}
         </button>
       </div>
     </form>

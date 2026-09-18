@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { criarFut, type NovaParticipacao } from "@/data/futs";
+import { atualizarFut, criarFut, excluirFut, type NovaParticipacao, type NovoFut } from "@/data/futs";
+import { ehUuid } from "@/lib/id";
 
 const inteiroNaoNegativo = z.coerce
   .number({ error: "Valor inválido" })
@@ -24,12 +25,9 @@ const participacaoSchema = z.object({
   assistencias: inteiroNaoNegativo,
 });
 
-export type CriarFutState = { erro?: string };
+export type FutFormState = { erro?: string };
 
-export async function criarFutAction(
-  _estadoAnterior: CriarFutState,
-  formData: FormData,
-): Promise<CriarFutState> {
+function lerFut(formData: FormData): { erro: string } | { fut: NovoFut } {
   const fut = futSchema.safeParse({
     data: formData.get("data"),
     placarBranco: formData.get("placarBranco") || 0,
@@ -57,8 +55,46 @@ export async function criarFutAction(
     return { erro: "Escale pelo menos um jogador" };
   }
 
-  await criarFut({ ...fut.data, participacoes });
+  return { fut: { ...fut.data, participacoes } };
+}
+
+function revalidarFuts() {
   revalidatePath("/futs");
   revalidatePath("/jogadores");
+}
+
+export async function criarFutAction(
+  _estadoAnterior: FutFormState,
+  formData: FormData,
+): Promise<FutFormState> {
+  const lido = lerFut(formData);
+  if ("erro" in lido) return lido;
+
+  await criarFut(lido.fut);
+  revalidarFuts();
+  redirect("/futs");
+}
+
+export async function editarFutAction(
+  _estadoAnterior: FutFormState,
+  formData: FormData,
+): Promise<FutFormState> {
+  const id = formData.get("id");
+  if (!ehUuid(id)) throw new Error("Fut inválido");
+
+  const lido = lerFut(formData);
+  if ("erro" in lido) return lido;
+
+  await atualizarFut(id, lido.fut);
+  revalidarFuts();
+  redirect("/futs");
+}
+
+export async function excluirFutAction(formData: FormData) {
+  const id = formData.get("id");
+  if (!ehUuid(id)) throw new Error("Fut inválido");
+
+  await excluirFut(id);
+  revalidarFuts();
   redirect("/futs");
 }

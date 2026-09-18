@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { criarJogador } from "@/data/jogadores";
+import { atualizarJogador, criarJogador, excluirJogador } from "@/data/jogadores";
+import { ehUuid } from "@/lib/id";
 import { POSICOES } from "@/lib/jogador";
 
 const vazioParaNull = (valor: unknown) =>
@@ -26,28 +27,58 @@ const novoJogadorSchema = z.object({
 
 type Campos = keyof z.infer<typeof novoJogadorSchema>;
 
-export type CriarJogadorState = {
+export type JogadorFormState = {
   erros?: Partial<Record<Campos, string[]>>;
   valores?: Record<Campos, string>;
 };
 
-export async function criarJogadorAction(
-  _estadoAnterior: CriarJogadorState,
-  formData: FormData,
-): Promise<CriarJogadorState> {
+function lerJogador(formData: FormData) {
   const valores = {
     nome: String(formData.get("nome") ?? ""),
     apelido: String(formData.get("apelido") ?? ""),
     numero: String(formData.get("numero") ?? ""),
     posicao: String(formData.get("posicao") ?? ""),
   };
+  return { valores, resultado: novoJogadorSchema.safeParse(valores) };
+}
 
-  const resultado = novoJogadorSchema.safeParse(valores);
+export async function criarJogadorAction(
+  _estadoAnterior: JogadorFormState,
+  formData: FormData,
+): Promise<JogadorFormState> {
+  const { valores, resultado } = lerJogador(formData);
   if (!resultado.success) {
     return { erros: z.flattenError(resultado.error).fieldErrors, valores };
   }
 
   await criarJogador(resultado.data);
+  revalidatePath("/jogadores");
+  redirect("/jogadores");
+}
+
+export async function editarJogadorAction(
+  _estadoAnterior: JogadorFormState,
+  formData: FormData,
+): Promise<JogadorFormState> {
+  const id = formData.get("id");
+  if (!ehUuid(id)) throw new Error("Jogador inválido");
+
+  const { valores, resultado } = lerJogador(formData);
+  if (!resultado.success) {
+    return { erros: z.flattenError(resultado.error).fieldErrors, valores };
+  }
+
+  await atualizarJogador(id, resultado.data);
+  revalidatePath("/jogadores");
+  revalidatePath("/futs");
+  redirect("/jogadores");
+}
+
+export async function excluirJogadorAction(formData: FormData) {
+  const id = formData.get("id");
+  if (!ehUuid(id)) throw new Error("Jogador inválido");
+
+  await excluirJogador(id);
   revalidatePath("/jogadores");
   redirect("/jogadores");
 }

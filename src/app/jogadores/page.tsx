@@ -37,6 +37,14 @@ export default async function JogadoresPage() {
           {jogadores.map((jogador) => (
             <li key={jogador.id}>
               <JogadorCard jogador={jogador} />
+              {admin && (
+                <Link
+                  href={`/jogadores/${jogador.id}/editar`}
+                  className="mt-1 block text-center text-sm text-zinc-500 hover:underline"
+                >
+                  Editar
+                </Link>
+              )}
             </li>
           ))}
         </ul>

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { FutForm } from "@/app/futs/fut-form";
 import { isAdmin } from "@/data/auth";
-import { listarJogadores } from "@/data/jogadores";
-import { FutForm } from "./fut-form";
+import { listarEscalaveis } from "@/data/jogadores";
 
 export const metadata: Metadata = { title: "Registrar fut" };
 
 export default async function NovoFutPage() {
   if (!(await isAdmin())) redirect("/admin/login?destino=/futs/novo");
 
-  const jogadores = await listarJogadores();
+  const jogadores = await listarEscalaveis();
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -24,13 +24,7 @@ export default async function NovoFutPage() {
           .
         </p>
       ) : (
-        <FutForm
-          jogadores={jogadores.map((jogador) => ({
-            id: jogador.id,
-            nome: jogador.apelido ?? jogador.nome,
-            numero: jogador.numero,
-          }))}
-        />
+        <FutForm jogadores={jogadores} />
       )}
     </main>
   );
