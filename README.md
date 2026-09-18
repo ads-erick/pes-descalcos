@@ -67,3 +67,4 @@ Projeto pessoal, mas seguindo boas práticas:
 - Commits seguindo [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, `docs:`...)
 - Toda mudança vira Pull Request para `main`, revisado e aprovado manualmente antes do merge
 - CI (`.github/workflows/ci.yml`) roda lint e build em toda PR
+- Toda PR atualiza o [`ROADMAP.md`](ROADMAP.md), marcando o que foi entregue e se já foi testado
