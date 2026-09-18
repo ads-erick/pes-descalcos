@@ -1,0 +1,37 @@
+# Roadmap
+
+O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atualiza este arquivo.
+
+**Legenda:** `[x]` pronto e testado · `[~]` pronto, mas falta testar · `[ ]` a fazer
+
+## Feito
+
+- [x] **Base do projeto** — Next.js + TypeScript + Tailwind, CI com lint e build em toda PR (#1)
+- [x] **Banco de dados** — tabelas `jogador`, `fut` e `participacao`, RLS ativado (#1, #2)
+- [x] **Cadastro de jogadores** — lista pública em cartinhas, formulário com validação (#2)
+- [x] **Área de admin** — login por senha única, sessão em cookie assinado, cadastro bloqueado sem sessão (#2)
+- [x] **Registro do fut** — data, placar, escalação branco/preto, gols e assistências por jogador; estatísticas refletidas nas cartinhas (#3)
+
+## Próximos passos
+
+Em ordem de prioridade:
+
+1. [ ] **Editar e excluir jogadores e futs** — erro de digitação vai acontecer, e hoje só dá pra corrigir direto no banco. Vem antes do deploy por isso.
+2. [ ] **Detalhe do fut + seleção do fut** — página de cada partida com a escalação completa e a seleção calculada automaticamente pelas estatísticas.
+3. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança).
+4. [ ] **Rankings** — artilharia, assistências e presença, filtráveis por período.
+5. [ ] **Sorteio de times balanceados** — montar branco x preto equilibrado a partir das estatísticas de quem confirmou presença.
+6. [ ] **Foto na cartinha** — upload pelo Supabase Storage (precisa da `SUPABASE_SERVICE_ROLE_KEY`).
+7. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
+
+## Mais pra frente
+
+- [ ] **Time do ano** — fechamento da temporada. Fazer perto do fim do ano.
+- [ ] **Votação de MVP** — a galera vota no melhor de cada fut.
+- [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
+- [ ] **Evolução do jogador** — gráfico fut a fut.
+
+## Pendências técnicas
+
+- [ ] Senha de admin única para todos os admins; se entrarem mais pessoas, trocar por login individual.
+- [ ] Sem testes automatizados: os fluxos são verificados por script contra o banco a cada PR, mas o script não está versionado.
