@@ -1,8 +1,11 @@
 import "server-only";
+import { cache } from "react";
 import { connection } from "next/server";
 import type postgres from "postgres";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
+import type { Posicao } from "@/lib/jogador";
+import { selecaoDoFut, type Atuacao, type AtuacaoPontuada } from "@/lib/selecao";
 
 export type FutResumo = {
   id: string;
@@ -10,7 +13,21 @@ export type FutResumo = {
   placarBranco: number;
   placarPreto: number;
   jogadores: number;
-  destaque: { nome: string; gols: number; assistencias: number } | null;
+  craque: AtuacaoPontuada | null;
+};
+
+export type AtuacaoNoFut = Atuacao & {
+  nomeCompleto: string;
+  numero: number | null;
+  posicao: Posicao | null;
+};
+
+export type DetalheFut = {
+  id: string;
+  data: string;
+  placarBranco: number;
+  placarPreto: number;
+  atuacoes: AtuacaoNoFut[];
 };
 
 export type NovaParticipacao = {
@@ -30,56 +47,75 @@ export type NovoFut = {
 export async function listarFuts(): Promise<FutResumo[]> {
   await connection();
 
-  const [futs, destaques] = await Promise.all([
-    sql<
-      {
-        id: string;
-        data: string;
-        placar_branco: number;
-        placar_preto: number;
-        jogadores: number;
-      }[]
-    >`
-      select
-        f.id,
-        to_char(f.data, 'DD/MM/YYYY') as data,
-        f.placar_branco, f.placar_preto,
-        count(p.id)::int as jogadores
-      from fut f
-      left join participacao p on p.fut_id = f.id
-      group by f.id
-      order by f.data desc, f.criado_em desc
+  const [futs, atuacoes] = await Promise.all([
+    sql<{ id: string; data: string; placar_branco: number; placar_preto: number }[]>`
+      select id, to_char(data, 'DD/MM/YYYY') as data, placar_branco, placar_preto
+      from fut
+      order by fut.data desc, criado_em desc
     `,
-    sql<
-      { fut_id: string; nome: string; gols: number; assistencias: number }[]
-    >`
-      select distinct on (p.fut_id)
-        p.fut_id,
+    sql<(Atuacao & { futId: string })[]>`
+      select
+        p.fut_id as "futId",
+        p.jogador_id as "jogadorId",
         coalesce(j.apelido, j.nome) as nome,
+        p.cor_time as "corTime",
         p.gols, p.assistencias
       from participacao p
       join jogador j on j.id = p.jogador_id
-      where p.gols + p.assistencias > 0
-      order by p.fut_id, p.gols + p.assistencias desc, j.nome
     `,
   ]);
 
-  const porFut = new Map(destaques.map((d) => [d.fut_id, d]));
+  const porFut = Map.groupBy(atuacoes, (a) => a.futId);
 
   return futs.map((fut) => {
-    const destaque = porFut.get(fut.id);
+    const doFut = porFut.get(fut.id) ?? [];
+    const [craque] = selecaoDoFut(doFut, fut.placar_branco, fut.placar_preto);
     return {
       id: fut.id,
       data: fut.data,
       placarBranco: fut.placar_branco,
       placarPreto: fut.placar_preto,
-      jogadores: fut.jogadores,
-      destaque: destaque
-        ? { nome: destaque.nome, gols: destaque.gols, assistencias: destaque.assistencias }
-        : null,
+      jogadores: doFut.length,
+      craque: craque ?? null,
     };
   });
 }
+
+// cache: a página e o generateMetadata pedem o mesmo fut na mesma requisição
+export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | null> => {
+  await connection();
+
+  const [[fut], atuacoes] = await Promise.all([
+    sql<{ id: string; data: string; placar_branco: number; placar_preto: number }[]>`
+      select id, to_char(data, 'DD/MM/YYYY') as data, placar_branco, placar_preto
+      from fut
+      where id = ${id}
+    `,
+    sql<AtuacaoNoFut[]>`
+      select
+        p.jogador_id as "jogadorId",
+        coalesce(j.apelido, j.nome) as nome,
+        j.nome as "nomeCompleto",
+        j.numero, j.posicao,
+        p.cor_time as "corTime",
+        p.gols, p.assistencias
+      from participacao p
+      join jogador j on j.id = p.jogador_id
+      where p.fut_id = ${id}
+      order by p.gols + p.assistencias desc, nome
+    `,
+  ]);
+
+  if (!fut) return null;
+
+  return {
+    id: fut.id,
+    data: fut.data,
+    placarBranco: fut.placar_branco,
+    placarPreto: fut.placar_preto,
+    atuacoes,
+  };
+});
 
 export async function buscarFut(id: string): Promise<(NovoFut & { id: string }) | null> {
   await connection();

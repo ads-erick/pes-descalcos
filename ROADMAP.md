@@ -12,17 +12,17 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 - [x] **Área de admin** — login por senha única, sessão em cookie assinado, cadastro bloqueado sem sessão (#2)
 - [x] **Registro do fut** — data, placar, escalação branco/preto, gols e assistências por jogador; estatísticas refletidas nas cartinhas (#3)
 - [x] **Editar e excluir jogadores e futs** — link "Editar" nas listas (só pra admin), mesmo formulário do cadastro já preenchido, botão excluir com confirmação. Jogador que já jogou algum fut é arquivado em vez de apagado, pra não sumir do histórico (#5)
+- [x] **Detalhe do fut + seleção do fut** — página de cada partida (clicando no fut da lista) com placar, escalação branco/preto e a seleção do fut: top 5 por pontos (gol 3, assistência 2, vitória 1; desempate por gols e depois assistências), com o craque do fut em destaque. O "destaque" da lista virou o craque, pela mesma regra. Critérios em `src/lib/selecao.ts` (#6)
 
 ## Próximos passos
 
 Em ordem de prioridade:
 
-1. [ ] **Detalhe do fut + seleção do fut** — página de cada partida com a escalação completa e a seleção calculada automaticamente pelas estatísticas.
-2. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança).
-3. [ ] **Rankings** — artilharia, assistências e presença, filtráveis por período.
-4. [ ] **Sorteio de times balanceados** — montar branco x preto equilibrado a partir das estatísticas de quem confirmou presença.
-5. [ ] **Foto na cartinha** — upload pelo Supabase Storage (precisa da `SUPABASE_SERVICE_ROLE_KEY`).
-6. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
+1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança).
+2. [ ] **Rankings** — artilharia, assistências e presença, filtráveis por período.
+3. [ ] **Sorteio de times balanceados** — montar branco x preto equilibrado a partir das estatísticas de quem confirmou presença.
+4. [ ] **Foto na cartinha** — upload pelo Supabase Storage (precisa da `SUPABASE_SERVICE_ROLE_KEY`).
+5. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
 
 ## Mais pra frente
 

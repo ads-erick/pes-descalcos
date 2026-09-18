@@ -34,40 +34,40 @@ export default async function FutsPage() {
       ) : (
         <ul className="space-y-3">
           {futs.map((fut) => (
-            <li
-              key={fut.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
-            >
-              <div>
-                <p className="font-semibold">{fut.data}</p>
-                <p className="text-sm text-zinc-500">
-                  {fut.jogadores} {fut.jogadores === 1 ? "jogador" : "jogadores"}
-                  {fut.destaque && (
-                    <>
-                      {" · destaque: "}
-                      <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                        {fut.destaque.nome}
-                      </span>{" "}
-                      ({fut.destaque.gols}G {fut.destaque.assistencias}A)
-                    </>
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
+            <li key={fut.id} className="flex items-center gap-2">
+              <Link
+                href={`/futs/${fut.id}`}
+                className="flex flex-1 flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+              >
+                <div>
+                  <p className="font-semibold">{fut.data}</p>
+                  <p className="text-sm text-zinc-500">
+                    {fut.jogadores} {fut.jogadores === 1 ? "jogador" : "jogadores"}
+                    {fut.craque && (
+                      <>
+                        {" · craque: "}
+                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                          {fut.craque.nome}
+                        </span>{" "}
+                        ({fut.craque.gols}G {fut.craque.assistencias}A)
+                      </>
+                    )}
+                  </p>
+                </div>
                 <p className="text-lg font-black tabular-nums">
                   <span title="Time branco">{fut.placarBranco}</span>
                   <span className="mx-2 text-zinc-400">x</span>
                   <span title="Time preto">{fut.placarPreto}</span>
                 </p>
-                {admin && (
-                  <Link
-                    href={`/futs/${fut.id}/editar`}
-                    className="text-sm text-zinc-500 hover:underline"
-                  >
-                    Editar
-                  </Link>
-                )}
-              </div>
+              </Link>
+              {admin && (
+                <Link
+                  href={`/futs/${fut.id}/editar`}
+                  className="px-2 text-sm text-zinc-500 hover:underline"
+                >
+                  Editar
+                </Link>
+              )}
             </li>
           ))}
         </ul>
