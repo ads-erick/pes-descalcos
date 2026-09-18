@@ -5,7 +5,7 @@ import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
-import { PONTOS, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
+import { formatarPontos, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
 
 export async function generateMetadata({ params }: PageProps<"/futs/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -55,12 +55,12 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       <section className="mb-8">
         <h2 className="text-lg font-bold">Seleção do fut</h2>
         <p className="mb-3 text-xs text-zinc-500">
-          Gol vale {PONTOS.gol} pts, assistência {PONTOS.assistencia} e vitória {PONTOS.vitoria}.
-          Só entra quem participou de algum gol.
+          Gols, assistências e saldo do time, com peso por posição: meias e atacantes valem mais
+          pelos gols e assistências, goleiros e zagueiros pelo saldo.
         </p>
         {selecao.length === 0 ? (
           <p className="rounded-xl border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500 dark:border-zinc-700">
-            Ninguém fez gol nem deu assistência nesse fut.
+            Ninguém pontuou nesse fut.
           </p>
         ) : (
           <ol className="space-y-2">
@@ -90,7 +90,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
                   </p>
                 </div>
                 <span className="text-right">
-                  <span className="text-xl font-black tabular-nums">{atuacao.pontos}</span>
+                  <span className="text-xl font-black tabular-nums">{formatarPontos(atuacao.pontos)}</span>
                   <span className="ml-1 text-xs text-zinc-500">pts</span>
                 </span>
               </li>

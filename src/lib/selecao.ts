@@ -1,5 +1,5 @@
-// Critérios da seleção do fut. Ficam em código (e não no banco) pra dar pra ajustar à vontade.
-export const PONTOS = { gol: 3, assistencia: 2, vitoria: 1 } as const;
+import type { Posicao } from "./jogador";
+import { nota } from "./nivel";
 
 export const TAMANHO_SELECAO = 5;
 
@@ -8,6 +8,7 @@ export type CorTime = "branco" | "preto";
 export type Atuacao = {
   jogadorId: string;
   nome: string;
+  posicao: Posicao | null;
   corTime: CorTime;
   gols: number;
   assistencias: number;
@@ -20,12 +21,8 @@ export function vencedor(placarBranco: number, placarPreto: number): CorTime | n
   return placarBranco > placarPreto ? "branco" : "preto";
 }
 
-export function pontuar<T extends Atuacao>(atuacao: T, venceu: CorTime | null): AtuacaoPontuada<T> {
-  const pontos =
-    atuacao.gols * PONTOS.gol +
-    atuacao.assistencias * PONTOS.assistencia +
-    (atuacao.corTime === venceu ? PONTOS.vitoria : 0);
-  return { ...atuacao, pontos };
+export function saldoDoTime(corTime: CorTime, placarBranco: number, placarPreto: number) {
+  return corTime === "branco" ? placarBranco - placarPreto : placarPreto - placarBranco;
 }
 
 // Desempate: mais gols, depois mais assistências, depois ordem alfabética (pra ser estável)
@@ -38,17 +35,23 @@ function compararAtuacoes(a: AtuacaoPontuada, b: AtuacaoPontuada) {
   );
 }
 
-// Só entra quem participou de algum gol: vitória sozinha não basta pra ir pra seleção.
-// O primeiro da lista é o craque do fut.
+// Mesma nota do nível das cartinhas, só que de um fut só. Só entra quem pontuou;
+// o primeiro da lista é o craque do fut.
 export function selecaoDoFut<T extends Atuacao>(
   atuacoes: T[],
   placarBranco: number,
   placarPreto: number,
 ): AtuacaoPontuada<T>[] {
-  const venceu = vencedor(placarBranco, placarPreto);
   return atuacoes
-    .filter((a) => a.gols + a.assistencias > 0)
-    .map((a) => pontuar(a, venceu))
+    .map((a) => ({
+      ...a,
+      pontos: nota({ ...a, saldo: saldoDoTime(a.corTime, placarBranco, placarPreto) }, a.posicao),
+    }))
+    .filter((a) => a.pontos > 0)
     .sort(compararAtuacoes)
     .slice(0, TAMANHO_SELECAO);
+}
+
+export function formatarPontos(pontos: number) {
+  return pontos.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
 }

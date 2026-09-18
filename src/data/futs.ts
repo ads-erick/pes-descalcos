@@ -4,7 +4,6 @@ import { connection } from "next/server";
 import type postgres from "postgres";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
-import type { Posicao } from "@/lib/jogador";
 import { selecaoDoFut, type Atuacao, type AtuacaoPontuada } from "@/lib/selecao";
 
 export type FutResumo = {
@@ -19,7 +18,6 @@ export type FutResumo = {
 export type AtuacaoNoFut = Atuacao & {
   nomeCompleto: string;
   numero: number | null;
-  posicao: Posicao | null;
 };
 
 export type DetalheFut = {
@@ -58,6 +56,7 @@ export async function listarFuts(): Promise<FutResumo[]> {
         p.fut_id as "futId",
         p.jogador_id as "jogadorId",
         coalesce(j.apelido, j.nome) as nome,
+        j.posicao,
         p.cor_time as "corTime",
         p.gols, p.assistencias
       from participacao p
