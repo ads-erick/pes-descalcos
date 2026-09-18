@@ -77,8 +77,10 @@ async function criar(tx) {
     numero,
     posicao,
     talento,
+    // Nível escolhido no cadastro: de 62 (talento 0) a 90 (talento 1)
+    nivel_base: 62 + Math.round(talento * 28),
   }));
-  await tx`insert into jogador ${tx(jogadores, "id", "nome", "apelido", "numero", "posicao")}`;
+  await tx`insert into jogador ${tx(jogadores, "id", "nome", "apelido", "numero", "posicao", "nivel_base")}`;
 
   const goleiros = jogadores.filter((j) => j.posicao === "goleiro");
   const linha = jogadores.filter((j) => j.posicao !== "goleiro");

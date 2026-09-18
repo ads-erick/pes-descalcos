@@ -22,12 +22,24 @@ export function pesosDa(posicao: Posicao | null): Pesos {
 
 export const NIVEL_MIN = 60;
 export const NIVEL_MAX = 95;
-// Onde começa quem ainda não jogou (e pra onde puxa quem jogou pouco)
-export const NIVEL_BASE = 65;
-// Quanto cada ponto de nota média por fut vale em nível
+// Sugestão do formulário pra quem ainda não tem nível escolhido
+export const NIVEL_PADRAO = 70;
+// Quanto as estatísticas podem mexer no nível escolhido, pra cima ou pra baixo
+const VARIACAO_MAX = 10;
+// Quanto cada ponto de nota por fut acima (ou abaixo) da média do grupo vale em nível
 const NIVEL_POR_PONTO = 5;
-// Com poucos jogos o nível fica perto da base: com 3 jogos conta metade, com 9 conta 75%
+// Com poucos jogos o nível fica perto do escolhido: com 3 jogos conta metade, com 9 conta 75%
 const JOGOS_PRA_CONFIAR = 3;
+
+// Cada jogador é comparado com quem joga parecido. Goleiro e zagueiro ficam juntos
+// (e meia com atacante) porque tem pouco goleiro no grupo pra comparar só entre eles.
+export type Grupo = "defesa" | "ataque" | "todos";
+
+export function grupoDa(posicao: Posicao | null): Grupo {
+  if (posicao === "goleiro" || posicao === "zagueiro") return "defesa";
+  if (posicao === "meio" || posicao === "atacante") return "ataque";
+  return "todos";
+}
 
 export type Desempenho = {
   gols: number;
@@ -48,12 +60,33 @@ export function nota(d: Desempenho, posicao: Posicao | null) {
   );
 }
 
-export function nivel(d: Desempenho & { jogos: number }, posicao: Posicao | null) {
-  if (d.jogos === 0) return NIVEL_BASE;
-  const media = nota(d, posicao) / d.jogos;
-  const confianca = d.jogos / (d.jogos + JOGOS_PRA_CONFIAR);
-  const bruto = NIVEL_BASE + media * NIVEL_POR_PONTO * confianca;
-  return Math.round(Math.min(NIVEL_MAX, Math.max(NIVEL_MIN, bruto)));
+export type Estatisticas = Desempenho & { jogos: number; posicao: Posicao | null };
+
+// Nota média por fut de cada grupo, pra saber o que é jogar "na média"
+export function mediasPorGrupo(jogadores: Estatisticas[]): Record<Grupo, number> {
+  const soma = { defesa: 0, ataque: 0, todos: 0 };
+  const jogos = { defesa: 0, ataque: 0, todos: 0 };
+  for (const j of jogadores) {
+    const pontos = nota(j, j.posicao);
+    for (const grupo of new Set([grupoDa(j.posicao), "todos" as const])) {
+      soma[grupo] += pontos;
+      jogos[grupo] += j.jogos;
+    }
+  }
+  const media = (g: Grupo) => (jogos[g] ? soma[g] / jogos[g] : 0);
+  return { defesa: media("defesa"), ataque: media("ataque"), todos: media("todos") };
+}
+
+// Nível escolhido no cadastro + até 10 pontos pelas estatísticas: jogar acima da média do grupo
+// sobe, abaixo desce. Gols e assistências só aumentam a nota; o que derruba é produzir menos que
+// o grupo ou o time tomar muito gol.
+export function nivel(j: Estatisticas, nivelBase: number, medias: Record<Grupo, number>) {
+  if (j.jogos === 0) return nivelBase;
+  const acimaDaMedia = nota(j, j.posicao) / j.jogos - medias[grupoDa(j.posicao)];
+  const confianca = j.jogos / (j.jogos + JOGOS_PRA_CONFIAR);
+  const variacao = acimaDaMedia * NIVEL_POR_PONTO * confianca;
+  const limitada = Math.min(VARIACAO_MAX, Math.max(-VARIACAO_MAX, variacao));
+  return Math.round(Math.min(NIVEL_MAX, Math.max(NIVEL_MIN, nivelBase + limitada)));
 }
 
 export type Raridade = "bronze" | "prata" | "ouro";

@@ -10,6 +10,7 @@ const ESTILO_RARIDADE: Record<Raridade, string> = {
 
 export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
   const tier = raridade(jogador.nivel);
+  const variacao = jogador.nivel - jogador.nivelBase;
   const nomeNaCarta = jogador.apelido ?? jogador.nome;
 
   return (
@@ -23,6 +24,14 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
           </p>
           <p className="mt-1 text-sm font-bold tracking-wide">
             {jogador.posicao ? POSICAO_SIGLA[jogador.posicao] : "–"}
+            {variacao !== 0 && (
+              <span
+                className="ml-1.5 text-xs tabular-nums opacity-70"
+                title={`Nível escolhido: ${jogador.nivelBase}`}
+              >
+                {variacao > 0 ? `▲${variacao}` : `▼${-variacao}`}
+              </span>
+            )}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
@@ -42,9 +51,10 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
       <h2 className="truncate text-center text-lg font-extrabold uppercase">
         {nomeNaCarta}
       </h2>
-      {jogador.apelido && (
-        <p className="truncate text-center text-xs opacity-75">{jogador.nome}</p>
-      )}
+      {/* Linha sempre presente (vazia sem apelido) pra todas as cartas terem a mesma altura */}
+      <p className="truncate text-center text-xs opacity-75">
+        {jogador.apelido ? jogador.nome : "\u00a0"}
+      </p>
 
       <dl className="mt-auto grid grid-cols-3 border-t border-black/15 pt-2 text-center">
         <Stat label="JOG" valor={jogador.jogos} />

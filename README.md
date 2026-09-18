@@ -45,6 +45,8 @@ As migrações ficam em `supabase/migrations/` e são aplicadas em ordem:
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrations/0001_init.sql
 ```
 
+(Repetir pra cada arquivo novo em `supabase/migrations/`, na ordem.)
+
 As tabelas têm RLS ativado sem policies: a chave publishable do Supabase não lê nem escreve nada. Todo acesso passa pelo servidor do Next.js (`src/data/`), usando a `DATABASE_URL`.
 
 ## Estrutura
@@ -67,13 +69,17 @@ Tudo que o seed cria tem id começando com `5eed`, então a limpeza não encosta
 
 ## Nível das cartinhas e seleção do fut
 
-Os critérios ficam em `src/lib/nivel.ts`. Cada jogador ganha uma nota por fut:
+Os critérios ficam em `src/lib/nivel.ts`.
 
-- **Gols e assistências** só somam pontos (nunca tiram)
-- **Defesa**: metade do saldo do time no fut (quanto sofreu a menos ou a mais que a média do jogo), então tomar muito gol derruba
+**Nível (60 a 95):** o admin escolhe o nível de cada jogador no cadastro (bronze 60–69, prata 70–79, ouro 80–95), e os futs sobem ou descem **até 10 pontos** a partir dele. A carta mostra o nível atual e a variação (▲/▼).
+
+Cada fut dá uma nota ao jogador:
+
+- **Gols e assistências** somam pontos
+- **Defesa**: metade do saldo do time no fut (quanto sofreu a menos ou a mais que a média do jogo)
 - **Peso por posição**: goleiro e zagueiro têm peso alto na defesa e normal em gols/assistências; meia e atacante, o contrário. Sem posição, tudo normal
 
-O **nível** (60 a 95) parte de 65 e sobe ou desce com a nota média por fut. Com poucos jogos ele fica perto de 65, pra um fut isolado não definir a carta. Bronze vai de 60 a 69, prata de 70 a 79 e ouro de 80 a 95.
+A nota média por fut do jogador é comparada com a média do grupo dele (goleiros + zagueiros, meias + atacantes; quem não tem posição é comparado com todo mundo): acima da média sobe, abaixo desce. Com poucos jogos a variação é menor (1 fut conta 25%, 3 futs 50%), pra um jogo isolado não mexer demais na carta.
 
 A **seleção do fut** usa a mesma nota, só que daquele fut: os 5 melhores (com nota positiva), e o primeiro é o craque.
 

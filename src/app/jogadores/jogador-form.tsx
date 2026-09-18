@@ -9,6 +9,7 @@ import {
 } from "@/app/jogadores/actions";
 import type { NovoJogador } from "@/data/jogadores";
 import { POSICAO_LABEL, POSICOES } from "@/lib/jogador";
+import { NIVEL_MAX, NIVEL_MIN, NIVEL_PADRAO } from "@/lib/nivel";
 
 const inputClass =
   "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 dark:border-zinc-700 dark:bg-zinc-900";
@@ -32,6 +33,7 @@ export function JogadorForm({
     apelido: jogador?.apelido ?? "",
     numero: jogador?.numero?.toString() ?? "",
     posicao: jogador?.posicao ?? "",
+    nivelBase: String(jogador?.nivelBase ?? NIVEL_PADRAO),
   };
 
   return (
@@ -88,6 +90,25 @@ export function JogadorForm({
           </select>
         </Campo>
       </div>
+
+      <Campo label="Nível" name="nivelBase" erros={state.erros?.nivelBase}>
+        <input
+          id="nivelBase"
+          name="nivelBase"
+          type="number"
+          inputMode="numeric"
+          required
+          min={NIVEL_MIN}
+          max={NIVEL_MAX}
+          defaultValue={valores.nivelBase}
+          aria-describedby="nivelBase-ajuda"
+          className={inputClass}
+        />
+        <p id="nivelBase-ajuda" className="mt-1 text-xs text-zinc-500">
+          De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 69, prata até 79, ouro a partir de 80). Os
+          futs sobem ou descem até 10 pontos a partir daqui.
+        </p>
+      </Campo>
 
       <div className="flex items-center justify-end gap-3 pt-2">
         {children && <div className="mr-auto">{children}</div>}
