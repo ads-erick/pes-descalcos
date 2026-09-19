@@ -34,12 +34,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/jogadores" className="font-black tracking-tight">
               Pés Descalços
             </Link>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-3 text-sm sm:gap-4">
               <Link href="/jogadores" className="hover:underline">
                 Jogadores
               </Link>
               <Link href="/futs" className="hover:underline">
                 Futs
+              </Link>
+              <Link href="/rankings" className="hover:underline">
+                Rankings
               </Link>
               {admin ? (
                 <form action={logoutAction}>
