@@ -17,15 +17,15 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 - [x] **Dados de teste** — `npm run seed:teste` cria 20 jogadores e 10 futs pra testar o layout, `npm run seed:limpar` apaga (#6)
 - [x] **Nível escolhido no cadastro** — o admin define o nível de cada jogador (60–95) no formulário e os futs mexem até 10 pontos pra cima ou pra baixo, comparando a nota média por fut com a média do grupo (defesa: goleiro + zagueiro; ataque: meia + atacante). A carta mostra ▲/▼ com a variação (#7)
 - [x] **Rankings** — página nova no menu com artilharia, assistências e presença (com % dos futs), filtrando por este mês, este ano ou desde sempre. Empate divide a colocação e jogador arquivado continua contando nos períodos em que jogou (#8)
-- [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts`
+- [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts` (#9)
+- [x] **Foto na cartinha** — o admin escolhe a foto no cadastro ou na edição do jogador (com prévia na hora), pode trocar ou remover. O navegador recorta e reduz a foto antes de enviar, então foto de celular funciona direto. Sem foto, a carta continua com as iniciais. Fotos no Supabase Storage (#10)
 
 ## Próximos passos
 
 Em ordem de prioridade:
 
-1. [ ] **Foto na cartinha** — upload pelo Supabase Storage (precisa da `SUPABASE_SERVICE_ROLE_KEY`).
-2. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
-3. [ ] **Deploy na Vercel** — publicar o site pra galera acessar quando estiver com cara de pronto. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança).
+1. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
+2. [ ] **Deploy na Vercel** — publicar o site pra galera acessar quando estiver com cara de pronto. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
 
 ## Mais pra frente
 
@@ -33,6 +33,7 @@ Em ordem de prioridade:
 - [ ] **Votação de MVP** — a galera vota no melhor de cada fut.
 - [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de algum login por jogador.
 - [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
+- [ ] **Foto em outras telas** — hoje a foto só aparece na cartinha; dá pra levar pra seleção do fut, sorteio e rankings.
 - [ ] **Evolução do jogador** — gráfico fut a fut.
 - [ ] **Rankings de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
 

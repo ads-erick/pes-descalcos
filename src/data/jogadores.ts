@@ -1,7 +1,9 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { connection } from "next/server";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
+import { apagarFoto, enviarFoto } from "./fotos";
 import type { Posicao } from "@/lib/jogador";
 import { mediasPorGrupo, nivel } from "@/lib/nivel";
 
@@ -11,6 +13,7 @@ export type JogadorResumo = {
   apelido: string | null;
   numero: number | null;
   posicao: Posicao | null;
+  fotoUrl: string | null;
   jogos: number;
   gols: number;
   assistencias: number;
@@ -28,6 +31,11 @@ export type NovoJogador = {
   nivelBase: number;
 };
 
+export type JogadorEditavel = NovoJogador & { id: string; fotoUrl: string | null };
+
+// "remover" apaga a foto atual; null mantém como está
+export type MudancaFoto = File | "remover" | null;
+
 const colunas = (j: NovoJogador) => ({
   nome: j.nome,
   apelido: j.apelido,
@@ -41,6 +49,7 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
   const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number })[]>`
     select
       j.id, j.nome, j.apelido, j.numero, j.posicao,
+      j.foto_url as "fotoUrl",
       j.nivel_base as "nivelBase",
       count(p.id) filter (where p.presente)::int as jogos,
       coalesce(sum(p.gols), 0)::int as gols,
@@ -70,17 +79,25 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
     );
 }
 
-export async function criarJogador(jogador: NovoJogador) {
+// O id sai daqui pra foto já subir na pasta do jogador antes do insert
+export async function criarJogador(jogador: NovoJogador, foto: File | null) {
   await requireAdmin();
-  await sql`
-    insert into jogador ${sql(colunas(jogador))}
-  `;
+  const id = randomUUID();
+  const fotoUrl = foto ? await enviarFoto(id, foto) : null;
+  try {
+    await sql`
+      insert into jogador ${sql({ id, ...colunas(jogador), foto_url: fotoUrl })}
+    `;
+  } catch (erro) {
+    await apagarFoto(fotoUrl);
+    throw erro;
+  }
 }
 
-export async function buscarJogador(id: string): Promise<(NovoJogador & { id: string }) | null> {
+export async function buscarJogador(id: string): Promise<JogadorEditavel | null> {
   await connection();
-  const [jogador] = await sql<(NovoJogador & { id: string })[]>`
-    select id, nome, apelido, numero, posicao, nivel_base as "nivelBase"
+  const [jogador] = await sql<JogadorEditavel[]>`
+    select id, nome, apelido, numero, posicao, foto_url as "fotoUrl", nivel_base as "nivelBase"
     from jogador
     where id = ${id} and ativo
   `;
@@ -102,25 +119,35 @@ export async function listarEscalaveis(futId?: string): Promise<JogadorEscalavel
   `;
 }
 
-export async function atualizarJogador(id: string, jogador: NovoJogador) {
+export async function atualizarJogador(id: string, jogador: NovoJogador, foto: MudancaFoto) {
   await requireAdmin();
-  await sql`
-    update jogador
-    set ${sql(colunas(jogador))}
-    where id = ${id}
+  if (!foto) {
+    await sql`update jogador set ${sql(colunas(jogador))} where id = ${id}`;
+    return;
+  }
+
+  const [anterior] = await sql<{ fotoUrl: string | null }[]>`
+    select foto_url as "fotoUrl" from jogador where id = ${id}
   `;
+  const fotoUrl = foto === "remover" ? null : await enviarFoto(id, foto);
+  await sql`update jogador set ${sql({ ...colunas(jogador), foto_url: fotoUrl })} where id = ${id}`;
+  await apagarFoto(anterior?.fotoUrl ?? null);
 }
 
 // Quem já jogou algum fut é só arquivado, pra não apagar o histórico das partidas
 export async function excluirJogador(id: string): Promise<"excluido" | "arquivado"> {
   await requireAdmin();
   return sql.begin(async (tx) => {
-    const excluidos = await tx`
+    const excluidos = await tx<{ fotoUrl: string | null }[]>`
       delete from jogador
       where id = ${id}
         and not exists (select 1 from participacao where jogador_id = ${id})
+      returning foto_url as "fotoUrl"
     `;
-    if (excluidos.count > 0) return "excluido";
+    if (excluidos.count > 0) {
+      await apagarFoto(excluidos[0].fotoUrl);
+      return "excluido";
+    }
 
     await tx`update jogador set ativo = false where id = ${id}`;
     return "arquivado";

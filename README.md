@@ -33,6 +33,7 @@ Abra [http://localhost:3000](http://localhost:3000).
 | Variável | Onde pegar |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Connect |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API Keys → `service_role` (ou "secret"). Só no servidor: é o que sobe e apaga as fotos das cartinhas |
 | `DATABASE_URL` | Supabase → Connect → Connection String (URI). Caracteres especiais da senha precisam ser codificados (`@` → `%40`) |
 | `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
 | `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
@@ -48,6 +49,12 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrati
 (Repetir pra cada arquivo novo em `supabase/migrations/`, na ordem.)
 
 As tabelas têm RLS ativado sem policies: a chave publishable do Supabase não lê nem escreve nada. Todo acesso passa pelo servidor do Next.js (`src/data/`), usando a `DATABASE_URL`.
+
+### Fotos das cartinhas
+
+Ficam no bucket público `fotos` do Supabase Storage (criado pela migração `0004_bucket_fotos.sql`), em `jogadores/<id>/<timestamp>.jpg`; a URL pública vai na coluna `jogador.foto_url`. Qualquer um lê pela URL, mas só o servidor sobe e apaga, com a `SUPABASE_SERVICE_ROLE_KEY` (`src/data/fotos.ts`).
+
+O navegador recorta a foto num quadrado e reduz pra 400×400 JPEG (~30 KB) antes de enviar (`src/lib/foto.ts`), então foto de celular de vários MB passa no limite de 1 MB das Server Actions. Trocar ou remover a foto apaga a anterior do bucket, e excluir o jogador também; jogador arquivado mantém a foto.
 
 ## Estrutura
 

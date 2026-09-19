@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { JogadorResumo } from "@/data/jogadores";
 import { POSICAO_SIGLA, iniciais } from "@/lib/jogador";
 import { raridade, type Raridade } from "@/lib/nivel";
@@ -44,8 +45,18 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
         </div>
       </div>
 
-      <div className="mx-auto my-3 flex size-16 items-center justify-center rounded-full bg-black/10 text-2xl font-black sm:size-20">
-        {iniciais(nomeNaCarta)}
+      <div className="mx-auto my-3 flex size-16 items-center justify-center overflow-hidden rounded-full bg-black/10 text-2xl font-black ring-2 ring-black/15 sm:size-20">
+        {jogador.fotoUrl ? (
+          <Image
+            src={jogador.fotoUrl}
+            alt=""
+            width={80}
+            height={80}
+            className="size-full object-cover"
+          />
+        ) : (
+          iniciais(nomeNaCarta)
+        )}
       </div>
 
       <h2 className="truncate text-center text-lg font-extrabold uppercase">
