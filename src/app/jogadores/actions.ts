@@ -6,6 +6,7 @@ import { z } from "zod";
 import { atualizarJogador, criarJogador, excluirJogador } from "@/data/jogadores";
 import { ehUuid } from "@/lib/id";
 import { POSICOES } from "@/lib/jogador";
+import { NIVEL_MAX, NIVEL_MIN } from "@/lib/nivel";
 
 const vazioParaNull = (valor: unknown) =>
   typeof valor === "string" && valor.trim() === "" ? null : valor;
@@ -23,6 +24,11 @@ const novoJogadorSchema = z.object({
       .nullable(),
   ),
   posicao: z.preprocess(vazioParaNull, z.enum(POSICOES, { error: "Posição inválida" }).nullable()),
+  nivelBase: z.coerce
+    .number({ error: "Nível inválido" })
+    .int("Nível inválido")
+    .min(NIVEL_MIN, `Use um nível de ${NIVEL_MIN} a ${NIVEL_MAX}`)
+    .max(NIVEL_MAX, `Use um nível de ${NIVEL_MIN} a ${NIVEL_MAX}`),
 });
 
 type Campos = keyof z.infer<typeof novoJogadorSchema>;
@@ -38,6 +44,7 @@ function lerJogador(formData: FormData) {
     apelido: String(formData.get("apelido") ?? ""),
     numero: String(formData.get("numero") ?? ""),
     posicao: String(formData.get("posicao") ?? ""),
+    nivelBase: String(formData.get("nivelBase") ?? ""),
   };
   return { valores, resultado: novoJogadorSchema.safeParse(valores) };
 }

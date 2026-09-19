@@ -3,7 +3,7 @@ import { connection } from "next/server";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
 import type { Posicao } from "@/lib/jogador";
-import { nivel } from "@/lib/nivel";
+import { mediasPorGrupo, nivel } from "@/lib/nivel";
 
 export type JogadorResumo = {
   id: string;
@@ -14,6 +14,7 @@ export type JogadorResumo = {
   jogos: number;
   gols: number;
   assistencias: number;
+  nivelBase: number;
   nivel: number;
 };
 
@@ -24,13 +25,23 @@ export type NovoJogador = {
   apelido: string | null;
   numero: number | null;
   posicao: Posicao | null;
+  nivelBase: number;
 };
+
+const colunas = (j: NovoJogador) => ({
+  nome: j.nome,
+  apelido: j.apelido,
+  numero: j.numero,
+  posicao: j.posicao,
+  nivel_base: j.nivelBase,
+});
 
 export async function listarJogadores(): Promise<JogadorResumo[]> {
   await connection();
   const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number })[]>`
     select
       j.id, j.nome, j.apelido, j.numero, j.posicao,
+      j.nivel_base as "nivelBase",
       count(p.id) filter (where p.presente)::int as jogos,
       coalesce(sum(p.gols), 0)::int as gols,
       coalesce(sum(p.assistencias), 0)::int as assistencias,
@@ -47,8 +58,9 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
     group by j.id
   `;
 
+  const medias = mediasPorGrupo(jogadores);
   return jogadores
-    .map(({ saldo, ...j }) => ({ ...j, nivel: nivel({ ...j, saldo }, j.posicao) }))
+    .map(({ saldo, ...j }) => ({ ...j, nivel: nivel({ ...j, saldo }, j.nivelBase, medias) }))
     .sort(
       (a, b) =>
         b.nivel - a.nivel ||
@@ -61,14 +73,14 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
 export async function criarJogador(jogador: NovoJogador) {
   await requireAdmin();
   await sql`
-    insert into jogador ${sql(jogador, "nome", "apelido", "numero", "posicao")}
+    insert into jogador ${sql(colunas(jogador))}
   `;
 }
 
 export async function buscarJogador(id: string): Promise<(NovoJogador & { id: string }) | null> {
   await connection();
   const [jogador] = await sql<(NovoJogador & { id: string })[]>`
-    select id, nome, apelido, numero, posicao
+    select id, nome, apelido, numero, posicao, nivel_base as "nivelBase"
     from jogador
     where id = ${id} and ativo
   `;
@@ -94,7 +106,7 @@ export async function atualizarJogador(id: string, jogador: NovoJogador) {
   await requireAdmin();
   await sql`
     update jogador
-    set ${sql(jogador, "nome", "apelido", "numero", "posicao")}
+    set ${sql(colunas(jogador))}
     where id = ${id}
   `;
 }
