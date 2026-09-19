@@ -5,8 +5,9 @@ import { useActionState, useState } from "react";
 import { criarFutAction, editarFutAction, type FutFormState } from "@/app/futs/actions";
 import type { NovoFut } from "@/data/futs";
 import type { JogadorEscalavel } from "@/data/jogadores";
+import type { CorTime } from "@/lib/selecao";
 
-type Time = "branco" | "preto";
+type Time = CorTime;
 type FutExistente = NovoFut & { id: string };
 
 const inputClass =
@@ -15,10 +16,13 @@ const inputClass =
 export function FutForm({
   jogadores,
   fut,
+  timesSorteados,
   children,
 }: {
   jogadores: JogadorEscalavel[];
   fut?: FutExistente;
+  // Escalação vinda do sorteio de times, pra já abrir o formulário com todo mundo no seu time
+  timesSorteados?: Record<string, Time>;
   children?: React.ReactNode;
 }) {
   const [state, action, pending] = useActionState<FutFormState, FormData>(
@@ -26,8 +30,10 @@ export function FutForm({
     {},
   );
   const salvos = new Map(fut?.participacoes.map((p) => [p.jogadorId, p]));
-  const [times, setTimes] = useState<Record<string, Time | "">>(() =>
-    Object.fromEntries(fut?.participacoes.map((p) => [p.jogadorId, p.corTime]) ?? []),
+  const [times, setTimes] = useState<Record<string, Time | "">>(
+    () =>
+      timesSorteados ??
+      Object.fromEntries(fut?.participacoes.map((p) => [p.jogadorId, p.corTime]) ?? []),
   );
 
   return (

@@ -30,11 +30,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-          <nav className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
-            <Link href="/jogadores" className="font-black tracking-tight">
+          <nav className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
+            <Link href="/jogadores" className="whitespace-nowrap font-black tracking-tight">
               Pés Descalços
             </Link>
-            <div className="flex items-center gap-3 text-sm sm:gap-4">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm sm:gap-x-4">
               <Link href="/jogadores" className="hover:underline">
                 Jogadores
               </Link>
@@ -43,6 +43,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
               <Link href="/rankings" className="hover:underline">
                 Rankings
+              </Link>
+              <Link href="/sorteio" className="hover:underline">
+                Sorteio
               </Link>
               {admin ? (
                 <form action={logoutAction}>

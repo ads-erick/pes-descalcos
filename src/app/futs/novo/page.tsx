@@ -4,13 +4,34 @@ import { redirect } from "next/navigation";
 import { FutForm } from "@/app/futs/fut-form";
 import { isAdmin } from "@/data/auth";
 import { listarEscalaveis } from "@/data/jogadores";
+import type { CorTime } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Registrar fut" };
 
-export default async function NovoFutPage() {
+// ?branco=id,id&preto=id,id vem do sorteio de times. Id que não é de ninguém do elenco é ignorado.
+function lerTimesSorteados(
+  params: Record<string, string | string[] | undefined>,
+  elenco: Set<string>,
+): Record<string, CorTime> | undefined {
+  const times: Record<string, CorTime> = {};
+  for (const cor of ["branco", "preto"] as const) {
+    const valor = params[cor];
+    if (typeof valor !== "string") continue;
+    for (const id of valor.split(",")) {
+      if (elenco.has(id)) times[id] = cor;
+    }
+  }
+  return Object.keys(times).length > 0 ? times : undefined;
+}
+
+export default async function NovoFutPage({ searchParams }: PageProps<"/futs/novo">) {
   if (!(await isAdmin())) redirect("/admin/login?destino=/futs/novo");
 
   const jogadores = await listarEscalaveis();
+  const timesSorteados = lerTimesSorteados(
+    await searchParams,
+    new Set(jogadores.map((j) => j.id)),
+  );
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -24,7 +45,7 @@ export default async function NovoFutPage() {
           .
         </p>
       ) : (
-        <FutForm jogadores={jogadores} />
+        <FutForm jogadores={jogadores} timesSorteados={timesSorteados} />
       )}
     </main>
   );

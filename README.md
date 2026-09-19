@@ -83,6 +83,16 @@ A nota média por fut do jogador é comparada com a média do grupo dele (goleir
 
 A **seleção do fut** usa a mesma nota, só que daquele fut: os 5 melhores (com nota positiva), e o primeiro é o craque.
 
+## Sorteio de times
+
+Critérios em `src/lib/sorteio.ts`. A força de cada time é a soma dos níveis das cartinhas. O sorteio:
+
+1. Divide cada posição entre os dois lados, intercalando: um goleiro pra cada time, zagueiros divididos, e assim por diante. Quem não tem posição completa os times. Os times ficam do mesmo tamanho (ou com um a mais, se o número for ímpar)
+2. Troca jogadores da mesma posição entre os times enquanto isso aproximar a força dos dois
+3. Repete isso 200 vezes com ordens aleatórias e escolhe ao acaso uma das divisões com diferença de até 2 pontos a mais que a melhor, pra "sortear de novo" trazer times diferentes
+
+Tudo roda no navegador, nada é salvo. O admin pode levar os times sorteados pro registro do fut (`/futs/novo?branco=…&preto=…`).
+
 ## Admin
 
 A lista de jogadores é pública. Para cadastrar, entre em `/admin/login` com a `ADMIN_PASSWORD`. A sessão fica num cookie assinado por 30 dias.
