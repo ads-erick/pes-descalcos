@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { atualizarJogador, criarJogador, excluirJogador } from "@/data/jogadores";
+import { FOTO_TAMANHO_MAX, FOTO_TIPOS } from "@/data/fotos";
+import { atualizarJogador, criarJogador, excluirJogador, type MudancaFoto } from "@/data/jogadores";
 import { ehUuid } from "@/lib/id";
 import { POSICOES } from "@/lib/jogador";
 import { NIVEL_MAX, NIVEL_MIN } from "@/lib/nivel";
@@ -34,7 +35,7 @@ const novoJogadorSchema = z.object({
 type Campos = keyof z.infer<typeof novoJogadorSchema>;
 
 export type JogadorFormState = {
-  erros?: Partial<Record<Campos, string[]>>;
+  erros?: Partial<Record<Campos | "foto", string[]>>;
   valores?: Record<Campos, string>;
 };
 
@@ -49,16 +50,37 @@ function lerJogador(formData: FormData) {
   return { valores, resultado: novoJogadorSchema.safeParse(valores) };
 }
 
+// O navegador já manda a foto reduzida; aqui só confere se veio algo aceitável
+function lerFoto(formData: FormData): { foto: MudancaFoto; erro?: string } {
+  if (formData.get("removerFoto") === "on") return { foto: "remover" };
+
+  const foto = formData.get("foto");
+  if (!(foto instanceof File) || foto.size === 0) return { foto: null };
+  if (!(FOTO_TIPOS as readonly string[]).includes(foto.type)) {
+    return { foto: null, erro: "Use uma foto JPG, PNG ou WebP" };
+  }
+  if (foto.size > FOTO_TAMANHO_MAX) return { foto: null, erro: "Foto muito grande (máximo 1 MB)" };
+  return { foto };
+}
+
+function validar(formData: FormData) {
+  const { valores, resultado } = lerJogador(formData);
+  const { foto, erro } = lerFoto(formData);
+  if (!resultado.success || erro) {
+    const erros = resultado.success ? {} : z.flattenError(resultado.error).fieldErrors;
+    return { estado: { erros: { ...erros, ...(erro && { foto: [erro] }) }, valores } };
+  }
+  return { dados: resultado.data, foto };
+}
+
 export async function criarJogadorAction(
   _estadoAnterior: JogadorFormState,
   formData: FormData,
 ): Promise<JogadorFormState> {
-  const { valores, resultado } = lerJogador(formData);
-  if (!resultado.success) {
-    return { erros: z.flattenError(resultado.error).fieldErrors, valores };
-  }
+  const { estado, dados, foto } = validar(formData);
+  if (estado) return estado;
 
-  await criarJogador(resultado.data);
+  await criarJogador(dados, foto === "remover" ? null : foto);
   revalidatePath("/jogadores");
   redirect("/jogadores");
 }
@@ -70,12 +92,10 @@ export async function editarJogadorAction(
   const id = formData.get("id");
   if (!ehUuid(id)) throw new Error("Jogador inválido");
 
-  const { valores, resultado } = lerJogador(formData);
-  if (!resultado.success) {
-    return { erros: z.flattenError(resultado.error).fieldErrors, valores };
-  }
+  const { estado, dados, foto } = validar(formData);
+  if (estado) return estado;
 
-  await atualizarJogador(id, resultado.data);
+  await atualizarJogador(id, dados, foto);
   revalidatePath("/jogadores");
   revalidatePath("/futs");
   redirect("/jogadores");
