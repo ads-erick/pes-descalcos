@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { botaoPrimario, botaoSecundario, faixaTime, link, painel } from "@/lib/estilo";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
 import type { CorTime } from "@/lib/selecao";
 import { forca, sortearTimes, type Times } from "@/lib/sorteio";
@@ -9,9 +10,6 @@ import { forca, sortearTimes, type Times } from "@/lib/sorteio";
 type JogadorSorteavel = { id: string; nome: string; posicao: Posicao | null; nivel: number };
 
 const NOME_TIME: Record<CorTime, string> = { branco: "Time branco", preto: "Time preto" };
-
-const botaoSecundario =
-  "rounded-full border border-zinc-300 px-4 py-2 text-sm font-semibold hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800";
 
 export function SorteioTimes({
   jogadores,
@@ -46,40 +44,40 @@ export function SorteioTimes({
     <div className="space-y-6">
       <div>
         <div className="mb-2 flex items-center justify-between gap-3">
-          <p className="text-sm font-medium">
+          <p className="text-sm font-semibold">
             Quem vai jogar{" "}
-            <span className="text-zinc-500">
+            <span className="font-normal text-apagado">
               ({confirmados.size} de {jogadores.length})
             </span>
           </p>
-          <div className="flex gap-3 text-sm text-zinc-500">
+          <div className="flex gap-3 text-sm">
             <button
               type="button"
               onClick={() => marcar(new Set(jogadores.map((j) => j.id)))}
-              className="hover:underline"
+              className={link}
             >
               Marcar todos
             </button>
-            <button type="button" onClick={() => marcar(new Set())} className="hover:underline">
+            <button type="button" onClick={() => marcar(new Set())} className={link}>
               Limpar
             </button>
           </div>
         </div>
-        <ul className="grid rounded-xl border border-zinc-200 bg-white sm:grid-cols-2 dark:border-zinc-800 dark:bg-zinc-900">
+        <ul className={`${painel} grid overflow-hidden sm:grid-cols-2`}>
           {jogadores.map((j) => (
             <li key={j.id}>
-              <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800">
+              <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-superficie-2 has-checked:bg-ouro-suave">
                 <input
                   type="checkbox"
                   checked={confirmados.has(j.id)}
                   onChange={() => alternar(j.id)}
-                  className="size-4"
+                  className="size-4 accent-destaque"
                 />
                 <span className="min-w-0 flex-1 truncate font-medium">{j.nome}</span>
-                <span className="w-8 text-xs font-semibold text-zinc-500">
+                <span className="w-8 font-numero text-base tracking-wide text-apagado">
                   {j.posicao ? POSICAO_SIGLA[j.posicao] : "–"}
                 </span>
-                <span className="w-6 text-right font-bold tabular-nums">{j.nivel}</span>
+                <span className="w-6 text-right font-numero text-xl leading-none">{j.nivel}</span>
               </label>
             </li>
           ))}
@@ -88,13 +86,13 @@ export function SorteioTimes({
 
       <div className="flex flex-wrap items-center justify-end gap-3">
         {confirmados.size < 2 && (
-          <p className="mr-auto text-sm text-zinc-500">Marque pelo menos dois jogadores.</p>
+          <p className="mr-auto text-sm text-apagado">Marque pelo menos dois jogadores.</p>
         )}
         <button
           type="button"
           onClick={sortear}
           disabled={confirmados.size < 2}
-          className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+          className={botaoPrimario}
         >
           {times ? "Sortear de novo" : "Sortear times"}
         </button>
@@ -102,9 +100,9 @@ export function SorteioTimes({
 
       {times && (
         <section aria-label="Times sorteados" className="space-y-4">
-          <p className="text-center text-sm text-zinc-500">
+          <p className="text-center text-sm text-apagado">
             Diferença de força:{" "}
-            <span className="font-bold text-zinc-900 tabular-nums dark:text-zinc-100">
+            <span className="font-numero text-xl text-tinta">
               {Math.abs(forca(times.branco) - forca(times.preto))}
             </span>{" "}
             (soma dos níveis de cada time)
@@ -132,29 +130,27 @@ export function SorteioTimes({
 function Time({ cor, jogadores }: { cor: CorTime; jogadores: JogadorSorteavel[] }) {
   const total = forca(jogadores);
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <div className={`${painel} overflow-hidden`}>
       <h3
-        className={`flex items-baseline justify-between px-4 py-2 text-sm font-bold ${
-          cor === "branco" ? "bg-zinc-100 text-zinc-900" : "bg-zinc-900 text-white dark:bg-black"
-        }`}
+        className={`flex items-baseline justify-between px-4 pt-2 pb-1.5 font-numero text-xl tracking-wider uppercase ${faixaTime[cor]}`}
       >
         <span>
           {NOME_TIME[cor]}
-          <span className="ml-2 font-normal opacity-70">({jogadores.length})</span>
+          <span className="ml-2 opacity-60">({jogadores.length})</span>
         </span>
-        <span className="font-normal opacity-70">
-          força <span className="font-bold tabular-nums opacity-100">{total}</span> · média{" "}
-          <span className="tabular-nums">{Math.round(total / jogadores.length)}</span>
+        <span className="text-base opacity-70">
+          força <span className="text-xl opacity-100">{total}</span> · média{" "}
+          {Math.round(total / jogadores.length)}
         </span>
       </h3>
-      <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+      <ul className="divide-y divide-linha">
         {jogadores.map((j) => (
           <li key={j.id} className="flex items-center gap-3 px-4 py-2 text-sm">
-            <span className="w-8 text-xs font-semibold text-zinc-500">
+            <span className="w-8 font-numero text-base tracking-wide text-apagado">
               {j.posicao ? POSICAO_SIGLA[j.posicao] : "–"}
             </span>
             <span className="min-w-0 flex-1 truncate font-medium">{j.nome}</span>
-            <span className="font-bold tabular-nums">{j.nivel}</span>
+            <span className="font-numero text-xl leading-none">{j.nivel}</span>
           </li>
         ))}
       </ul>

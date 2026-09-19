@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { isAdmin } from "@/data/auth";
 import { listarJogadores } from "@/data/jogadores";
+import { vazio } from "@/lib/estilo";
 import { SorteioTimes } from "./sorteio-times";
 
 export const metadata: Metadata = { title: "Sorteio de times" };
@@ -10,15 +12,13 @@ export default async function SorteioPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Sorteio de times</h1>
-        <p className="text-sm text-zinc-500">
-          Marque quem vai jogar e o sorteio divide branco x preto pelo nível das cartinhas.
-        </p>
-      </div>
+      <CabecalhoPagina
+        titulo="Sorteio"
+        subtitulo="Marque quem vai jogar e o sorteio divide branco x preto pelo nível das cartinhas."
+      />
 
       {jogadores.length < 2 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700">
+        <p className={vazio}>
           Precisa de pelo menos dois jogadores cadastrados pra sortear.
         </p>
       ) : (

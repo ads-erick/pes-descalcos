@@ -61,7 +61,20 @@ O navegador recorta a foto num quadrado e reduz pra 400×400 JPEG (~30 KB) antes
 - `src/app/` — rotas e Server Actions
 - `src/data/` — camada de acesso a dados (só roda no servidor): queries, autenticação de admin
 - `src/components/` — componentes visuais (ex: cartinha do jogador)
-- `src/lib/` — constantes e helpers compartilhados entre servidor e cliente
+- `src/lib/` — constantes e helpers compartilhados entre servidor e cliente (`estilo.ts` tem as classes de botão, campo e painel)
+- `public/marca/escudo.png` — o escudo do time sem fundo, usado como máscara (pega a cor do tema)
+- `public/texturas/` — as estampas das camisas usadas de fundo
+
+## Identidade visual
+
+Tirada das camisas do grupo. Os temas seguem o sistema do aparelho até a pessoa escolher no botão do cabeçalho; a escolha fica no cookie `tema`.
+
+- **Escuro (camisa preta):** fundo preto com rosas vinho, detalhes dourados
+- **Claro (camisa branca):** fundo com mármore cinza, detalhes em azul-marinho
+
+As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-dourado`...), redefinidos por tema. Use os tokens em vez de cores fixas, assim o componente já funciona nos dois temas. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
+
+A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ouro, prata ou bronze pelo nível, e todas as medidas em `cqw` pra escalar com a largura da carta.
 
 ### Dados de teste
 

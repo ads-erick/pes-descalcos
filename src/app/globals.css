@@ -1,10 +1,145 @@
 @import "tailwindcss";
 
+/*
+ * Identidade tirada das camisas do grupo:
+ * - claro: camisa branca (papel com mármore cinza, detalhes em azul-marinho)
+ * - escuro: camisa preta (preto com rosas vinho, detalhes dourados)
+ * Sem preferência salva, segue o tema do sistema; o botão do cabeçalho grava a escolha no cookie "tema".
+ */
+
+/* dark: vale pro tema escuro escolhido ou, sem escolha, pro sistema em modo escuro */
+@custom-variant dark {
+  &:where([data-tema="escuro"], [data-tema="escuro"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-tema="claro"]), :root:not([data-tema="claro"]) *) {
+      @slot;
+    }
+  }
+}
+
+:root {
+  color-scheme: light;
+  --fundo: #f2efe8;
+  --superficie: #fbf9f4;
+  --superficie-2: #e8e4da;
+  --tinta: #172243;
+  --apagado: #5b6275;
+  --linha: #d3cdc0;
+  --destaque: #1e3163;
+  --sobre-destaque: #f7f3ea;
+  --sombra: #c9a14a;
+  --ouro: #9a7224;
+  --ouro-suave: #f1e4c0;
+  --faixa: #1e3163;
+  --sobre-faixa: #f7f3ea;
+  --dourado: #d8b65c;
+  --perigo: #b42318;
+  --textura: url("/texturas/marmore.svg");
+}
+
+/* Tema escuro: repetido pro sistema em modo escuro (sem escolha salva) e pra escolha explícita */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --fundo: #0e0a0b;
+    --superficie: #181213;
+    --superficie-2: #251b1c;
+    --tinta: #f2e8d2;
+    --apagado: #a8998a;
+    --linha: #3a2d2c;
+    --destaque: #d8b65c;
+    --sobre-destaque: #1a1208;
+    --sombra: #7a1f2b;
+    --ouro: #e2c26e;
+    --ouro-suave: #2e2413;
+    --faixa: #070505;
+    --sobre-faixa: #e8cf8a;
+    --dourado: #d8b65c;
+    --perigo: #f0786b;
+    --textura: url("/texturas/rosas.svg");
+  }
+}
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --fundo: #0e0a0b;
+  --superficie: #181213;
+  --superficie-2: #251b1c;
+  --tinta: #f2e8d2;
+  --apagado: #a8998a;
+  --linha: #3a2d2c;
+  --destaque: #d8b65c;
+  --sobre-destaque: #1a1208;
+  --sombra: #7a1f2b;
+  --ouro: #e2c26e;
+  --ouro-suave: #2e2413;
+  --faixa: #070505;
+  --sobre-faixa: #e8cf8a;
+  --dourado: #d8b65c;
+  --perigo: #f0786b;
+  --textura: url("/texturas/rosas.svg");
+}
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--fonte-texto);
+  --font-slab: var(--fonte-slab);
+  --font-numero: var(--fonte-numero);
+  --font-script: var(--fonte-script);
+
+  --color-fundo: var(--fundo);
+  --color-superficie: var(--superficie);
+  --color-superficie-2: var(--superficie-2);
+  --color-tinta: var(--tinta);
+  --color-apagado: var(--apagado);
+  --color-linha: var(--linha);
+  --color-destaque: var(--destaque);
+  --color-sobre-destaque: var(--sobre-destaque);
+  --color-sombra: var(--sombra);
+  --color-ouro: var(--ouro);
+  --color-ouro-suave: var(--ouro-suave);
+  --color-faixa: var(--faixa);
+  --color-sobre-faixa: var(--sobre-faixa);
+  --color-dourado: var(--dourado);
+  --color-perigo: var(--perigo);
 }
 
 body {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: var(--fundo);
+  color: var(--tinta);
+  font-family: var(--fonte-texto), system-ui, sans-serif;
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Estampa da camisa numa imagem só, presa na tela e cobrindo tudo (sem repetir) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--textura) center / cover no-repeat;
+}
+
+/* Granulado de impressão antiga por cima de tudo, bem de leve */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Escudo como máscara: pega a cor do texto (currentColor) */
+@utility escudo {
+  display: inline-block;
+  aspect-ratio: 413 / 600;
+  background-color: currentColor;
+  mask: url("/marca/escudo.png") center / contain no-repeat;
 }

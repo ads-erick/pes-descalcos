@@ -12,8 +12,9 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
 
   return (
     <main className="mx-auto w-full max-w-sm px-4 py-12">
-      <h1 className="mb-2 text-2xl font-bold">Área do admin</h1>
-      <p className="mb-6 text-sm text-zinc-500">
+      <span className="escudo mx-auto mb-4 block h-24 text-destaque" aria-hidden />
+      <h1 className="mb-2 text-center font-slab text-3xl uppercase">Área do admin</h1>
+      <p className="mb-6 text-center text-sm text-apagado">
         Só quem lança os dados dos futs precisa entrar.
       </p>
       <LoginForm destino={destino} />

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { buscarRankings, type EstatisticaDoPeriodo } from "@/data/rankings";
+import { painel } from "@/lib/estilo";
 import { POSICAO_SIGLA } from "@/lib/jogador";
 import {
   PERIODOS,
@@ -48,30 +50,28 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Rankings</h1>
-          <p className="text-sm text-zinc-500">
-            {descreverPeriodo(periodo)} · {plural(futs, "fut", "futs")}
-          </p>
-        </div>
-        <nav aria-label="Período" className="flex rounded-full bg-zinc-200 p-1 text-sm dark:bg-zinc-800">
+      <CabecalhoPagina
+        titulo="Rankings"
+        subtitulo={`${descreverPeriodo(periodo)} · ${plural(futs, "fut", "futs")}`}
+      >
+        <nav
+          aria-label="Período"
+          className="flex overflow-hidden rounded-md border-2 border-tinta font-numero text-lg leading-none tracking-wider uppercase"
+        >
           {PERIODOS.map((p) => (
             <Link
               key={p}
               href={`/rankings?periodo=${p}`}
               aria-current={p === periodo ? "page" : undefined}
-              className={`rounded-full px-3 py-1 ${
-                p === periodo
-                  ? "bg-white font-semibold shadow-sm dark:bg-zinc-950"
-                  : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              className={`px-3 pt-1.5 pb-1 transition ${
+                p === periodo ? "bg-tinta text-fundo" : "hover:bg-superficie-2"
               }`}
             >
               {PERIODO_LABEL[p]}
             </Link>
           ))}
         </nav>
-      </div>
+      </CabecalhoPagina>
 
       <div className="grid gap-4 md:grid-cols-3">
         {COLUNAS.map((coluna) => {
@@ -79,35 +79,41 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
           return (
             <section
               key={coluna.titulo}
-              className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+              className={`${painel} overflow-hidden`}
             >
-              <h2 className="mb-3 font-bold">{coluna.titulo}</h2>
+              <h2 className="border-b-2 border-dourado bg-faixa px-4 pt-2 pb-1.5 font-slab text-lg text-sobre-faixa uppercase">
+                {coluna.titulo}
+              </h2>
               {ranking.length === 0 ? (
-                <p className="py-4 text-center text-sm text-zinc-500">{coluna.vazio}</p>
+                <p className="py-6 text-center text-sm text-apagado">{coluna.vazio}</p>
               ) : (
-                <ol className="space-y-1">
+                <ol className="space-y-1 p-3">
                   {ranking.map((j) => (
                     <li
                       key={j.jogadorId}
-                      className={`flex items-center gap-3 rounded-lg px-2 py-1.5 ${
-                        j.colocacao === 1 ? "bg-amber-100 dark:bg-amber-900/30" : ""
+                      className={`flex items-center gap-3 rounded-md px-2 py-1.5 ${
+                        j.colocacao === 1 ? "bg-ouro-suave" : ""
                       }`}
                     >
-                      <span className="w-6 text-right text-sm font-bold tabular-nums text-zinc-500">
+                      <span
+                        className={`w-7 text-right font-numero text-xl leading-none ${
+                          j.colocacao === 1 ? "text-ouro" : "text-apagado"
+                        }`}
+                      >
                         {j.colocacao}º
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium">
                           {j.nome}
                           {j.posicao && (
-                            <span className="ml-1.5 text-xs text-zinc-500">
+                            <span className="ml-1.5 font-numero text-sm tracking-wide text-apagado">
                               {POSICAO_SIGLA[j.posicao]}
                             </span>
                           )}
                         </p>
-                        <p className="text-xs text-zinc-500">{coluna.detalhe(j, futs)}</p>
+                        <p className="text-xs text-apagado">{coluna.detalhe(j, futs)}</p>
                       </div>
-                      <span className="text-lg font-black tabular-nums">{coluna.valor(j)}</span>
+                      <span className="font-numero text-3xl leading-none">{coluna.valor(j)}</span>
                     </li>
                   ))}
                 </ol>

@@ -19,13 +19,13 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 - [x] **Rankings** — página nova no menu com artilharia, assistências e presença (com % dos futs), filtrando por este mês, este ano ou desde sempre. Empate divide a colocação e jogador arquivado continua contando nos períodos em que jogou (#8)
 - [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts` (#9)
 - [x] **Foto na cartinha** — o admin escolhe a foto no cadastro ou na edição do jogador (com prévia na hora), pode trocar ou remover. O navegador recorta e reduz a foto antes de enviar, então foto de celular funciona direto. Sem foto, a carta continua com as iniciais. Fotos no Supabase Storage (#10)
+- [x] **Identidade visual** — tema claro (camisa branca: mármore e azul-marinho) e escuro (camisa preta: rosas e dourado), seguindo o sistema ou escolhido no cabeçalho. Escudo do time no cabeçalho, no rodapé, nas cartinhas e no ícone da aba. Fontes retrô, cartinhas no modelo FUT (moldura de ouro, prata e bronze, foto grande, escudo do clube), placar com as cores das camisas, botão de voltar nas telas de edição. Pro admin, clicar na carta abre a edição (#11)
 
 ## Próximos passos
 
 Em ordem de prioridade:
 
-1. [ ] **Capricho visual** — identidade própria pro site e uma cartinha à altura, depois que as telas principais estiverem estáveis.
-2. [ ] **Deploy na Vercel** — publicar o site pra galera acessar quando estiver com cara de pronto. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
+1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar quando estiver com cara de pronto. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
 
 ## Mais pra frente
 

@@ -21,7 +21,7 @@ export function BotaoExcluir({
       onClick={(e) => {
         if (!confirm(confirmacao)) e.preventDefault();
       }}
-      className="px-4 py-2 text-sm font-medium text-red-600 hover:underline disabled:opacity-60"
+      className="px-2 text-sm font-semibold text-perigo underline-offset-4 hover:underline disabled:opacity-60"
     >
       Excluir
     </button>
