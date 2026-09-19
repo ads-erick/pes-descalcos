@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LinkVoltar } from "@/components/link-voltar";
+import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
+import { botaoPequeno, faixaTime, painel, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
 import { formatarPontos, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
@@ -28,38 +31,34 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/futs" className="text-sm text-zinc-500 hover:underline">
-          ← Futs
-        </Link>
+        <LinkVoltar href="/futs">Futs</LinkVoltar>
         {admin && (
-          <Link href={`/futs/${fut.id}/editar`} className="text-sm text-zinc-500 hover:underline">
+          <Link href={`/futs/${fut.id}/editar`} className={botaoPequeno}>
             Editar
           </Link>
         )}
       </div>
 
-      <section className="mb-8 rounded-2xl border border-zinc-200 bg-white p-6 text-center dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="text-sm font-semibold uppercase tracking-widest text-zinc-500">
-          Fut de {fut.data}
-        </h1>
-        <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-          <Placar cor="branco" gols={fut.placarBranco} venceu={venceu} />
-          <span className="text-2xl text-zinc-400">x</span>
-          <Placar cor="preto" gols={fut.placarPreto} venceu={venceu} />
+      <section className={`${painel} mb-10 px-4 py-6 text-center`}>
+        <h1 className="font-slab text-2xl uppercase sm:text-3xl">Fut de {fut.data}</h1>
+        <div className="mt-5 flex items-center justify-center gap-3 font-numero text-xl tracking-wider uppercase sm:gap-5">
+          <span className="w-16 text-right sm:w-20">Branco</span>
+          <Placar branco={fut.placarBranco} preto={fut.placarPreto} grande />
+          <span className="w-16 text-left sm:w-20">Preto</span>
         </div>
-        <p className="mt-3 text-sm text-zinc-500">
+        <p className="mt-4 font-script text-2xl text-apagado">
           {venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate"}
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-lg font-bold">Seleção do fut</h2>
-        <p className="mb-3 text-xs text-zinc-500">
+        <h2 className="font-slab text-xl uppercase">Seleção do fut</h2>
+        <p className="mb-4 text-xs text-apagado">
           Gols, assistências e saldo do time, com peso por posição: meias e atacantes valem mais
           pelos gols e assistências, goleiros e zagueiros pelo saldo.
         </p>
         {selecao.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500 dark:border-zinc-700">
+          <p className={`${vazio} text-sm`}>
             Ninguém pontuou nesse fut.
           </p>
         ) : (
@@ -67,31 +66,36 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
             {selecao.map((atuacao, i) => (
               <li
                 key={atuacao.jogadorId}
-                className={`flex items-center gap-3 rounded-xl border p-3 ${
-                  i === 0
-                    ? "border-amber-400 bg-amber-50 dark:border-amber-500/60 dark:bg-amber-950/30"
-                    : "border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                className={`flex items-center gap-3 rounded-lg border-2 p-3 ${
+                  i === 0 ? "border-ouro bg-ouro-suave" : "border-linha bg-superficie"
                 }`}
               >
-                <span className="w-6 text-center text-lg font-black tabular-nums text-zinc-400">
+                <span
+                  className={`w-7 text-center font-numero text-3xl leading-none ${
+                    i === 0 ? "text-ouro" : "text-apagado"
+                  }`}
+                >
                   {i + 1}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">
                     {atuacao.nome}
                     {i === 0 && (
-                      <span className="ml-2 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-950">
+                      <span className="ml-2 inline-flex items-center gap-1 rounded-sm bg-ouro px-1.5 pt-0.5 font-numero text-sm leading-none tracking-wider text-superficie uppercase">
+                        <span className="escudo h-3.5" aria-hidden />
                         Craque do fut
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-apagado">
                     {NOME_TIME[atuacao.corTime]} · {atuacao.gols}G {atuacao.assistencias}A
                   </p>
                 </div>
                 <span className="text-right">
-                  <span className="text-xl font-black tabular-nums">{formatarPontos(atuacao.pontos)}</span>
-                  <span className="ml-1 text-xs text-zinc-500">pts</span>
+                  <span className="font-numero text-3xl leading-none">
+                    {formatarPontos(atuacao.pontos)}
+                  </span>
+                  <span className="ml-1 text-xs text-apagado">pts</span>
                 </span>
               </li>
             ))}
@@ -100,7 +104,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       </section>
 
       <section>
-        <h2 className="mb-3 text-lg font-bold">Escalação</h2>
+        <h2 className="mb-4 font-slab text-xl uppercase">Escalação</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {(["branco", "preto"] as const).map((cor) => (
             <Escalacao
@@ -115,51 +119,32 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   );
 }
 
-function Placar({ cor, gols, venceu }: { cor: CorTime; gols: number; venceu: CorTime | null }) {
-  return (
-    <div>
-      <p className="text-sm font-medium text-zinc-500">{NOME_TIME[cor]}</p>
-      <p
-        className={`text-5xl font-black tabular-nums ${
-          venceu && venceu !== cor ? "text-zinc-400" : ""
-        }`}
-      >
-        {gols}
-      </p>
-    </div>
-  );
-}
-
 function Escalacao({ cor, atuacoes }: { cor: CorTime; atuacoes: AtuacaoNoFut[] }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <div className={`${painel} overflow-hidden`}>
       <h3
-        className={`px-4 py-2 text-sm font-bold ${
-          cor === "branco"
-            ? "bg-zinc-100 text-zinc-900"
-            : "bg-zinc-900 text-white dark:bg-black"
-        }`}
+        className={`px-4 pt-2 pb-1.5 font-numero text-xl tracking-wider uppercase ${faixaTime[cor]}`}
       >
         {NOME_TIME[cor]}
-        <span className="ml-2 font-normal opacity-70">({atuacoes.length})</span>
+        <span className="ml-2 opacity-60">({atuacoes.length})</span>
       </h3>
       {atuacoes.length === 0 ? (
-        <p className="p-4 text-sm text-zinc-500">Ninguém escalado.</p>
+        <p className="p-4 text-sm text-apagado">Ninguém escalado.</p>
       ) : (
-        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+        <ul className="divide-y divide-linha">
           {atuacoes.map((a) => (
             <li key={a.jogadorId} className="flex items-center gap-3 px-4 py-2 text-sm">
-              <span className="w-6 text-center font-bold tabular-nums text-zinc-400">
+              <span className="w-6 text-center font-numero text-lg text-apagado">
                 {a.numero ?? "–"}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{a.nome}</p>
                 {a.nome !== a.nomeCompleto && (
-                  <p className="truncate text-xs text-zinc-500">{a.nomeCompleto}</p>
+                  <p className="truncate text-xs text-apagado">{a.nomeCompleto}</p>
                 )}
               </div>
               {a.posicao && (
-                <span className="text-xs font-semibold text-zinc-500">
+                <span className="font-numero text-base tracking-wide text-apagado">
                   {POSICAO_SIGLA[a.posicao]}
                 </span>
               )}

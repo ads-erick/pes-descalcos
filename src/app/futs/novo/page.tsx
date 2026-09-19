@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { LinkVoltar } from "@/components/link-voltar";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FutForm } from "@/app/futs/fut-form";
 import { isAdmin } from "@/data/auth";
 import { listarEscalaveis } from "@/data/jogadores";
+import { vazio } from "@/lib/estilo";
 import type { CorTime } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Registrar fut" };
@@ -35,9 +37,12 @@ export default async function NovoFutPage({ searchParams }: PageProps<"/futs/nov
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold">Registrar fut</h1>
+      <div className="mb-6">
+        <LinkVoltar href="/futs" />
+      </div>
+      <h1 className="mb-6 font-slab text-3xl uppercase">Registrar fut</h1>
       {jogadores.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700">
+        <p className={vazio}>
           Cadastre os jogadores primeiro em{" "}
           <Link href="/jogadores/novo" className="font-medium underline">
             novo jogador

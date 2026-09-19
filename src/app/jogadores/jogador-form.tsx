@@ -9,12 +9,10 @@ import {
   type JogadorFormState,
 } from "@/app/jogadores/actions";
 import type { JogadorEditavel } from "@/data/jogadores";
+import { botaoPrimario, botaoSecundario, campo, link } from "@/lib/estilo";
 import { reduzirFoto } from "@/lib/foto";
 import { POSICAO_LABEL, POSICOES, iniciais } from "@/lib/jogador";
 import { NIVEL_MAX, NIVEL_MIN, NIVEL_PADRAO } from "@/lib/nivel";
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 dark:border-zinc-700 dark:bg-zinc-900";
 
 export function JogadorForm({
   jogador,
@@ -72,7 +70,7 @@ export function JogadorForm({
           required
           maxLength={80}
           defaultValue={valores.nome}
-          className={inputClass}
+          className={campo}
         />
       </Campo>
 
@@ -82,7 +80,7 @@ export function JogadorForm({
           name="apelido"
           maxLength={40}
           defaultValue={valores.apelido}
-          className={inputClass}
+          className={campo}
         />
       </Campo>
 
@@ -96,7 +94,7 @@ export function JogadorForm({
             min={0}
             max={99}
             defaultValue={valores.numero}
-            className={inputClass}
+            className={campo}
           />
         </Campo>
 
@@ -105,7 +103,7 @@ export function JogadorForm({
             id="posicao"
             name="posicao"
             defaultValue={valores.posicao}
-            className={inputClass}
+            className={campo}
           >
             <option value="">–</option>
             {POSICOES.map((posicao) => (
@@ -128,9 +126,9 @@ export function JogadorForm({
           max={NIVEL_MAX}
           defaultValue={valores.nivelBase}
           aria-describedby="nivelBase-ajuda"
-          className={inputClass}
+          className={campo}
         />
-        <p id="nivelBase-ajuda" className="mt-1 text-xs text-zinc-500">
+        <p id="nivelBase-ajuda" className="mt-1 text-xs text-apagado">
           De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 69, prata até 79, ouro a partir de 80). Os
           futs sobem ou descem até 10 pontos a partir daqui.
         </p>
@@ -138,14 +136,10 @@ export function JogadorForm({
 
       <div className="flex items-center justify-end gap-3 pt-2">
         {children && <div className="mr-auto">{children}</div>}
-        <Link href="/jogadores" className="px-4 py-2 text-sm text-zinc-500 hover:underline">
+        <Link href="/jogadores" className={`px-2 text-sm ${link}`}>
           Cancelar
         </Link>
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-        >
+        <button type="submit" disabled={pending} className={botaoPrimario}>
           {pending ? "Salvando..." : "Salvar"}
         </button>
       </div>
@@ -190,9 +184,9 @@ function CampoFoto({
 
   return (
     <div>
-      <p className="mb-1 block text-sm font-medium">Foto</p>
+      <p className="mb-1 block text-sm font-semibold">Foto</p>
       <div className="flex items-center gap-4">
-        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-zinc-200 text-2xl font-black text-zinc-500 dark:bg-zinc-800">
+        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-linha bg-superficie-2 font-slab text-2xl text-apagado">
           {atual ? (
             <Image
               src={atual}
@@ -207,7 +201,7 @@ function CampoFoto({
           )}
         </div>
         <div className="flex flex-col items-start gap-1">
-          <label className="cursor-pointer rounded-full border border-zinc-300 px-4 py-1.5 text-sm font-medium hover:bg-zinc-100 has-focus-visible:ring-2 has-focus-visible:ring-emerald-600/40 dark:border-zinc-700 dark:hover:bg-zinc-800">
+          <label className={`${botaoSecundario} cursor-pointer has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-destaque`}>
             {processando ? "Preparando..." : atual ? "Trocar foto" : "Escolher foto"}
             <input
               id="foto"
@@ -222,7 +216,7 @@ function CampoFoto({
             <button
               type="button"
               onClick={aoRemover}
-              className="px-4 text-sm text-zinc-500 hover:underline"
+              className={`px-1 text-sm ${link}`}
             >
               Remover foto
             </button>
@@ -230,7 +224,7 @@ function CampoFoto({
         </div>
       </div>
       {mensagem && (
-        <p role="alert" className="mt-1 text-sm text-red-600">
+        <p role="alert" className="mt-1 text-sm text-perigo">
           {mensagem}
         </p>
       )}
@@ -251,12 +245,12 @@ function Campo({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="mb-1 block text-sm font-medium">
+      <label htmlFor={name} className="mb-1 block text-sm font-semibold">
         {label}
       </label>
       {children}
       {erros?.[0] && (
-        <p role="alert" className="mt-1 text-sm text-red-600">
+        <p role="alert" className="mt-1 text-sm text-perigo">
           {erros[0]}
         </p>
       )}

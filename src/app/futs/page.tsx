@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
+import { botaoPrimario, link, painel, vazio } from "@/lib/estilo";
 
 export const metadata: Metadata = { title: "Futs" };
 
@@ -10,25 +13,19 @@ export default async function FutsPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Futs</h1>
-          <p className="text-sm text-zinc-500">
-            {futs.length} {futs.length === 1 ? "fut registrado" : "futs registrados"}
-          </p>
-        </div>
+      <CabecalhoPagina
+        titulo="Futs"
+        subtitulo={`${futs.length} ${futs.length === 1 ? "fut registrado" : "futs registrados"}`}
+      >
         {admin && (
-          <Link
-            href="/futs/novo"
-            className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-          >
+          <Link href="/futs/novo" className={botaoPrimario}>
             Registrar fut
           </Link>
         )}
-      </div>
+      </CabecalhoPagina>
 
       {futs.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700">
+        <p className={vazio}>
           Nenhum fut registrado ainda.
         </p>
       ) : (
@@ -37,16 +34,16 @@ export default async function FutsPage() {
             <li key={fut.id} className="flex items-center gap-2">
               <Link
                 href={`/futs/${fut.id}`}
-                className="flex flex-1 flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-600"
+                className={`${painel} flex flex-1 items-center justify-between gap-4 p-3 pl-4 transition hover:border-destaque`}
               >
-                <div>
-                  <p className="font-semibold">{fut.data}</p>
-                  <p className="text-sm text-zinc-500">
+                <div className="min-w-0">
+                  <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>
+                  <p className="mt-1 text-sm text-apagado">
                     {fut.jogadores} {fut.jogadores === 1 ? "jogador" : "jogadores"}
                     {fut.craque && (
                       <>
                         {" · craque: "}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                        <span className="font-semibold text-ouro">
                           {fut.craque.nome}
                         </span>{" "}
                         ({fut.craque.gols}G {fut.craque.assistencias}A)
@@ -54,16 +51,12 @@ export default async function FutsPage() {
                     )}
                   </p>
                 </div>
-                <p className="text-lg font-black tabular-nums">
-                  <span title="Time branco">{fut.placarBranco}</span>
-                  <span className="mx-2 text-zinc-400">x</span>
-                  <span title="Time preto">{fut.placarPreto}</span>
-                </p>
+                <Placar branco={fut.placarBranco} preto={fut.placarPreto} />
               </Link>
               {admin && (
                 <Link
                   href={`/futs/${fut.id}/editar`}
-                  className="px-2 text-sm text-zinc-500 hover:underline"
+                  className={`px-1 text-sm ${link}`}
                 >
                   Editar
                 </Link>

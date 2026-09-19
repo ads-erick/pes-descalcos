@@ -1,49 +1,52 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { JogadorCard } from "@/components/jogador-card";
 import { isAdmin } from "@/data/auth";
 import { listarJogadores } from "@/data/jogadores";
+import { botaoPrimario, vazio } from "@/lib/estilo";
 
-export const metadata: Metadata = { title: "Jogadores" };
+export const metadata: Metadata = { title: "Elenco" };
+
+const zoom = "block transition duration-200 ease-out hover:scale-105 focus-visible:scale-105";
 
 export default async function JogadoresPage() {
   const [jogadores, admin] = await Promise.all([listarJogadores(), isAdmin()]);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Jogadores</h1>
-          <p className="text-sm text-zinc-500">
-            {jogadores.length} {jogadores.length === 1 ? "jogador" : "jogadores"} no elenco
-          </p>
-        </div>
+      <CabecalhoPagina
+        titulo="Elenco"
+        subtitulo={`${jogadores.length} ${jogadores.length === 1 ? "jogador" : "jogadores"} no elenco`}
+      >
         {admin && (
-          <Link
-            href="/jogadores/novo"
-            className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
-          >
+          <Link href="/jogadores/novo" className={botaoPrimario}>
             Novo jogador
           </Link>
         )}
-      </div>
+      </CabecalhoPagina>
 
       {jogadores.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-zinc-500 dark:border-zinc-700">
+        <p className={vazio}>
           Nenhum jogador cadastrado ainda.
         </p>
       ) : (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4">
           {jogadores.map((jogador) => (
             <li key={jogador.id}>
-              <JogadorCard jogador={jogador} />
-              {admin && (
+              {/* Pro admin a carta inteira abre a edição */}
+              {admin ? (
                 <Link
                   href={`/jogadores/${jogador.id}/editar`}
-                  className="mt-1 block text-center text-sm text-zinc-500 hover:underline"
+                  aria-label={`Editar ${jogador.apelido ?? jogador.nome}`}
+                  className={`${zoom} rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-destaque`}
                 >
-                  Editar
+                  <JogadorCard jogador={jogador} />
                 </Link>
+              ) : (
+                <div className={zoom}>
+                  <JogadorCard jogador={jogador} />
+                </div>
               )}
             </li>
           ))}

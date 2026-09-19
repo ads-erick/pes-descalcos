@@ -5,13 +5,11 @@ import { useActionState, useState } from "react";
 import { criarFutAction, editarFutAction, type FutFormState } from "@/app/futs/actions";
 import type { NovoFut } from "@/data/futs";
 import type { JogadorEscalavel } from "@/data/jogadores";
+import { botaoPrimario, campo, campoPequeno, link, painel } from "@/lib/estilo";
 import type { CorTime } from "@/lib/selecao";
 
 type Time = CorTime;
 type FutExistente = NovoFut & { id: string };
-
-const inputClass =
-  "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 dark:border-zinc-700 dark:bg-zinc-900";
 
 export function FutForm({
   jogadores,
@@ -39,9 +37,9 @@ export function FutForm({
   return (
     <form action={action} className="space-y-6">
       {fut && <input type="hidden" name="id" value={fut.id} />}
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <label htmlFor="data" className="mb-1 block text-sm font-medium">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="col-span-2 sm:col-span-1">
+          <label htmlFor="data" className="mb-1 block text-sm font-semibold">
             Data
           </label>
           <input
@@ -50,11 +48,11 @@ export function FutForm({
             type="date"
             required
             defaultValue={fut?.data ?? new Date().toISOString().slice(0, 10)}
-            className={inputClass}
+            className={campo}
           />
         </div>
         <div>
-          <label htmlFor="placarBranco" className="mb-1 block text-sm font-medium">
+          <label htmlFor="placarBranco" className="mb-1 block text-sm font-semibold">
             Gols branco
           </label>
           <input
@@ -64,11 +62,11 @@ export function FutForm({
             min={0}
             max={99}
             defaultValue={fut?.placarBranco ?? 0}
-            className={inputClass}
+            className={campo}
           />
         </div>
         <div>
-          <label htmlFor="placarPreto" className="mb-1 block text-sm font-medium">
+          <label htmlFor="placarPreto" className="mb-1 block text-sm font-semibold">
             Gols preto
           </label>
           <input
@@ -78,14 +76,14 @@ export function FutForm({
             min={0}
             max={99}
             defaultValue={fut?.placarPreto ?? 0}
-            className={inputClass}
+            className={campo}
           />
         </div>
       </div>
 
       <fieldset>
-        <legend className="mb-2 text-sm font-medium">Quem jogou</legend>
-        <ul className="divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+        <legend className="mb-2 text-sm font-semibold">Quem jogou</legend>
+        <ul className={`divide-y-2 divide-linha ${painel}`}>
           {jogadores.map((jogador) => {
             const escalado = times[jogador.id] !== undefined && times[jogador.id] !== "";
             return (
@@ -102,10 +100,10 @@ export function FutForm({
                         [jogador.id]: e.target.checked ? "branco" : "",
                       }))
                     }
-                    className="size-4"
+                    className="size-4 accent-destaque"
                   />
                   {jogador.numero !== null && (
-                    <span className="text-zinc-400">{jogador.numero}</span>
+                    <span className="font-numero text-base text-apagado">{jogador.numero}</span>
                   )}
                   {jogador.nome}
                 </label>
@@ -122,7 +120,7 @@ export function FutForm({
                         }))
                       }
                       aria-label={`Time de ${jogador.nome}`}
-                      className="rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                      className={campoPequeno}
                     >
                       <option value="branco">Branco</option>
                       <option value="preto">Preto</option>
@@ -134,9 +132,9 @@ export function FutForm({
                       max={99}
                       defaultValue={salvos.get(jogador.id)?.gols ?? 0}
                       aria-label={`Gols de ${jogador.nome}`}
-                      className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                      className={`w-16 ${campoPequeno}`}
                     />
-                    <span className="text-xs text-zinc-500">G</span>
+                    <span className="text-xs text-apagado">G</span>
                     <input
                       name={`assistencias_${jogador.id}`}
                       type="number"
@@ -144,9 +142,9 @@ export function FutForm({
                       max={99}
                       defaultValue={salvos.get(jogador.id)?.assistencias ?? 0}
                       aria-label={`Assistências de ${jogador.nome}`}
-                      className="w-16 rounded-lg border border-zinc-300 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                      className={`w-16 ${campoPequeno}`}
                     />
-                    <span className="text-xs text-zinc-500">A</span>
+                    <span className="text-xs text-apagado">A</span>
                   </div>
                 )}
               </li>
@@ -156,21 +154,17 @@ export function FutForm({
       </fieldset>
 
       {state.erro && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-perigo">
           {state.erro}
         </p>
       )}
 
       <div className="flex items-center justify-end gap-3">
         {children && <div className="mr-auto">{children}</div>}
-        <Link href="/futs" className="px-4 py-2 text-sm text-zinc-500 hover:underline">
+        <Link href="/futs" className={`px-2 text-sm ${link}`}>
           Cancelar
         </Link>
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-        >
+        <button type="submit" disabled={pending} className={botaoPrimario}>
           {pending ? "Salvando..." : fut ? "Salvar alterações" : "Salvar fut"}
         </button>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LinkVoltar } from "@/components/link-voltar";
 import { notFound, redirect } from "next/navigation";
 import { excluirFutAction } from "@/app/futs/actions";
 import { FutForm } from "@/app/futs/fut-form";
@@ -20,7 +21,10 @@ export default async function EditarFutPage({ params }: PageProps<"/futs/[id]/ed
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold">Editar fut</h1>
+      <div className="mb-6">
+        <LinkVoltar href={`/futs/${id}`} />
+      </div>
+      <h1 className="mb-6 font-slab text-3xl uppercase">Editar fut</h1>
       <FutForm jogadores={jogadores} fut={fut}>
         <BotaoExcluir
           acao={excluirFutAction}
