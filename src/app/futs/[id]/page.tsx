@@ -5,7 +5,7 @@ import { LinkVoltar } from "@/components/link-voltar";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
-import { botaoPequeno, faixaTime, painel, vazio } from "@/lib/estilo";
+import { botaoPequeno, faixaTime, link, painel, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
 import { formatarPontos, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
@@ -52,7 +52,12 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       </section>
 
       <section className="mb-8">
-        <h2 className="font-slab text-xl uppercase">Seleção do fut</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="font-slab text-xl uppercase">Destaques do fut</h2>
+          <Link href={`/selecao?fut=${fut.id}`} className={`text-sm ${link}`}>
+            Ver a seleção no campo →
+          </Link>
+        </div>
         <p className="mb-4 text-xs text-apagado">
           Gols, assistências e saldo do time, com peso por posição: meias e atacantes valem mais
           pelos gols e assistências, goleiros e zagueiros pelo saldo.

@@ -20,6 +20,7 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 - [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts` (#9)
 - [x] **Foto na cartinha** — o admin escolhe a foto no cadastro ou na edição do jogador (com prévia na hora), pode trocar ou remover. O navegador recorta e reduz a foto antes de enviar, então foto de celular funciona direto. Sem foto, a carta continua com as iniciais. Fotos no Supabase Storage (#10)
 - [x] **Identidade visual** — tema claro (camisa branca: mármore e azul-marinho) e escuro (camisa preta: rosas e dourado), seguindo o sistema ou escolhido no cabeçalho. Escudo do time no cabeçalho, no rodapé, nas cartinhas e no ícone da aba. Fontes retrô, cartinhas no modelo FUT (moldura de ouro, prata e bronze, foto grande, escudo do clube), placar com as cores das camisas, botão de voltar nas telas de edição. Pro admin, clicar na carta abre a edição (#11)
+- [x] **Seleção do fut no campo** — página "Seleção" no menu com um campo de fut7 visto de cima e os melhores do fut por posição: 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pela mesma nota do fut. Abre no último fut e dá pra escolher qualquer outro. Se faltar gente numa posição, a vaga vai pro melhor que sobrou (aparece como "improvisado"). As cartas da seleção são pretas, no estilo das cartas inform do FIFA, com o mesmo nível da carta normal e os números do fut (gols, assistências e pontos). Na página do fut, o top 5 virou "Destaques do fut", com link pra seleção no campo (#12)
 
 ## Próximos passos
 
@@ -33,7 +34,7 @@ Em ordem de prioridade:
 - [ ] **Votação de MVP** — a galera vota no melhor de cada fut.
 - [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de algum login por jogador.
 - [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
-- [ ] **Foto em outras telas** — hoje a foto só aparece na cartinha; dá pra levar pra seleção do fut, sorteio e rankings.
+- [ ] **Foto em outras telas** — a foto aparece nas cartinhas (elenco e seleção do fut); dá pra levar pro sorteio e rankings.
 - [ ] **Evolução do jogador** — gráfico fut a fut.
 - [ ] **Rankings de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
 

@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { cache } from "react";
 import { connection } from "next/server";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
@@ -44,11 +45,13 @@ const colunas = (j: NovoJogador) => ({
   nivel_base: j.nivelBase,
 });
 
-export async function listarJogadores(): Promise<JogadorResumo[]> {
+// Cartinhas de todo mundo, arquivados inclusive (a seleção de um fut antigo pode ter
+// quem já saiu). A média do grupo usada no nível continua sendo só a do elenco atual.
+const listarCartas = cache(async (): Promise<(JogadorResumo & { ativo: boolean })[]> => {
   await connection();
-  const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number })[]>`
+  const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number; ativo: boolean })[]>`
     select
-      j.id, j.nome, j.apelido, j.numero, j.posicao,
+      j.id, j.nome, j.apelido, j.numero, j.posicao, j.ativo,
       j.foto_url as "fotoUrl",
       j.nivel_base as "nivelBase",
       count(p.id) filter (where p.presente)::int as jogos,
@@ -63,11 +66,10 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
     from jogador j
     left join participacao p on p.jogador_id = j.id
     left join fut f on f.id = p.fut_id
-    where j.ativo
     group by j.id
   `;
 
-  const medias = mediasPorGrupo(jogadores);
+  const medias = mediasPorGrupo(jogadores.filter((j) => j.ativo));
   return jogadores
     .map(({ saldo, ...j }) => ({ ...j, nivel: nivel({ ...j, saldo }, j.nivelBase, medias) }))
     .sort(
@@ -77,6 +79,15 @@ export async function listarJogadores(): Promise<JogadorResumo[]> {
         b.assistencias - a.assistencias ||
         a.nome.localeCompare(b.nome, "pt-BR"),
     );
+});
+
+export async function listarJogadores(): Promise<JogadorResumo[]> {
+  return (await listarCartas()).filter((j) => j.ativo);
+}
+
+export async function buscarCartas(ids: string[]): Promise<Map<string, JogadorResumo>> {
+  const cartas = await listarCartas();
+  return new Map(cartas.filter((j) => ids.includes(j.id)).map((j) => [j.id, j]));
 }
 
 // O id sai daqui pra foto já subir na pasta do jogador antes do insert
