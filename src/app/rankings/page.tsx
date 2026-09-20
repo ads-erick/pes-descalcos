@@ -18,7 +18,7 @@ type Coluna = {
   titulo: string;
   vazio: string;
   valor: (j: EstatisticaDoPeriodo) => number;
-  detalhe: (j: EstatisticaDoPeriodo, futs: number) => string;
+  detalhe: (j: EstatisticaDoPeriodo) => string;
 };
 
 const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
@@ -37,10 +37,16 @@ const COLUNAS: Coluna[] = [
     detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
   },
   {
-    titulo: "Presença",
-    vazio: "Nenhum fut no período.",
-    valor: (j) => j.jogos,
-    detalhe: (j, futs) => `${Math.round((j.jogos / futs) * 100)}% dos futs`,
+    titulo: "Craques",
+    vazio: "Ninguém foi craque ainda.",
+    valor: (j) => j.craques,
+    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
+  },
+  {
+    titulo: "Vitórias",
+    vazio: "Ninguém venceu ainda.",
+    valor: (j) => j.vitorias,
+    detalhe: (j) => `${Math.round((j.vitorias / j.jogos) * 100)}% dos jogos`,
   },
 ];
 
@@ -71,7 +77,7 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
         </nav>
       </CabecalhoPagina>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {COLUNAS.map((coluna) => {
           const ranking = rankear(jogadores, coluna.valor);
           return (
@@ -101,15 +107,15 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
                         {j.colocacao}º
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium">
-                          {j.nome}
+                        <p className="flex items-baseline gap-1.5 font-medium">
+                          <span className="truncate">{j.nome}</span>
                           {j.posicao && (
-                            <span className="ml-1.5 font-numero text-sm tracking-wide text-apagado">
+                            <span className="shrink-0 font-numero text-sm tracking-wide text-apagado">
                               {POSICAO_SIGLA[j.posicao]}
                             </span>
                           )}
                         </p>
-                        <p className="text-xs text-apagado">{coluna.detalhe(j, futs)}</p>
+                        <p className="text-xs text-apagado">{coluna.detalhe(j)}</p>
                       </div>
                       <span className="font-numero text-3xl leading-none">{coluna.valor(j)}</span>
                     </li>
