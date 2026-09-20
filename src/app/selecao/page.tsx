@@ -49,26 +49,27 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
   const porPosicao = Map.groupBy(vagas, (v) => v.posicao);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+    <main className="mx-auto w-full max-w-[34rem] px-4 py-8">
       <CabecalhoPagina
         titulo="Seleção do fut"
         subtitulo="Os melhores de cada posição, pela nota do fut"
-      >
-        <div className="flex items-end gap-3">
-          <SeletorFut
-            atual={fut.id}
-            futs={futs.map((f) => ({
-              id: f.id,
-              rotulo: `${f.data} · ${f.placarBranco} x ${f.placarPreto}`,
-            }))}
-          />
-          <Link href={`/futs/${fut.id}`} className={`${botaoPequeno} mb-0.5 h-10.5`}>
-            Ver fut
-          </Link>
-        </div>
-      </CabecalhoPagina>
+      />
 
-      <div className="relative mx-auto aspect-[2/3] w-full max-w-[34rem] overflow-hidden rounded-xl border-2 border-dourado shadow-[4px_4px_0_var(--sombra)]">
+      {/* Controles na mesma largura do campo, pra não ficarem soltos lá na ponta */}
+      <div className="mb-4 flex w-full items-end gap-3">
+        <SeletorFut
+          atual={fut.id}
+          futs={futs.map((f) => ({
+            id: f.id,
+            rotulo: `${f.data} · ${f.placarBranco} x ${f.placarPreto}`,
+          }))}
+        />
+        <Link href={`/futs/${fut.id}`} className={`${botaoPequeno} h-10.5!`}>
+          Ver fut
+        </Link>
+      </div>
+
+      <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border-2 border-dourado shadow-[4px_4px_0_var(--sombra)]">
         <CampoFut7 className="absolute inset-0 size-full" />
         {[...porPosicao].map(([posicao, daPosicao]) =>
           daPosicao.map((vaga, i) => {
@@ -110,7 +111,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
       </div>
 
       {escalados.length > 0 && (
-        <ol className={`${painel} mx-auto mt-8 max-w-[34rem] divide-y divide-linha`}>
+        <ol className={`${painel} mt-8 divide-y divide-linha`}>
           {vagas.map(
             (vaga, i) =>
               vaga.atuacao && (
@@ -134,13 +135,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                   </p>
                   <span className="text-xs whitespace-nowrap text-apagado">
                     <span className="hidden sm:inline">Time {vaga.atuacao.corTime} · </span>
-                    {vaga.atuacao.gols}G {vaga.atuacao.assistencias}A
-                  </span>
-                  <span className="w-14 text-right">
-                    <span className="font-numero text-xl leading-none">
-                      {formatarPontos(vaga.atuacao.pontos)}
-                    </span>
-                    <span className="ml-1 text-xs text-apagado">pts</span>
+                    {vaga.atuacao.gols}G/{vaga.atuacao.assistencias}A
                   </span>
                 </li>
               ),

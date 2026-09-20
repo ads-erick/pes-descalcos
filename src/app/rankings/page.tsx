@@ -25,7 +25,7 @@ const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um :
 
 const COLUNAS: Coluna[] = [
   {
-    titulo: "Artilharia",
+    titulo: "Gols",
     vazio: "Ninguém marcou ainda.",
     valor: (j) => j.gols,
     detalhe: (j) => plural(j.jogos, "jogo", "jogos"),

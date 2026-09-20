@@ -9,12 +9,12 @@ export function SeletorFut({ futs, atual }: { futs: OpcaoFut[]; atual: string })
   const router = useRouter();
 
   return (
-    <label className="flex flex-col gap-1 text-sm font-medium">
+    <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium">
       Fut
       <select
         value={atual}
         onChange={(e) => router.push(`/selecao?fut=${encodeURIComponent(e.target.value)}`)}
-        className={`${campo} font-numero text-lg tracking-wide sm:w-64`}
+        className={`${campo} font-numero text-lg tracking-wide`}
       >
         {futs.map((fut) => (
           <option key={fut.id} value={fut.id}>

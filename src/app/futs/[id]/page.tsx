@@ -5,10 +5,10 @@ import { LinkVoltar } from "@/components/link-voltar";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
-import { botaoPequeno, faixaTime, link, painel, vazio } from "@/lib/estilo";
+import { botaoPequeno, faixaTime, painel, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
-import { formatarPontos, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
+import { selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
 
 export async function generateMetadata({ params }: PageProps<"/futs/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -52,16 +52,12 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       </section>
 
       <section className="mb-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-slab text-xl uppercase">Destaques do fut</h2>
-          <Link href={`/selecao?fut=${fut.id}`} className={`text-sm ${link}`}>
+          <Link href={`/selecao?fut=${fut.id}`} className={botaoPequeno}>
             Ver a seleção no campo →
           </Link>
         </div>
-        <p className="mb-4 text-xs text-apagado">
-          Gols, assistências e saldo do time, com peso por posição: meias e atacantes valem mais
-          pelos gols e assistências, goleiros e zagueiros pelo saldo.
-        </p>
         {selecao.length === 0 ? (
           <p className={`${vazio} text-sm`}>
             Ninguém pontuou nesse fut.
@@ -93,15 +89,9 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
                     )}
                   </p>
                   <p className="text-xs text-apagado">
-                    {NOME_TIME[atuacao.corTime]} · {atuacao.gols}G {atuacao.assistencias}A
+                    {NOME_TIME[atuacao.corTime]} · {atuacao.gols}G/{atuacao.assistencias}A
                   </p>
                 </div>
-                <span className="text-right">
-                  <span className="font-numero text-3xl leading-none">
-                    {formatarPontos(atuacao.pontos)}
-                  </span>
-                  <span className="ml-1 text-xs text-apagado">pts</span>
-                </span>
               </li>
             ))}
           </ol>
@@ -131,7 +121,6 @@ function Escalacao({ cor, atuacoes }: { cor: CorTime; atuacoes: AtuacaoNoFut[] }
         className={`px-4 pt-2 pb-1.5 font-numero text-xl tracking-wider uppercase ${faixaTime[cor]}`}
       >
         {NOME_TIME[cor]}
-        <span className="ml-2 opacity-60">({atuacoes.length})</span>
       </h3>
       {atuacoes.length === 0 ? (
         <p className="p-4 text-sm text-apagado">Ninguém escalado.</p>
@@ -154,7 +143,7 @@ function Escalacao({ cor, atuacoes }: { cor: CorTime; atuacoes: AtuacaoNoFut[] }
                 </span>
               )}
               <span className="w-14 text-right tabular-nums">
-                {a.gols > 0 || a.assistencias > 0 ? `${a.gols}G ${a.assistencias}A` : "–"}
+                {a.gols > 0 || a.assistencias > 0 ? `${a.gols}G/${a.assistencias}A` : "–"}
               </span>
             </li>
           ))}

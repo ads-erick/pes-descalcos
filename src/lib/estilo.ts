@@ -15,6 +15,10 @@ export const botaoNav =
 export const botaoPequeno =
   "inline-flex h-9 items-center gap-1.5 rounded-md border-2 border-tinta/70 px-3 pt-0.5 font-numero text-lg leading-none tracking-wider uppercase transition hover:border-tinta hover:bg-tinta hover:text-fundo";
 
+// Ações pequenas dentro da tela (marcar todos, limpar, ver no campo)
+export const botaoChip =
+  "inline-flex h-8 items-center gap-1.5 rounded-md border-2 border-linha bg-superficie px-2.5 pt-0.5 font-numero text-base leading-none tracking-wider uppercase transition hover:border-tinta hover:bg-tinta hover:text-fundo";
+
 export const link = "text-apagado underline-offset-4 hover:text-tinta hover:underline";
 
 export const campo =
