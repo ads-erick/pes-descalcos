@@ -126,7 +126,8 @@ export function JogadorCard({
           </p>
           {variacao !== 0 && (
             <p
-              className="mt-[0.5cqw] font-numero text-[5.5cqw] leading-none opacity-75"
+              // Some na carta pequena (o campo no celular): lá isso dá 4px de letra
+              className="mt-[0.5cqw] font-numero text-[5.5cqw] leading-none opacity-75 @max-[7rem]:hidden"
               title={`Nível escolhido: ${jogador.nivelBase}`}
             >
               {variacao > 0 ? `▲${variacao}` : `▼${-variacao}`}
@@ -135,7 +136,9 @@ export function JogadorCard({
           <span className="mt-[2cqw] h-px w-[14cqw]" style={{ background: estilo.linha }} />
           <span className="escudo mt-[2cqw] h-[13cqw]" title="Pés Descalços FC" />
           {jogador.numero !== null && (
-            <p className="mt-[1.5cqw] font-numero text-[7cqw] leading-none">#{jogador.numero}</p>
+            <p className="mt-[1.5cqw] font-numero text-[7cqw] leading-none @max-[7rem]:hidden">
+              #{jogador.numero}
+            </p>
           )}
         </div>
 
@@ -145,7 +148,7 @@ export function JogadorCard({
             {nomeNaCarta}
           </h2>
           {/* Linha sempre presente (vazia sem apelido) pra todas as cartas terem a mesma altura */}
-          <p className="truncate text-[4.5cqw] leading-tight font-semibold opacity-70">
+          <p className="truncate text-[4.5cqw] leading-tight font-semibold opacity-70 @max-[7rem]:hidden">
             {jogador.apelido ? jogador.nome : "\u00a0"}
           </p>
           <div className="mx-auto mt-[2cqw] h-px w-[80%]" style={{ background: estilo.linha }} />
@@ -181,7 +184,10 @@ function Stat({
       className="flex flex-col-reverse"
       style={ultima ? undefined : { borderRight: `1px solid ${linha}` }}
     >
-      <dt className="font-numero text-[5cqw] leading-none tracking-wider opacity-70">{label}</dt>
+      {/* Na carta pequena sobra só o número: o rótulo viraria um borrão de 4px */}
+      <dt className="font-numero text-[5cqw] leading-none tracking-wider opacity-70 @max-[7rem]:hidden">
+        {label}
+      </dt>
       <dd className="font-numero text-[11cqw] leading-none">{valor}</dd>
     </div>
   );
