@@ -25,12 +25,14 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **Celular arrumado** — o cabeçalho cabia só em tela de 390px ou mais: abaixo disso "Sorteio" e "Sair" ficavam pra fora e a página inteira rolava de lado. Agora o escudo e o nome encolhem no celular, o "Sair" fica só com o ícone, o menu rola sozinho se precisar e o nome corta em vez de estourar a tela (testado de 320px a 430px). O menu da cartinha (copiar/baixar PNG), que só abria com o botão direito, abre com toque longo de meio segundo — segurar e arrastar continua rolando a página. Os campos de time/gols/assistência do fut foram pra 16px e 40px de altura, senão o Safari do iPhone dava zoom ao focar e o alvo de toque ficava pequeno; os campos de número abrem o teclado numérico. Na carta pequena do campo (seleção no celular), o que virava borrão de 4px — número da camisa, nome completo, ▲/▼ e os rótulos GOL/AST — some e sobram nível, posição, nome e os números (#20)
 
+- [x] **Pronto pra Vercel** — validação geral antes do deploy: lint, build e TypeScript limpos, e uma passada de navegador em todas as telas (elenco, futs, detalhe do fut, rankings, seleção, sorteio, login e os formulários) em 320px, 390px e 1440px, nos dois temas, sem erro de console, sem requisição quebrada e sem rolagem lateral. Os fluxos de admin foram testados de ponta a ponta: criar, editar e excluir jogador e fut, validação do formulário, arquivamento de quem já jogou (o histórico continua) e upload de foto (sobe pro Storage, aparece na carta e some do bucket quando a foto é trocada ou o jogador excluído). Nenhum bug encontrado. A conexão com o banco foi ajustada pra serverless: na Vercel cada instância abre o próprio pool, então as conexões agora voltam pro pooler depois de 20s paradas e o pooler em modo transação (porta 6543) é reconhecido sozinho, desligando os prepared statements que ele não guarda (`src/data/db.ts`). Banco zerado: os 21 jogadores e 10 futs de teste foram apagados pra estrear com os dados reais (#21)
+
 ## Próximos passos
 
 Em ordem de prioridade:
 
-1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
-2. [ ] **Elenco de verdade no ar** — apagar os dados de teste (`npm run seed:limpar`) e cadastrar os jogadores reais com foto, nível e número, pra estrear com o grupo.
+1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos. Passo a passo no README.
+2. [ ] **Elenco de verdade no ar** — o banco já está zerado; falta cadastrar os jogadores reais com foto, nível e número, pra estrear com o grupo.
 
 ## Mais pra frente
 
