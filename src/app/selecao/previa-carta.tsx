@@ -49,7 +49,7 @@ export function Previa({
   padrao,
   className,
 }: {
-  cartas: { id: string; nome: string; carta: ReactNode }[];
+  cartas: { id: string; carta: ReactNode }[];
   padrao?: string;
   className?: string;
 }) {
@@ -61,12 +61,9 @@ export function Previa({
 
   return (
     <div className={className}>
-      <p className="font-numero text-sm tracking-wider text-apagado uppercase">
-        {atual === padrao ? "Craque do fut" : cartas.find((c) => c.id === atual)?.nome}
-      </p>
       {/* Todas ficam montadas e só uma aparece: assim a foto não recarrega a cada hover.
           A largura sai da altura da janela pra carta, que é alta, não passar do fim da tela */}
-      <div className="relative mt-2 w-[min(13rem,18vh)]">
+      <div className="relative mx-auto w-[min(16rem,22vh)]">
         {cartas.map(({ id, carta }) => (
           <div key={id} className={id === atual ? "" : "invisible absolute inset-0"}>
             {carta}

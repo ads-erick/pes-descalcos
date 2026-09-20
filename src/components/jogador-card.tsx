@@ -67,11 +67,11 @@ export function JogadorCard({
   jogador: JogadorResumo;
   inform?: boolean;
   // Sem stats, a carta mostra os números da carreira (jogos, gols, assistências)
-  stats?: [StatCarta, StatCarta, StatCarta];
+  stats?: [StatCarta, StatCarta] | [StatCarta, StatCarta, StatCarta];
 }) {
   const tier = raridade(jogador.nivel);
   const estilo = (inform ? INFORM : ESTILO)[tier];
-  const [s1, s2, s3] = stats ?? [
+  const numeros = stats ?? [
     { label: "JOG", valor: jogador.jogos },
     { label: "GOL", valor: jogador.gols },
     { label: "AST", valor: jogador.assistencias },
@@ -149,10 +149,15 @@ export function JogadorCard({
             {jogador.apelido ? jogador.nome : "\u00a0"}
           </p>
           <div className="mx-auto mt-[2cqw] h-px w-[80%]" style={{ background: estilo.linha }} />
-          <dl className="mt-[2.5cqw] grid grid-cols-3">
-            <Stat {...s1} linha={estilo.linha} />
-            <Stat {...s2} linha={estilo.linha} />
-            <Stat {...s3} linha={estilo.linha} ultima />
+          <dl className={`mt-[2.5cqw] grid ${numeros.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+            {numeros.map((numero, i) => (
+              <Stat
+                key={numero.label}
+                {...numero}
+                linha={estilo.linha}
+                ultima={i === numeros.length - 1}
+              />
+            ))}
           </dl>
         </div>
       </div>

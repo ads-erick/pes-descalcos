@@ -10,7 +10,7 @@ import { buscarCartas } from "@/data/jogadores";
 import { botaoSecundario, larguraCampo, larguraPadrao, painel, sombraCartao, sombraTarja, vazio, zoomCarta } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
-import { escalarSelecao, formatarPontos, selecaoDoFut } from "@/lib/selecao";
+import { escalarSelecao, selecaoDoFut } from "@/lib/selecao";
 import { AlvoPrevia, Previa, PreviaCartas } from "./previa-carta";
 import { SeletorFut } from "./seletor-fut";
 
@@ -63,7 +63,6 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           stats={[
             { label: "GOL", valor: atuacao.gols },
             { label: "AST", valor: atuacao.assistencias },
-            { label: "PTS", valor: formatarPontos(atuacao.pontos) },
           ]}
         />
       </CartaMenu>
@@ -77,10 +76,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_1fr] lg:gap-8">
           {/* O cabeçalho já traz margem embaixo: sem isso ele fica longe demais do filtro */}
           <div className="-mb-6 lg:-mb-8">
-            <CabecalhoPagina
-              titulo="Seleção do fut"
-              subtitulo="Os melhores de cada posição, pela nota do fut"
-            />
+            <CabecalhoPagina titulo="Seleção do fut" />
           </div>
 
           <div className="flex w-full items-end gap-3 lg:col-start-1 lg:row-start-2">
@@ -179,9 +175,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               padrao={craque}
               cartas={escalados.flatMap((atuacao) => {
                 const carta = cartinha(atuacao);
-                if (!carta) return [];
-                const nome = cartas.get(atuacao.jogadorId)?.apelido ?? atuacao.nome;
-                return [{ id: atuacao.jogadorId, nome, carta }];
+                return carta ? [{ id: atuacao.jogadorId, carta }] : [];
               })}
             />
           )}
