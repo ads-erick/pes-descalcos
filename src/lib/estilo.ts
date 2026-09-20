@@ -94,7 +94,7 @@ export const tituloPagina = "font-slab text-3xl leading-tight uppercase sm:text-
 export const larguraLarga = "mx-auto w-full max-w-5xl px-4 py-8"; // grades de cartinhas e colunas
 export const larguraForm = "mx-auto w-full max-w-4xl px-4 py-8"; // formulário + prévia lado a lado
 export const larguraPadrao = "mx-auto w-full max-w-3xl px-4 py-8"; // listas, detalhes e formulários simples
-export const larguraCampo = "mx-auto w-full max-w-[34rem] px-4 py-8"; // o campo de fut7 é alto: mais largo não cabe na tela
+export const larguraCampo = "mx-auto w-full max-w-7xl px-4 py-8"; // seleção: lista de um lado e o campo de fut7 do outro
 export const larguraEstreita = "mx-auto w-full max-w-sm px-4 py-12"; // login
 
 // Cabeçalho de cada lado no fut: o branco e o preto como as camisas.
