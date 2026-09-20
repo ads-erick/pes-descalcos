@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CampoFut7 } from "@/components/campo-fut7";
+import { CartaMenu } from "@/components/carta-menu";
 import { JogadorCard } from "@/components/jogador-card";
 import { buscarDetalheFut, listarFuts } from "@/data/futs";
 import { buscarCartas } from "@/data/jogadores";
@@ -84,15 +85,18 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                 {vaga.atuacao && carta ? (
                   // O zoom fica aqui fora pra tarja de craque crescer junto com a carta
                   <div className={`relative ${zoomCarta}`}>
-                    <JogadorCard
-                      jogador={carta}
-                      inform
-                      stats={[
-                        { label: "GOL", valor: vaga.atuacao.gols },
-                        { label: "AST", valor: vaga.atuacao.assistencias },
-                        { label: "PTS", valor: formatarPontos(vaga.atuacao.pontos) },
-                      ]}
-                    />
+                    {/* Só a carta entra no menu: a tarja de craque fica de fora da imagem */}
+                    <CartaMenu nome={carta.apelido ?? carta.nome} sufixo="seleção">
+                      <JogadorCard
+                        jogador={carta}
+                        inform
+                        stats={[
+                          { label: "GOL", valor: vaga.atuacao.gols },
+                          { label: "AST", valor: vaga.atuacao.assistencias },
+                          { label: "PTS", valor: formatarPontos(vaga.atuacao.pontos) },
+                        ]}
+                      />
+                    </CartaMenu>
                     {vaga.atuacao.jogadorId === craque && (
                       <span className={`${sombraTarja} absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
                         <span className="escudo h-3" aria-hidden />

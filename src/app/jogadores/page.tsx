@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { CartaMenu } from "@/components/carta-menu";
 import { JogadorCard } from "@/components/jogador-card";
 import { isAdmin } from "@/data/auth";
 import { listarJogadores } from "@/data/jogadores";
@@ -30,24 +31,30 @@ export default async function JogadoresPage() {
         </p>
       ) : (
         <ul className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4">
-          {jogadores.map((jogador) => (
-            <li key={jogador.id}>
-              {/* Pro admin a carta inteira abre a edição */}
-              {admin ? (
-                <Link
-                  href={`/jogadores/${jogador.id}/editar`}
-                  aria-label={`Editar ${jogador.apelido ?? jogador.nome}`}
-                  className={`${zoomCarta} rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-destaque`}
-                >
-                  <JogadorCard jogador={jogador} />
-                </Link>
-              ) : (
-                <div className={zoomCarta}>
-                  <JogadorCard jogador={jogador} />
-                </div>
-              )}
-            </li>
-          ))}
+          {jogadores.map((jogador) => {
+            const nome = jogador.apelido ?? jogador.nome;
+            return (
+              <li key={jogador.id}>
+                {/* Botão direito em qualquer carta abre o menu de copiar/baixar */}
+                <CartaMenu nome={nome}>
+                  {/* Pro admin a carta inteira abre a edição */}
+                  {admin ? (
+                    <Link
+                      href={`/jogadores/${jogador.id}/editar`}
+                      aria-label={`Editar ${nome}`}
+                      className={`${zoomCarta} rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-destaque`}
+                    >
+                      <JogadorCard jogador={jogador} />
+                    </Link>
+                  ) : (
+                    <div className={zoomCarta}>
+                      <JogadorCard jogador={jogador} />
+                    </div>
+                  )}
+                </CartaMenu>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
