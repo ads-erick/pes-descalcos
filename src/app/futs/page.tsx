@@ -31,10 +31,12 @@ export default async function FutsPage() {
       ) : (
         <ul className="space-y-3">
           {futs.map((fut) => (
-            <li key={fut.id} className="flex items-center gap-2">
+            // O "Editar" fica dentro do card (posicionado), pra lista e cabeçalho
+            // terem a mesma largura
+            <li key={fut.id} className="relative">
               <Link
                 href={`/futs/${fut.id}`}
-                className={`${painel} flex flex-1 items-center justify-between gap-4 p-3 pl-4 transition hover:border-destaque`}
+                className={`${painel} flex items-center justify-between gap-4 p-3 pl-4 transition hover:border-destaque ${admin ? "pr-20" : ""}`}
               >
                 <div className="min-w-0">
                   <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>
@@ -46,7 +48,7 @@ export default async function FutsPage() {
                         <span className="font-semibold text-ouro">
                           {fut.craque.nome}
                         </span>{" "}
-                        ({fut.craque.gols}G {fut.craque.assistencias}A)
+                        ({fut.craque.gols}G/{fut.craque.assistencias}A)
                       </>
                     )}
                   </p>
@@ -56,7 +58,7 @@ export default async function FutsPage() {
               {admin && (
                 <Link
                   href={`/futs/${fut.id}/editar`}
-                  className={`px-1 text-sm ${link}`}
+                  className={`absolute top-1/2 right-3 -translate-y-1/2 text-sm ${link}`}
                 >
                   Editar
                 </Link>

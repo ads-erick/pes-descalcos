@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { botaoPrimario, botaoSecundario, faixaTime, link, painel } from "@/lib/estilo";
+import { botaoChip, botaoPrimario, botaoSecundario, faixaTime, painel } from "@/lib/estilo";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
 import type { CorTime } from "@/lib/selecao";
 import { forca, sortearTimes, type Times } from "@/lib/sorteio";
@@ -50,15 +50,15 @@ export function SorteioTimes({
               ({confirmados.size} de {jogadores.length})
             </span>
           </p>
-          <div className="flex gap-3 text-sm">
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={() => marcar(new Set(jogadores.map((j) => j.id)))}
-              className={link}
+              className={botaoChip}
             >
               Marcar todos
             </button>
-            <button type="button" onClick={() => marcar(new Set())} className={link}>
+            <button type="button" onClick={() => marcar(new Set())} className={botaoChip}>
               Limpar
             </button>
           </div>

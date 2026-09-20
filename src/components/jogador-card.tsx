@@ -32,15 +32,56 @@ const ESTILO: Record<Raridade, { borda: string; fundo: string; tinta: string; li
   },
 };
 
-export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
+// Carta "inform" (seleção do fut): corpo preto, com a moldura e as letras no metal da raridade
+const INFORM: Record<Raridade, { borda: string; fundo: string; tinta: string; linha: string }> = {
+  ouro: {
+    borda: ESTILO.ouro.borda,
+    fundo:
+      "radial-gradient(90% 55% at 70% 25%, rgb(226 194 110 / 0.28) 0%, transparent 70%), repeating-linear-gradient(135deg, transparent 0 7px, rgb(226 194 110 / 0.05) 7px 8px), linear-gradient(165deg, #1d1a14 0%, #0b0a08 55%, #16130d 100%)",
+    tinta: "#ecd18a",
+    linha: "rgb(236 209 138 / 0.35)",
+  },
+  prata: {
+    borda: ESTILO.prata.borda,
+    fundo:
+      "radial-gradient(90% 55% at 70% 25%, rgb(220 225 232 / 0.22) 0%, transparent 70%), repeating-linear-gradient(135deg, transparent 0 7px, rgb(220 225 232 / 0.05) 7px 8px), linear-gradient(165deg, #1a1c1f 0%, #0a0b0c 55%, #141619 100%)",
+    tinta: "#e3e7ec",
+    linha: "rgb(227 231 236 / 0.32)",
+  },
+  bronze: {
+    borda: ESTILO.bronze.borda,
+    fundo:
+      "radial-gradient(90% 55% at 70% 25%, rgb(229 173 124 / 0.24) 0%, transparent 70%), repeating-linear-gradient(135deg, transparent 0 7px, rgb(229 173 124 / 0.05) 7px 8px), linear-gradient(165deg, #1e1510 0%, #0c0907 55%, #18110c 100%)",
+    tinta: "#eab58a",
+    linha: "rgb(234 181 138 / 0.34)",
+  },
+};
+
+export type StatCarta = { label: string; valor: number | string };
+
+export function JogadorCard({
+  jogador,
+  inform = false,
+  stats,
+}: {
+  jogador: JogadorResumo;
+  inform?: boolean;
+  // Sem stats, a carta mostra os números da carreira (jogos, gols, assistências)
+  stats?: [StatCarta, StatCarta, StatCarta];
+}) {
   const tier = raridade(jogador.nivel);
-  const estilo = ESTILO[tier];
+  const estilo = (inform ? INFORM : ESTILO)[tier];
+  const [s1, s2, s3] = stats ?? [
+    { label: "JOG", valor: jogador.jogos },
+    { label: "GOL", valor: jogador.gols },
+    { label: "AST", valor: jogador.assistencias },
+  ];
   const variacao = jogador.nivel - jogador.nivelBase;
   const nomeNaCarta = jogador.apelido ?? jogador.nome;
 
   return (
     <article
-      aria-label={`${nomeNaCarta}, nível ${jogador.nivel}`}
+      aria-label={`${nomeNaCarta}, nível ${jogador.nivel}${inform ? ", seleção do fut" : ""}`}
       className="@container relative aspect-[5/7] drop-shadow-[0_6px_10px_rgb(0_0_0/0.35)]"
       style={{ color: estilo.tinta }}
     >
@@ -51,7 +92,11 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
         style={{ clipPath: FORMATO, background: estilo.fundo }}
       >
         {/* Brilho metálico na diagonal */}
-        <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_35%,rgb(255_255_255/0.35)_45%,transparent_55%)]" />
+        <div
+          className={`absolute inset-0 bg-[linear-gradient(115deg,transparent_35%,rgb(255_255_255/0.35)_45%,transparent_55%)] ${
+            inform ? "opacity-25" : ""
+          }`}
+        />
 
         {/* Foto (ou iniciais) do lado direito, sumindo embaixo como nas cartas FUT */}
         <div className="absolute top-[9cqw] right-[5cqw] aspect-square w-[64cqw] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
@@ -102,9 +147,9 @@ export function JogadorCard({ jogador }: { jogador: JogadorResumo }) {
           </p>
           <div className="mx-auto mt-[2cqw] h-px w-[80%]" style={{ background: estilo.linha }} />
           <dl className="mt-[2.5cqw] grid grid-cols-3">
-            <Stat label="JOG" valor={jogador.jogos} linha={estilo.linha} />
-            <Stat label="GOL" valor={jogador.gols} linha={estilo.linha} />
-            <Stat label="AST" valor={jogador.assistencias} linha={estilo.linha} ultima />
+            <Stat {...s1} linha={estilo.linha} />
+            <Stat {...s2} linha={estilo.linha} />
+            <Stat {...s3} linha={estilo.linha} ultima />
           </dl>
         </div>
       </div>
@@ -119,7 +164,7 @@ function Stat({
   ultima,
 }: {
   label: string;
-  valor: number;
+  valor: number | string;
   linha: string;
   ultima?: boolean;
 }) {

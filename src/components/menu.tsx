@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const ITENS = [
   { href: "/jogadores", label: "Elenco" },
   { href: "/futs", label: "Futs" },
+  { href: "/selecao", label: "Seleção" },
   { href: "/rankings", label: "Rankings" },
   { href: "/sorteio", label: "Sorteio" },
 ];

@@ -16,30 +16,35 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 - [x] **Nível das cartinhas** — nível de 60 a 95 no canto da carta (bronze 60–69, prata 70–79, ouro 80–95), calculado com peso por posição: goleiro e zagueiro pesam mais pelos gols sofridos, meia e atacante pelos gols e assistências. Gols e assistências nunca tiram nível. Critérios em `src/lib/nivel.ts`; elenco ordenado por nível (#6)
 - [x] **Dados de teste** — `npm run seed:teste` cria 20 jogadores e 10 futs pra testar o layout, `npm run seed:limpar` apaga (#6)
 - [x] **Nível escolhido no cadastro** — o admin define o nível de cada jogador (60–95) no formulário e os futs mexem até 10 pontos pra cima ou pra baixo, comparando a nota média por fut com a média do grupo (defesa: goleiro + zagueiro; ataque: meia + atacante). A carta mostra ▲/▼ com a variação (#7)
-- [x] **Rankings** — página nova no menu com artilharia, assistências e presença (com % dos futs), filtrando por este mês, este ano ou desde sempre. Empate divide a colocação e jogador arquivado continua contando nos períodos em que jogou (#8)
+- [x] **Rankings** — página nova no menu com gols, assistências e presença (com % dos futs), filtrando por este mês, este ano ou desde sempre. Empate divide a colocação e jogador arquivado continua contando nos períodos em que jogou (#8)
 - [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts` (#9)
 - [x] **Foto na cartinha** — o admin escolhe a foto no cadastro ou na edição do jogador (com prévia na hora), pode trocar ou remover. O navegador recorta e reduz a foto antes de enviar, então foto de celular funciona direto. Sem foto, a carta continua com as iniciais. Fotos no Supabase Storage (#10)
 - [x] **Identidade visual** — tema claro (camisa branca: mármore e azul-marinho) e escuro (camisa preta: rosas e dourado), seguindo o sistema ou escolhido no cabeçalho. Escudo do time no cabeçalho, no rodapé, nas cartinhas e no ícone da aba. Fontes retrô, cartinhas no modelo FUT (moldura de ouro, prata e bronze, foto grande, escudo do clube), placar com as cores das camisas, botão de voltar nas telas de edição. Pro admin, clicar na carta abre a edição (#11)
+- [x] **Seleção do fut no campo** — página "Seleção" no menu com um campo de fut7 visto de cima e os melhores do fut por posição: 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pela mesma nota do fut. Abre no último fut e dá pra escolher qualquer outro. Se faltar gente numa posição, a vaga vai pro melhor que sobrou (aparece como "improvisado"). As cartas da seleção são pretas, no estilo das cartas inform do FIFA, com o mesmo nível da carta normal e os números do fut (gols, assistências e pontos). Na página do fut, o top 5 virou "Destaques do fut", com um botão pra seleção no campo (#12)
+- [x] **Limpeza visual** — gols e assistências no formato `2G/1A` nas listas, sem a contagem de jogadores no cabeçalho dos times, sem os pontos repetidos fora das cartas, "Marcar todos"/"Limpar" do sorteio com cara de botão e o "Registrar fut" alinhado com a lista. Abrir o `next dev` pelo IP da rede (pra testar no celular) era bloqueado como origem cruzada e a página não ficava clicável; liberado em `next.config.ts` (#12)
 
 ## Próximos passos
 
 Em ordem de prioridade:
 
-1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar quando estiver com cara de pronto. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
+1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos.
+2. [ ] **Elenco de verdade no ar** — apagar os dados de teste (`npm run seed:limpar`) e cadastrar os jogadores reais com foto, nível e número, pra estrear com o grupo.
 
 ## Mais pra frente
 
-- [ ] **Time do ano** — fechamento da temporada. Fazer perto do fim do ano.
-- [ ] **Votação de MVP** — a galera vota no melhor de cada fut.
-- [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de algum login por jogador.
-- [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
-- [ ] **Foto em outras telas** — hoje a foto só aparece na cartinha; dá pra levar pra seleção do fut, sorteio e rankings.
-- [ ] **Evolução do jogador** — gráfico fut a fut.
+Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
+
+- [ ] **Foto em outras telas** — a foto já aparece nas cartinhas (elenco e seleção do fut); falta levar pro sorteio, rankings e destaques do fut.
 - [ ] **Rankings de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
+- [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
+- [ ] **Evolução do jogador** — gráfico do nível fut a fut, na página do jogador (que ainda não existe: hoje a carta só abre a edição).
+- [ ] **Time do ano** — a seleção do campo, mas com o ano inteiro. Fazer perto do fim do ano, reusando `escalarSelecao`.
+- [ ] **Votação de MVP** — a galera vota no melhor de cada fut. Precisa de login por jogador.
+- [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de login por jogador.
 
 ## Pendências técnicas
 
 - [ ] Senha de admin única para todos os admins; se entrarem mais pessoas, trocar por login individual.
 - [ ] Jogador arquivado não tem tela pra voltar ao elenco; por enquanto é `update jogador set ativo = true` no banco.
-- [ ] Sem testes automatizados: os fluxos são verificados por script contra o banco a cada PR, mas o script não está versionado.
+- [ ] Sem testes automatizados: os fluxos são verificados a cada PR por um script de navegador contra o banco, mas o script é descartável e não está versionado.
 - [ ] Os números do nível (5 de nível por ponto acima da média, variação máxima de 10, 3 jogos pra "confiar") foram calibrados com os dados de teste; revisar quando tiver uns 10 futs reais.
