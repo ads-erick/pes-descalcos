@@ -72,7 +72,8 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
   return (
     <main className={larguraCampo}>
       {/* No desktop, a coluna da esquerda leva filtro, lista e prévia; o campo fica à direita, bem maior */}
-      <PreviaCartas>
+      {/* A escolha some quando o fut muda: a chave remonta a prévia */}
+      <PreviaCartas key={fut.id} padrao={craque}>
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_1fr] lg:gap-8">
           {/* O cabeçalho já traz margem embaixo: sem isso ele fica longe demais do filtro */}
           <div className="-mb-6 lg:-mb-8">
@@ -172,7 +173,6 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           {escalados.length > 0 && (
             <Previa
               className="hidden lg:col-start-1 lg:row-start-4 lg:block"
-              padrao={craque}
               cartas={escalados.flatMap((atuacao) => {
                 const carta = cartinha(atuacao);
                 return carta ? [{ id: atuacao.jogadorId, carta }] : [];

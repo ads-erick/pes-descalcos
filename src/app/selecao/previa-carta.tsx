@@ -2,18 +2,20 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-// Quem o mouse está apontando no campo (ou na lista). Só o id viaja: as cartas
-// já vêm prontas do servidor pra prévia, que apenas escolhe qual mostrar
-const Foco = createContext<(id: string | null) => void>(() => {});
-const EmFoco = createContext<string | null>(null);
+// Quem está escolhido no campo (ou na lista). Só o id viaja: as cartas já vêm
+// prontas do servidor pra prévia, que apenas escolhe qual mostrar.
+// Passar o mouse — ou clicar — troca a carta, e ela fica: tirar o mouse não
+// desfaz a escolha
+const Escolher = createContext<(id: string) => void>(() => {});
+const Escolhido = createContext<string | null>(null);
 
-export function PreviaCartas({ children }: { children: ReactNode }) {
-  const [emFoco, mirar] = useState<string | null>(null);
+export function PreviaCartas({ padrao, children }: { padrao?: string; children: ReactNode }) {
+  const [escolhido, escolher] = useState<string | null>(padrao ?? null);
 
   return (
-    <Foco.Provider value={mirar}>
-      <EmFoco.Provider value={emFoco}>{children}</EmFoco.Provider>
-    </Foco.Provider>
+    <Escolher.Provider value={escolher}>
+      <Escolhido.Provider value={escolhido}>{children}</Escolhido.Provider>
+    </Escolher.Provider>
   );
 }
 
@@ -30,14 +32,14 @@ export function AlvoPrevia({
   style?: React.CSSProperties;
   children: ReactNode;
 }) {
-  const mirar = useContext(Foco);
+  const escolher = useContext(Escolher);
 
   return (
     <Como
       className={className}
       style={style}
-      onMouseEnter={() => mirar(id)}
-      onMouseLeave={() => mirar(null)}
+      onMouseEnter={() => escolher(id)}
+      onClick={() => escolher(id)}
     >
       {children}
     </Como>
@@ -46,18 +48,15 @@ export function AlvoPrevia({
 
 export function Previa({
   cartas,
-  padrao,
   className,
 }: {
   cartas: { id: string; carta: ReactNode }[];
-  padrao?: string;
   className?: string;
 }) {
-  const emFoco = useContext(EmFoco);
-  // Sem ninguém no mouse, fica a carta do craque — o espaço nunca fica vazio
-  const atual =
-    (cartas.some((c) => c.id === emFoco) ? emFoco : null) ??
-    (cartas.some((c) => c.id === padrao) ? padrao : cartas[0]?.id);
+  const escolhido = useContext(Escolhido);
+  // Antes de qualquer escolha (ou se o escolhido não está neste fut), o craque
+  // abre a prévia — o espaço nunca fica vazio
+  const atual = cartas.some((c) => c.id === escolhido) ? escolhido : cartas[0]?.id;
 
   return (
     <div className={className}>
