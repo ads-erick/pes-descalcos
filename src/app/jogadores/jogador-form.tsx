@@ -9,7 +9,7 @@ import {
   type JogadorFormState,
 } from "@/app/jogadores/actions";
 import type { JogadorEditavel } from "@/data/jogadores";
-import { botaoPrimario, botaoSecundario, campo, link } from "@/lib/estilo";
+import { botaoPerigoChip, botaoPrimario, botaoSecundario, campo } from "@/lib/estilo";
 import { reduzirFoto } from "@/lib/foto";
 import { POSICAO_LABEL, POSICOES, iniciais } from "@/lib/jogador";
 import { NIVEL_MAX, NIVEL_MIN, NIVEL_PADRAO } from "@/lib/nivel";
@@ -135,7 +135,7 @@ export function JogadorForm({
 
       <div className="flex items-center justify-end gap-3 pt-2">
         {children && <div className="mr-auto">{children}</div>}
-        <Link href="/jogadores" className={`px-2 text-sm ${link}`}>
+        <Link href="/jogadores" className={botaoSecundario}>
           Cancelar
         </Link>
         <button type="submit" disabled={pending} className={botaoPrimario}>
@@ -200,7 +200,7 @@ function CampoFoto({
           )}
         </div>
         <div className="flex flex-col items-start gap-1">
-          <label className={`${botaoSecundario} cursor-pointer has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-destaque`}>
+          <label className={`${botaoSecundario} cursor-pointer`}>
             {processando ? "Preparando..." : atual ? "Trocar foto" : "Escolher foto"}
             <input
               id="foto"
@@ -215,7 +215,7 @@ function CampoFoto({
             <button
               type="button"
               onClick={aoRemover}
-              className={`px-1 text-sm ${link}`}
+              className={botaoPerigoChip}
             >
               Remover foto
             </button>

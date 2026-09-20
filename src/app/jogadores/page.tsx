@@ -4,17 +4,15 @@ import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { JogadorCard } from "@/components/jogador-card";
 import { isAdmin } from "@/data/auth";
 import { listarJogadores } from "@/data/jogadores";
-import { botaoPrimario, vazio } from "@/lib/estilo";
+import { botaoPrimario, larguraLarga, vazio, zoomCarta } from "@/lib/estilo";
 
 export const metadata: Metadata = { title: "Elenco" };
-
-const zoom = "block transition duration-200 ease-out hover:scale-105 focus-visible:scale-105";
 
 export default async function JogadoresPage() {
   const [jogadores, admin] = await Promise.all([listarJogadores(), isAdmin()]);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8">
+    <main className={larguraLarga}>
       <CabecalhoPagina
         titulo="Elenco"
         subtitulo={`${jogadores.length} ${jogadores.length === 1 ? "jogador" : "jogadores"} no elenco`}
@@ -39,12 +37,12 @@ export default async function JogadoresPage() {
                 <Link
                   href={`/jogadores/${jogador.id}/editar`}
                   aria-label={`Editar ${jogador.apelido ?? jogador.nome}`}
-                  className={`${zoom} rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-destaque`}
+                  className={`${zoomCarta} rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-destaque`}
                 >
                   <JogadorCard jogador={jogador} />
                 </Link>
               ) : (
-                <div className={zoom}>
+                <div className={zoomCarta}>
                   <JogadorCard jogador={jogador} />
                 </div>
               )}

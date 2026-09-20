@@ -5,7 +5,7 @@ import { LinkVoltar } from "@/components/link-voltar";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
-import { botaoPequeno, faixaTime, painel, vazio } from "@/lib/estilo";
+import { botaoPequeno, faixaTime, larguraPadrao, painel, sombraTarja, tituloPagina, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
 import { selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
@@ -29,7 +29,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   const selecao = selecaoDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+    <main className={larguraPadrao}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <LinkVoltar href="/futs">Futs</LinkVoltar>
         {admin && (
@@ -40,7 +40,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       </div>
 
       <section className={`${painel} mb-10 px-4 py-6 text-center`}>
-        <h1 className="font-slab text-2xl uppercase sm:text-3xl">Fut de {fut.data}</h1>
+        <h1 className={tituloPagina}>Fut de {fut.data}</h1>
         <div className="mt-5 flex items-center justify-center gap-3 font-numero text-xl tracking-wider uppercase sm:gap-5">
           <span className="w-16 text-right sm:w-20">Branco</span>
           <Placar branco={fut.placarBranco} preto={fut.placarPreto} grande />
@@ -82,7 +82,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
                   <p className="truncate font-semibold">
                     {atuacao.nome}
                     {i === 0 && (
-                      <span className="ml-2 inline-flex items-center gap-1 rounded-sm bg-ouro px-1.5 pt-0.5 font-numero text-sm leading-none tracking-wider text-superficie uppercase">
+                      <span className={`${sombraTarja} ml-2 inline-flex items-center gap-1 rounded-sm bg-ouro px-1.5 pt-0.5 font-numero text-sm leading-none tracking-wider text-superficie uppercase`}>
                         <span className="escudo h-3.5" aria-hidden />
                         Craque do fut
                       </span>

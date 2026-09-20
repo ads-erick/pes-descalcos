@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { buscarRankings, type EstatisticaDoPeriodo } from "@/data/rankings";
-import { painel } from "@/lib/estilo";
+import { grupoBotoes, grupoBotoesItem, grupoBotoesItemAtual, larguraLarga, painel } from "@/lib/estilo";
 import { POSICAO_SIGLA } from "@/lib/jogador";
 import {
   PERIODOS,
@@ -49,23 +49,21 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
   const { futs, jogadores } = await buscarRankings(periodo);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8">
+    <main className={larguraLarga}>
       <CabecalhoPagina
         titulo="Rankings"
         subtitulo={`${descreverPeriodo(periodo)} · ${plural(futs, "fut", "futs")}`}
       >
         <nav
           aria-label="Período"
-          className="flex overflow-hidden rounded-md border-2 border-tinta font-numero text-lg leading-none tracking-wider uppercase"
+          className={grupoBotoes}
         >
           {PERIODOS.map((p) => (
             <Link
               key={p}
               href={`/rankings?periodo=${p}`}
               aria-current={p === periodo ? "page" : undefined}
-              className={`px-3 pt-1.5 pb-1 transition ${
-                p === periodo ? "bg-tinta text-fundo" : "hover:bg-superficie-2"
-              }`}
+              className={`${grupoBotoesItem} ${p === periodo ? grupoBotoesItemAtual : ""}`}
             >
               {PERIODO_LABEL[p]}
             </Link>

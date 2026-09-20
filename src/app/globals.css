@@ -35,6 +35,8 @@
   --faixa: #1e3163;
   --sobre-faixa: #f7f3ea;
   --dourado: #d8b65c;
+  /* Texto por cima do dourado: igual nos dois temas, porque --dourado não muda */
+  --sobre-dourado: #140f0a;
   --perigo: #b42318;
   --textura: url("/texturas/marmore.svg");
 }
@@ -101,6 +103,7 @@
   --color-faixa: var(--faixa);
   --color-sobre-faixa: var(--sobre-faixa);
   --color-dourado: var(--dourado);
+  --color-sobre-dourado: var(--sobre-dourado);
   --color-perigo: var(--perigo);
 }
 

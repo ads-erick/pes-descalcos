@@ -4,7 +4,7 @@ import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
-import { botaoPrimario, link, painel, vazio } from "@/lib/estilo";
+import { botaoPequeno, botaoPrimario, larguraPadrao, painelClicavel, vazio } from "@/lib/estilo";
 
 export const metadata: Metadata = { title: "Futs" };
 
@@ -12,7 +12,7 @@ export default async function FutsPage() {
   const [futs, admin] = await Promise.all([listarFuts(), isAdmin()]);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+    <main className={larguraPadrao}>
       <CabecalhoPagina
         titulo="Futs"
         subtitulo={`${futs.length} ${futs.length === 1 ? "fut registrado" : "futs registrados"}`}
@@ -36,7 +36,7 @@ export default async function FutsPage() {
             <li key={fut.id} className="relative">
               <Link
                 href={`/futs/${fut.id}`}
-                className={`${painel} flex items-center justify-between gap-4 p-3 pl-4 transition hover:border-destaque ${admin ? "pr-20" : ""}`}
+                className={`${painelClicavel} flex items-center justify-between gap-4 p-3 pl-4 ${admin ? "pr-28" : ""}`}
               >
                 <div className="min-w-0">
                   <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>
@@ -58,7 +58,7 @@ export default async function FutsPage() {
               {admin && (
                 <Link
                   href={`/futs/${fut.id}/editar`}
-                  className={`absolute top-1/2 right-3 -translate-y-1/2 text-sm ${link}`}
+                  className={`${botaoPequeno} absolute top-1/2 right-3 -translate-y-1/2`}
                 >
                   Editar
                 </Link>
