@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-// Quem está escolhido no campo (ou na lista). Só o id viaja: as cartas já vêm
+// Quem está escolhido no campo. Só o id viaja: as cartas já vêm
 // prontas do servidor pra prévia, que apenas escolhe qual mostrar.
 // Passar o mouse — ou clicar — troca a carta, e ela fica: tirar o mouse não
 // desfaz a escolha
@@ -21,13 +21,11 @@ export function PreviaCartas({ padrao, children }: { padrao?: string; children: 
 
 export function AlvoPrevia({
   id,
-  como: Como = "div",
   className,
   style,
   children,
 }: {
   id: string;
-  como?: "div" | "li";
   className?: string;
   style?: React.CSSProperties;
   children: ReactNode;
@@ -35,14 +33,14 @@ export function AlvoPrevia({
   const escolher = useContext(Escolher);
 
   return (
-    <Como
+    <div
       className={className}
       style={style}
       onMouseEnter={() => escolher(id)}
       onClick={() => escolher(id)}
     >
       {children}
-    </Como>
+    </div>
   );
 }
 
