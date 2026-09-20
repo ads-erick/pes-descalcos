@@ -136,12 +136,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               {vagas.map(
                 (vaga, i) =>
                   vaga.atuacao && (
-                    <AlvoPrevia
-                      key={i}
-                      como="li"
-                      id={vaga.atuacao.jogadorId}
-                      className="flex items-center gap-3 px-4 py-2 text-sm"
-                    >
+                    <li key={i} className="flex items-center gap-3 px-4 py-2 text-sm">
                       <span className="w-8 font-numero text-base tracking-wide text-apagado">
                         {POSICAO_SIGLA[vaga.posicao]}
                       </span>
@@ -163,13 +158,13 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                         <span className="hidden sm:inline">Time {vaga.atuacao.corTime} · </span>
                         {vaga.atuacao.gols}G/{vaga.atuacao.assistencias}A
                       </span>
-                    </AlvoPrevia>
+                    </li>
                   ),
               )}
             </ol>
           )}
 
-          {/* A carta em tamanho de gente: segue o mouse pelo campo e pela lista */}
+          {/* A carta em tamanho de gente: segue o mouse pelas cartas do campo — a lista é só leitura */}
           {escalados.length > 0 && (
             <Previa
               className="hidden lg:col-start-1 lg:row-start-4 lg:block"
