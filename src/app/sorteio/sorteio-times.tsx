@@ -4,12 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { botaoChip, botaoPrimario, botaoSecundario, faixaTime, painel } from "@/lib/estilo";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
-import type { CorTime } from "@/lib/selecao";
+import { NOME_TIME, type CorTime } from "@/lib/selecao";
 import { forca, sortearTimes, type Times } from "@/lib/sorteio";
 
 type JogadorSorteavel = { id: string; nome: string; posicao: Posicao | null; nivel: number };
-
-const NOME_TIME: Record<CorTime, string> = { branco: "Time branco", preto: "Time preto" };
 
 export function SorteioTimes({
   jogadores,

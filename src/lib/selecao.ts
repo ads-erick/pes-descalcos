@@ -5,6 +5,11 @@ export const TAMANHO_SELECAO = 5;
 
 export type CorTime = "branco" | "preto";
 
+export const NOME_TIME: Record<CorTime, string> = {
+  branco: "Time branco",
+  preto: "Time preto",
+};
+
 export type Atuacao = {
   jogadorId: string;
   nome: string;

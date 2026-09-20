@@ -5,8 +5,14 @@ import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
 import { botaoPequeno, botaoPrimario, larguraPadrao, painelClicavel, vazio } from "@/lib/estilo";
+import { NOME_TIME, vencedor } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Futs" };
+
+function resultado(placarBranco: number, placarPreto: number) {
+  const venceu = vencedor(placarBranco, placarPreto);
+  return venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate";
+}
 
 export default async function FutsPage() {
   const [futs, admin] = await Promise.all([listarFuts(), isAdmin()]);
@@ -41,14 +47,15 @@ export default async function FutsPage() {
                 <div className="min-w-0">
                   <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>
                   <p className="mt-1 text-sm text-apagado">
-                    {fut.jogadores} {fut.jogadores === 1 ? "jogador" : "jogadores"}
+                    {resultado(fut.placarBranco, fut.placarPreto)}
                     {fut.craque && (
                       <>
                         {" · craque: "}
-                        <span className="font-semibold text-ouro">
-                          {fut.craque.nome}
-                        </span>{" "}
-                        ({fut.craque.gols}G/{fut.craque.assistencias}A)
+                        <span className="font-semibold text-ouro">{fut.craque.nome}</span>{" "}
+                        {/* Margem além do espaço: em negrito e dourado o nome gruda no parêntese */}
+                        <span className="ml-0.5">
+                          ({fut.craque.gols}G/{fut.craque.assistencias}A)
+                        </span>
                       </>
                     )}
                   </p>
