@@ -37,10 +37,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <header className="border-b-2 border-dourado bg-faixa text-sobre-faixa">
           {/* Celular: marca + ações em cima, menu embaixo. Desktop: marca | menu | ações */}
-          <nav className="mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 px-4 py-3 md:grid-cols-[1fr_auto_1fr]">
-            <Link href="/jogadores" className="flex items-center gap-3 justify-self-start">
-              <span className="escudo h-11 text-dourado" aria-hidden />
-              <span className="font-slab text-lg leading-none whitespace-nowrap uppercase">
+          <nav className="mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto] items-center gap-x-2 gap-y-3 px-4 py-3 sm:gap-x-4 md:grid-cols-[1fr_auto_1fr]">
+            {/* min-w-0 + truncate: em tela muito estreita o nome corta em vez de
+                empurrar a faixa e dar rolagem lateral na página inteira */}
+            <Link
+              href="/jogadores"
+              className="flex min-w-0 items-center gap-2 justify-self-start sm:gap-3"
+            >
+              <span className="escudo h-9 shrink-0 text-dourado sm:h-11" aria-hidden />
+              <span className="truncate font-slab text-base leading-none whitespace-nowrap uppercase sm:text-lg">
                 Pés Descalços
                 <span className="ml-1.5 align-top font-numero text-sm tracking-widest text-dourado">
                   FC
@@ -48,15 +53,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </span>
             </Link>
 
-            <div className="order-3 col-span-2 border-t border-dourado/25 pt-2 md:order-2 md:col-span-1 md:border-0 md:pt-0">
+            {/* O -mx-4/px-4 estende a rolagem até a borda da tela; o overflow também
+                impede que o menu estique a coluna do grid em tela estreita */}
+            <div className="order-3 col-span-2 -mx-4 overflow-x-auto border-t border-dourado/25 px-4 pt-2 md:order-2 md:col-span-1 md:mx-0 md:overflow-x-visible md:border-0 md:px-0 md:pt-0">
               <Menu />
             </div>
 
-            <div className="order-2 flex items-center gap-3 justify-self-end md:order-3">
+            <div className="order-2 flex shrink-0 items-center gap-2 justify-self-end sm:gap-3 md:order-3">
               <BotaoTema />
               {admin ? (
                 <form action={logoutAction}>
-                  <button type="submit" className={botaoNav}>
+                  {/* No celular fica só o ícone: o texto ao lado estourava a faixa */}
+                  <button type="submit" aria-label="Sair" className={`${botaoNav} px-2.5 sm:px-3`}>
                     <svg
                       viewBox="0 0 24 24"
                       className="-mt-0.5 size-4"
@@ -69,7 +77,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     >
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                     </svg>
-                    Sair
+                    <span className="hidden sm:inline">Sair</span>
                   </button>
                 </form>
               ) : (
