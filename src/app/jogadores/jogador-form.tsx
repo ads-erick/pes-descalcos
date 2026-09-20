@@ -86,7 +86,7 @@ export function JogadorForm({
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-12">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-24 xl:gap-32">
       <form ref={formRef} onChange={espelhar} action={enviar} className="space-y-4">
         {jogador && <input type="hidden" name="id" value={jogador.id} />}
         {removerFoto && <input type="hidden" name="removerFoto" value="on" />}
@@ -184,11 +184,8 @@ export function JogadorForm({
       </form>
 
       {/* No celular a carta vai pra cima do formulário, menorzinha */}
-      <aside className="order-first mx-auto w-44 sm:w-52 lg:sticky lg:top-8 lg:order-none lg:mx-0 lg:w-full lg:max-w-[19rem]">
+      <aside className="order-first mx-auto w-44 sm:w-52 lg:sticky lg:top-8 lg:order-none lg:mx-auto lg:w-full lg:max-w-[19rem]">
         <JogadorCard jogador={cartaPrevia} />
-        <p className="mt-3 text-center text-xs text-apagado">
-          Prévia. Nos futs o nível ainda sobe ou desce com as estatísticas.
-        </p>
       </aside>
     </div>
   );

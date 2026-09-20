@@ -107,10 +107,10 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
                         {j.colocacao}º
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium">
-                          {j.nome}
+                        <p className="flex items-baseline gap-1.5 font-medium">
+                          <span className="truncate">{j.nome}</span>
                           {j.posicao && (
-                            <span className="ml-1.5 font-numero text-sm tracking-wide text-apagado">
+                            <span className="shrink-0 font-numero text-sm tracking-wide text-apagado">
                               {POSICAO_SIGLA[j.posicao]}
                             </span>
                           )}
