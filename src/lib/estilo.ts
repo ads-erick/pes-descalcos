@@ -18,9 +18,11 @@ const focoNaFaixa =
 const desabilitado =
   "disabled:pointer-events-none disabled:opacity-60 has-disabled:pointer-events-none has-disabled:opacity-60";
 
-// Sombra chapada, estilo impresso: levanta no hover e afunda ao apertar
+// Sombra chapada, estilo impresso: cresce no hover e some ao apertar.
+// Sem mexer na posição: um botão posicionado com translate (o "Editar" da lista
+// de futs) perderia a centralização e pularia ao ser clicado.
 const impresso =
-  "shadow-[3px_3px_0_var(--sombra)] hover:-translate-y-px hover:shadow-[4px_4px_0_var(--sombra)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none";
+  "shadow-[3px_3px_0_var(--sombra)] hover:shadow-[4px_4px_0_var(--sombra)] active:shadow-none";
 
 // Um contorno só pro app inteiro; o que separa os botões é o tamanho
 const contorno = "border-2 border-tinta bg-superficie hover:bg-tinta hover:text-fundo";
