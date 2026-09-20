@@ -73,8 +73,10 @@ export const link = `rounded-sm text-apagado underline-offset-4 transition durat
 export const campo =
   "w-full rounded-md border-2 border-linha bg-superficie px-3 py-2 transition duration-150 focus:border-destaque focus:outline-2 focus:outline-offset-2 focus:outline-destaque";
 
+// Fonte de 16px mesmo sendo o campo pequeno: abaixo disso o Safari do iPhone dá
+// zoom na página ao focar o campo. A altura acompanha, pra dar alvo de toque
 export const campoPequeno =
-  "rounded-md border-2 border-linha bg-superficie px-2 py-1 text-sm transition duration-150 focus:border-destaque focus:outline-2 focus:outline-offset-2 focus:outline-destaque";
+  "h-10 rounded-md border-2 border-linha bg-superficie px-2 transition duration-150 focus:border-destaque focus:outline-2 focus:outline-offset-2 focus:outline-destaque";
 
 export const painel = "rounded-lg border-2 border-linha bg-superficie";
 export const painelClicavel = `${painel} block transition duration-150 hover:border-destaque ${foco}`;

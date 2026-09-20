@@ -9,6 +9,9 @@ type Posicao = { x: number; y: number };
 type Estado = "parado" | "copiando" | "baixando" | "copiado" | "erro";
 
 const LARGURA = 208; // w-52, pra não deixar o menu sair da tela
+const TOQUE_LONGO_MS = 500;
+// Arrastar o dedo além disso é rolagem, não toque longo
+const TOLERANCIA_PX = 10;
 
 // Copiar imagem só existe em contexto seguro (https ou localhost) e em navegador
 // que aceite image/png no clipboard — no resto, sobra só o download
@@ -32,9 +35,14 @@ export function CartaMenu({
   children: ReactNode;
 }) {
   const carta = useRef<HTMLDivElement>(null);
+  const toque = useRef<{ timer: number; x: number; y: number } | null>(null);
+  // O toque longo termina em clique, que abriria o link da carta
+  const engolirClique = useRef(false);
   const [menu, setMenu] = useState<Posicao | null>(null);
   const [estado, setEstado] = useState<Estado>("parado");
   const [copiavel, setCopiavel] = useState(false);
+
+  useEffect(() => cancelarToque, []);
 
   // Fecha o menu ao clicar fora, rolar a página ou apertar Esc
   useEffect(() => {
@@ -53,11 +61,58 @@ export function CartaMenu({
     };
   }, [menu]);
 
-  function abrir(evento: React.MouseEvent) {
-    evento.preventDefault();
+  function abrirEm(x: number, y: number) {
     setEstado("parado");
     setCopiavel(podeCopiar());
-    setMenu({ x: evento.clientX, y: evento.clientY });
+    setMenu({ x, y });
+  }
+
+  // Mouse: botão direito
+  function abrir(evento: React.MouseEvent) {
+    evento.preventDefault();
+    abrirEm(evento.clientX, evento.clientY);
+  }
+
+  function cancelarToque() {
+    if (!toque.current) return;
+    clearTimeout(toque.current.timer);
+    toque.current = null;
+  }
+
+  // Celular: não existe botão direito e o toque simples é o link da carta,
+  // então meio segundo segurando abre o mesmo menu
+  function iniciarToque(evento: React.PointerEvent) {
+    if (evento.pointerType === "mouse") return;
+    cancelarToque();
+    engolirClique.current = false;
+    const { clientX: x, clientY: y } = evento;
+    toque.current = {
+      x,
+      y,
+      timer: window.setTimeout(() => {
+        toque.current = null;
+        engolirClique.current = true;
+        abrirEm(x, y);
+      }, TOQUE_LONGO_MS),
+    };
+  }
+
+  function moverToque(evento: React.PointerEvent) {
+    const inicio = toque.current;
+    if (!inicio) return;
+    if (
+      Math.abs(evento.clientX - inicio.x) > TOLERANCIA_PX ||
+      Math.abs(evento.clientY - inicio.y) > TOLERANCIA_PX
+    ) {
+      cancelarToque();
+    }
+  }
+
+  function engolir(evento: React.MouseEvent) {
+    if (!engolirClique.current) return;
+    engolirClique.current = false;
+    evento.preventDefault();
+    evento.stopPropagation();
   }
 
   async function copiar() {
@@ -96,7 +151,18 @@ export function CartaMenu({
 
   return (
     <>
-      <div ref={carta} onContextMenu={abrir}>
+      {/* touch-callout: sem isso o iPhone abre o menu dele ("abrir link", "salvar
+          imagem") por cima do nosso no toque longo */}
+      <div
+        ref={carta}
+        onContextMenu={abrir}
+        onPointerDown={iniciarToque}
+        onPointerMove={moverToque}
+        onPointerUp={cancelarToque}
+        onPointerCancel={cancelarToque}
+        onClickCapture={engolir}
+        className="select-none [-webkit-touch-callout:none]"
+      >
         {children}
       </div>
 
@@ -151,7 +217,7 @@ function ItemMenu({
       role="menuitem"
       onClick={onClick}
       disabled={disabled}
-      className="block w-full px-3 py-2 text-left font-numero text-lg leading-none tracking-wider uppercase transition duration-150 hover:bg-tinta hover:text-fundo focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-destaque disabled:pointer-events-none disabled:opacity-60"
+      className="block w-full px-3 py-2.5 text-left font-numero text-lg leading-none tracking-wider uppercase transition duration-150 hover:bg-tinta hover:text-fundo focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-destaque disabled:pointer-events-none disabled:opacity-60"
     >
       {children}
     </button>

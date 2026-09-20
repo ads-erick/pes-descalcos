@@ -61,6 +61,7 @@ export function FutForm({
             type="number"
             min={0}
             max={99}
+            inputMode="numeric"
             defaultValue={fut?.placarBranco ?? 0}
             className={campo}
           />
@@ -75,6 +76,7 @@ export function FutForm({
             type="number"
             min={0}
             max={99}
+            inputMode="numeric"
             defaultValue={fut?.placarPreto ?? 0}
             className={campo}
           />
@@ -109,7 +111,7 @@ export function FutForm({
                 </label>
 
                 {escalado && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <select
                       name={`time_${jogador.id}`}
                       value={times[jogador.id]}
@@ -130,6 +132,7 @@ export function FutForm({
                       type="number"
                       min={0}
                       max={99}
+                      inputMode="numeric"
                       defaultValue={salvos.get(jogador.id)?.gols ?? 0}
                       aria-label={`Gols de ${jogador.nome}`}
                       className={`w-16 ${campoPequeno}`}
@@ -140,6 +143,7 @@ export function FutForm({
                       type="number"
                       min={0}
                       max={99}
+                      inputMode="numeric"
                       defaultValue={salvos.get(jogador.id)?.assistencias ?? 0}
                       aria-label={`Assistências de ${jogador.nome}`}
                       className={`w-16 ${campoPequeno}`}
