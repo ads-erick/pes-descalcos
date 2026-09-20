@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { criarFutAction, editarFutAction, type FutFormState } from "@/app/futs/actions";
 import type { NovoFut } from "@/data/futs";
 import type { JogadorEscalavel } from "@/data/jogadores";
-import { botaoPrimario, campo, campoPequeno, link, painel } from "@/lib/estilo";
+import { botaoPrimario, botaoSecundario, campo, campoPequeno, painel } from "@/lib/estilo";
 import type { CorTime } from "@/lib/selecao";
 
 type Time = CorTime;
@@ -161,7 +161,7 @@ export function FutForm({
 
       <div className="flex items-center justify-end gap-3">
         {children && <div className="mr-auto">{children}</div>}
-        <Link href="/futs" className={`px-2 text-sm ${link}`}>
+        <Link href="/futs" className={botaoSecundario}>
           Cancelar
         </Link>
         <button type="submit" disabled={pending} className={botaoPrimario}>

@@ -11,6 +11,7 @@
     "seed:limpar": "node --env-file=.env.local scripts/seed-teste.mjs --limpar"
   },
   "dependencies": {
+    "html-to-image": "^1.11.13",
     "next": "16.3.5",
     "postgres": "^3.4.9",
     "react": "19.2.8",

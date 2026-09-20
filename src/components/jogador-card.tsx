@@ -106,6 +106,9 @@ export function JogadorCard({
               alt=""
               fill
               sizes="(min-width: 1024px) 160px, (min-width: 640px) 30vw, 45vw"
+              // A prévia do formulário usa a foto escolhida agora, que é um blob: local
+              // e não passa pelo otimizador
+              unoptimized={jogador.fotoUrl.startsWith("blob:")}
               className="object-cover"
             />
           ) : (

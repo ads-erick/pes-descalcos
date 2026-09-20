@@ -1,4 +1,5 @@
-// Título das páginas no estilo do escudo: slab pesada, caixa alta
+import { tituloPagina } from "@/lib/estilo";
+
 export function CabecalhoPagina({
   titulo,
   subtitulo,
@@ -11,7 +12,7 @@ export function CabecalhoPagina({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="font-slab text-3xl leading-tight uppercase sm:text-4xl">{titulo}</h1>
+        <h1 className={tituloPagina}>{titulo}</h1>
         {subtitulo && <p className="mt-1 text-sm text-apagado">{subtitulo}</p>}
       </div>
       {children}

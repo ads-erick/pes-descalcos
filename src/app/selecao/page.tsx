@@ -3,10 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CampoFut7 } from "@/components/campo-fut7";
+import { CartaMenu } from "@/components/carta-menu";
 import { JogadorCard } from "@/components/jogador-card";
 import { buscarDetalheFut, listarFuts } from "@/data/futs";
 import { buscarCartas } from "@/data/jogadores";
-import { botaoPequeno, painel, vazio } from "@/lib/estilo";
+import { botaoSecundario, larguraCampo, larguraPadrao, painel, sombraCartao, sombraTarja, vazio, zoomCarta } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
 import { escalarSelecao, formatarPontos, selecaoDoFut } from "@/lib/selecao";
@@ -28,7 +29,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
 
   if (futs.length === 0) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-4 py-8">
+      <main className={larguraPadrao}>
         <CabecalhoPagina titulo="Seleção do fut" />
         <p className={vazio}>Nenhum fut registrado ainda.</p>
       </main>
@@ -49,7 +50,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
   const porPosicao = Map.groupBy(vagas, (v) => v.posicao);
 
   return (
-    <main className="mx-auto w-full max-w-[34rem] px-4 py-8">
+    <main className={larguraCampo}>
       <CabecalhoPagina
         titulo="Seleção do fut"
         subtitulo="Os melhores de cada posição, pela nota do fut"
@@ -64,12 +65,12 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             rotulo: `${f.data} · ${f.placarBranco} x ${f.placarPreto}`,
           }))}
         />
-        <Link href={`/futs/${fut.id}`} className={`${botaoPequeno} h-10.5!`}>
+        <Link href={`/futs/${fut.id}`} className={botaoSecundario}>
           Ver fut
         </Link>
       </div>
 
-      <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl border-2 border-dourado shadow-[4px_4px_0_var(--sombra)]">
+      <div className={`${sombraCartao} relative aspect-[2/3] w-full overflow-hidden rounded-xl border-2 border-dourado`}>
         <CampoFut7 className="absolute inset-0 size-full" />
         {[...porPosicao].map(([posicao, daPosicao]) =>
           daPosicao.map((vaga, i) => {
@@ -82,18 +83,22 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                 style={{ top: lugar.top, left: lugar.lefts[i] }}
               >
                 {vaga.atuacao && carta ? (
-                  <div className="relative">
-                    <JogadorCard
-                      jogador={carta}
-                      inform
-                      stats={[
-                        { label: "GOL", valor: vaga.atuacao.gols },
-                        { label: "AST", valor: vaga.atuacao.assistencias },
-                        { label: "PTS", valor: formatarPontos(vaga.atuacao.pontos) },
-                      ]}
-                    />
+                  // O zoom fica aqui fora pra tarja de craque crescer junto com a carta
+                  <div className={`relative ${zoomCarta}`}>
+                    {/* Só a carta entra no menu: a tarja de craque fica de fora da imagem */}
+                    <CartaMenu nome={carta.apelido ?? carta.nome} sufixo="seleção">
+                      <JogadorCard
+                        jogador={carta}
+                        inform
+                        stats={[
+                          { label: "GOL", valor: vaga.atuacao.gols },
+                          { label: "AST", valor: vaga.atuacao.assistencias },
+                          { label: "PTS", valor: formatarPontos(vaga.atuacao.pontos) },
+                        ]}
+                      />
+                    </CartaMenu>
                     {vaga.atuacao.jogadorId === craque && (
-                      <span className="absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-[#140f0a] uppercase shadow sm:text-sm">
+                      <span className={`${sombraTarja} absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
                         <span className="escudo h-3" aria-hidden />
                         Craque
                       </span>
