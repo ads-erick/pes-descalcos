@@ -8,15 +8,13 @@ import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
 import { botaoPequeno, faixaTime, larguraPadrao, painel, sombraTarja, tituloPagina, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
-import { selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
+import { NOME_TIME, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
 
 export async function generateMetadata({ params }: PageProps<"/futs/[id]">): Promise<Metadata> {
   const { id } = await params;
   const fut = ehUuid(id) ? await buscarDetalheFut(id) : null;
   return { title: fut ? `Fut de ${fut.data}` : "Fut" };
 }
-
-const NOME_TIME: Record<CorTime, string> = { branco: "Time branco", preto: "Time preto" };
 
 export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   const { id } = await params;
