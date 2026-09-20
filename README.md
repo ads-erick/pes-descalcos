@@ -34,9 +34,23 @@ Abra [http://localhost:3000](http://localhost:3000).
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase → Connect |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API Keys → `service_role` (ou "secret"). Só no servidor: é o que sobe e apaga as fotos das cartinhas |
-| `DATABASE_URL` | Supabase → Connect → Connection String (URI). Caracteres especiais da senha precisam ser codificados (`@` → `%40`) |
+| `DATABASE_URL` | Supabase → Connect → Connection String (URI), sempre a do **pooler** (a conexão direta é só IPv6 e a Vercel não alcança). Caracteres especiais da senha precisam ser codificados (`@` → `%40`) |
 | `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
 | `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
+
+### Deploy na Vercel
+
+Importar o repositório na Vercel e cadastrar as mesmas variáveis de ambiente acima (a
+`SUPABASE_SERVICE_ROLE_KEY` precisa ir junto, senão as fotos não sobem).
+
+A `DATABASE_URL` tem que ser a do pooler do Supabase, em qualquer uma das duas portas:
+
+- **6543** (modo transação) — a recomendada pra serverless: o pooler não guarda prepared
+  statements, e `src/data/db.ts` desliga eles sozinho ao ver essa porta.
+- **5432** (modo sessão) — também funciona.
+
+Cada instância serverless abre o próprio pool (no máximo 5 conexões, devolvidas depois de
+20s paradas), pra não estourar o limite de conexões do Supabase com o site no ar.
 
 ### Banco de dados
 
