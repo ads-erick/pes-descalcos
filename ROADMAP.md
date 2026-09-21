@@ -12,7 +12,13 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 ## Próximos passos
 
-Pedidos da galera, na ordem em que devem sair:
+Pedidos da galera, na ordem em que devem sair. Primeiro os ajustes rápidos:
+
+- [ ] **Fundo com o mesmo enquadramento em todas as telas** — a estampa do fundo (nos dois temas) dá um leve zoom pra dentro ou pra fora dependendo da tela. Causa provável: ela é `cover` numa camada fixa do tamanho da janela (`body::before` em `globals.css`), então quando a página é comprida e aparece a barra de rolagem a janela fica uns 15px mais estreita e a imagem é reescalada; no celular a barra de endereço que some e volta faz o mesmo com a altura. A estampa tem que ficar do mesmo tamanho e na mesma posição em todas as telas.
+- [ ] **Sorteio sem a "Diferença de força"** — tirar a linha "Diferença de força: X (soma dos níveis de cada time)" embaixo dos times sorteados (`src/app/sorteio/sorteio-times.tsx`). O sorteio continua equilibrando do mesmo jeito.
+- [ ] **Carta do craque copiada com o ícone de craque** — na seleção, copiar ou baixar a carta do craque hoje gera só a carta, porque o menu embrulha só ela e a tarja de craque fica de fora de propósito (#13). Agora a tarja tem que entrar na imagem, só na carta do craque.
+
+Depois as features:
 
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
 - [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
