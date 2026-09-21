@@ -24,6 +24,10 @@ export async function cartaParaPng(carta: HTMLElement): Promise<Blob> {
     // ajusta pra toda carta sair com ~LARGURA_PNG de largura, sem ficar serrilhada
     pixelRatio: Math.min(10, Math.max(3, LARGURA_PNG / largura)),
     fontEmbedCSS: await fonteCss,
+    // As fotos passam pelo /_next/image?url=…, e o cache de imagens do html-to-image
+    // ignora a query por padrão: toda foto virava a mesma chave e a carta saía com
+    // a foto do primeiro jogador gerado
+    includeQueryParams: true,
   };
 
   // A primeira passada costuma sair sem as imagens (elas terminam de carregar
