@@ -4,7 +4,7 @@ import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
-import { botaoPequeno, botaoPrimario, larguraPadrao, painelClicavel, vazio } from "@/lib/estilo";
+import { botaoPequeno, botaoPrimario, larguraPadrao, painel, vazio } from "@/lib/estilo";
 import { NOME_TIME, vencedor } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Futs" };
@@ -37,36 +37,36 @@ export default async function FutsPage() {
       ) : (
         <ul className="space-y-3">
           {futs.map((fut) => (
-            // O "Editar" fica dentro do card (posicionado), pra lista e cabeçalho
-            // terem a mesma largura
-            <li key={fut.id} className="relative">
-              <Link
-                href={`/futs/${fut.id}`}
-                className={`${painelClicavel} flex items-center justify-between gap-3 p-3 pl-4 sm:gap-4 ${admin ? "pr-26 sm:pr-28" : ""}`}
-              >
-                <div className="min-w-0">
-                  <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>
-                  <p className="mt-1 text-sm text-apagado">
-                    {resultado(fut.placarBranco, fut.placarPreto)}
-                    {fut.craque && (
-                      <>
-                        {" · craque: "}
-                        <span className="font-semibold text-ouro">{fut.craque.nome}</span>{" "}
-                        {/* Margem além do espaço: em negrito e dourado o nome gruda no parêntese */}
-                        <span className="ml-0.5">
-                          ({fut.craque.gols}G/{fut.craque.assistencias}A)
-                        </span>
-                      </>
-                    )}
-                  </p>
-                </div>
-                <Placar branco={fut.placarBranco} preto={fut.placarPreto} />
-              </Link>
-              {admin && (
+            // O card inteiro abre o fut pelo ::after do link da data, e o "Editar" fica
+            // no fluxo ao lado do placar: posicionado por cima, ele cobria o placar no celular
+            <li
+              key={fut.id}
+              className={`${painel} relative flex items-center gap-3 p-3 pl-4 transition duration-150 hover:border-destaque sm:gap-4`}
+            >
+              <div className="min-w-0 flex-1">
                 <Link
-                  href={`/futs/${fut.id}/editar`}
-                  className={`${botaoPequeno} absolute top-1/2 right-3 -translate-y-1/2`}
+                  href={`/futs/${fut.id}`}
+                  className="block font-numero text-2xl leading-none tracking-wide outline-none after:absolute after:inset-0 after:rounded-md focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-destaque"
                 >
+                  {fut.data}
+                </Link>
+                <p className="mt-1 text-sm text-apagado">
+                  {resultado(fut.placarBranco, fut.placarPreto)}
+                  {fut.craque && (
+                    <>
+                      {" · craque: "}
+                      <span className="font-semibold text-ouro">{fut.craque.nome}</span>{" "}
+                      {/* Margem além do espaço: em negrito e dourado o nome gruda no parêntese */}
+                      <span className="ml-0.5">
+                        ({fut.craque.gols}G/{fut.craque.assistencias}A)
+                      </span>
+                    </>
+                  )}
+                </p>
+              </div>
+              <Placar branco={fut.placarBranco} preto={fut.placarPreto} />
+              {admin && (
+                <Link href={`/futs/${fut.id}/editar`} className={`${botaoPequeno} relative shrink-0`}>
                   Editar
                 </Link>
               )}
