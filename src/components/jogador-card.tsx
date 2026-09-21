@@ -98,21 +98,30 @@ export function JogadorCard({
           }`}
         />
 
-        {/* Foto (ou iniciais) do lado direito, sumindo embaixo como nas cartas FUT */}
-        <div className="absolute top-[9cqw] right-[5cqw] aspect-square w-[64cqw] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]">
+        {/* Foto (ou iniciais) num medalhão redondo, centralizado no espaço que sobra
+            à direita da coluna de números */}
+        <div
+          className="absolute top-[17cqw] right-[12cqw] aspect-square w-[46cqw] overflow-hidden rounded-full"
+          style={{
+            // Moldura: o anel da cor da raridade e uma sombrinha pra descolar do fundo
+            border: `1cqw solid ${estilo.linha}`,
+            boxShadow: `0 0.4cqw 1cqw rgb(0 0 0 / 0.25), inset 0 0 0 0.3cqw rgb(255 255 255 / 0.25)`,
+            background: inform ? "rgb(255 255 255 / 0.06)" : "rgb(0 0 0 / 0.07)",
+          }}
+        >
           {jogador.fotoUrl ? (
             <Image
               src={jogador.fotoUrl}
               alt=""
               fill
-              sizes="(min-width: 1024px) 160px, (min-width: 640px) 30vw, 45vw"
+              sizes="(min-width: 1024px) 140px, (min-width: 640px) 22vw, 32vw"
               // A prévia do formulário usa a foto escolhida agora, que é um blob: local
               // e não passa pelo otimizador
               unoptimized={jogador.fotoUrl.startsWith("blob:")}
               className="object-cover"
             />
           ) : (
-            <span className="grid size-full place-items-center font-slab text-[26cqw] opacity-25">
+            <span className="grid size-full place-items-center font-slab text-[20cqw] opacity-30">
               {iniciais(nomeNaCarta)}
             </span>
           )}
