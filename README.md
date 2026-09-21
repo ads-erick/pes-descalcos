@@ -1,22 +1,136 @@
-# Pés Descalços
+<div align="center">
 
-Plataforma (de brincadeira) do grupo de futebol com os amigos: cadastro de jogadores com "cartinha" de estatísticas, registro dos futs (gols, assistências, presença) e seleção automática dos melhores de cada fut.
+<img src="public/marca/escudo.png" alt="Escudo do Pés Descalços FC" width="96" />
+
+# Pés Descalços FC
+
+**Cartinhas, estatísticas e seleção do fut da galera.**
+
+[pes-descalcos.vercel.app](https://pes-descalcos.vercel.app) · Next.js 16 · Supabase · Vercel
+
+</div>
+
+![Elenco nos dois temas: camisa preta à esquerda, camisa branca à direita](docs/prints/elenco-temas.jpg)
+
+Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinha no estilo FUT, cada fut fica registrado com placar, gols e assistências, e o site monta sozinho a seleção da rodada, os rankings da temporada e até sorteia times equilibrados.
+
+> [!NOTE]
+> **Este projeto foi feito inteiro com o [Claude Code](https://claude.com/claude-code).**
+> Todo o código, os commits, os pull requests, os testes e este README foram escritos pelo Claude Code. O meu papel foi de dono do produto: dizer o que eu queria, testar no celular, apontar o que estava errado, revisar e aprovar cada PR. [Como a gente trabalhou](#como-foi-feito) está descrito mais abaixo.
+
+## O que tem
+
+### Seleção do fut
+
+Os melhores de cada fut num campo de fut7 (1 goleiro, 2 zagueiros, 2 meias, 2 atacantes), em cartas pretas no estilo das cartas inform do FIFA. A escolha é pelos números do fut (gols + assistências), e o craque ganha a tarja dourada. Passando o mouse numa carta do campo, ela aparece grande do lado.
+
+![Seleção do fut no campo](docs/prints/selecao.jpg)
+
+### No celular
+
+Tudo foi pensado pro celular primeiro, que é onde a galera abre o site: cabeçalho que cabe em 320px, toque longo na carta pra copiar ou baixar como imagem, campos que não dão zoom no iPhone.
+
+![Elenco, seleção e futs no celular](docs/prints/celular.png)
+
+### Futs e rankings
+
+Cada fut tem placar, resultado e os destaques da partida. Os rankings de gols, assistências, craques e vitórias podem ser vistos do mês, do ano ou desde sempre, e empate divide a colocação.
+
+| Detalhe do fut | Rankings |
+|---|---|
+| ![Detalhe do fut com placar e destaques](docs/prints/fut.jpg) | ![Rankings de gols, assistências, craques e vitórias](docs/prints/rankings.jpg) |
+
+### Sorteio de times
+
+Marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados. "Sortear de novo" traz outra divisão também equilibrada.
+
+![Sorteio de times balanceados](docs/prints/sorteio.jpg)
+
+### Área do admin
+
+Só quem tem a senha lança os dados. O admin cadastra jogadores (com foto enquadrada na hora e a cartinha atualizando ao lado), registra os futs e pode trocar na mão qualquer vaga da seleção.
+
+| Cadastro do jogador | Troca de vaga na seleção |
+|---|---|
+| ![Formulário de jogador com prévia da cartinha](docs/prints/admin-jogador.jpg) | ![Janela de troca de jogador numa vaga da seleção](docs/prints/admin-troca.jpg) |
+
+## Como foi feito
+
+O projeto saiu em uma semana (de 14 a 21 de setembro de 2026), com quase 30 pull requests e mais de 70 commits, sempre neste ritmo:
+
+```mermaid
+flowchart LR
+    A["Eu peço<br/>(em português, do jeito que falo)"] --> B["Claude Code<br/>lê o código e reproduz"]
+    B --> C["Implementa numa<br/>branch nova"]
+    C --> D["Testa: lint, build e<br/>navegador de verdade"]
+    D --> E["Abre o PR<br/>e atualiza o roadmap"]
+    E --> F["Eu testo no celular,<br/>reviso e faço o merge"]
+    F --> G["Vercel publica"]
+    F -. "achei um bug" .-> A
+```
+
+**1. O pedido.** Eu escrevo o que quero do jeito que falaria com um amigo, muitas vezes testando no celular: *"no mobile tá cortando o placar"*, *"a seleção devia ser pelos gols e assistências"*, *"sobe o localhost e o IP pro celular"*.
+
+**2. Entender e reproduzir.** Antes de mexer em qualquer coisa, o Claude Code lê o código envolvido e a documentação da versão do Next.js que está instalada (o [`AGENTS.md`](AGENTS.md) pede isso, porque o Next 16 mudou bastante). Bug relatado é reproduzido primeiro: ele abre o site num Chrome headless com a tela do tamanho de um celular, mede os elementos e tira print do antes. Quando um bug não aparecia no teste, ele foi atrás no log do servidor. Foi assim que descobriu que o botão "Admin" continuava aparecendo depois do login só em abas que já estavam abertas antes.
+
+**3. Implementar.** Cada mudança numa branch própria (`feat/`, `fix/`, `docs/`), com commits no padrão [Conventional Commits](https://www.conventionalcommits.org/) e comentários no código explicando o *porquê* das decisões menos óbvias.
+
+**4. Testar de verdade.** Lint, TypeScript e build passando não bastam: ele roda um script de navegador contra o site, tira print do depois e testa os fluxos de admin de ponta a ponta, com um cookie de sessão assinado no próprio teste. Os dados de teste têm um prefixo próprio e são apagados no final.
+
+**5. Abrir o PR.** Ele abre o pull request pelo `gh` com a descrição no [template do projeto](.github/pull_request_template.md) (o que muda, como testar, checklist) e atualiza o [`ROADMAP.md`](ROADMAP.md), com uma regra de honestidade: `[x]` só pro que foi testado, `[~]` pro que está pronto mas ainda não foi testado.
+
+**6. Revisar e aprovar.** Eu testo no celular (o Claude Code sobe o servidor de desenvolvimento e me passa o IP da rede), reviso e faço o merge. O merge é sempre meu, nunca dele. Se encontro algum problema, volto pro passo 1 na mesma branch. O CI roda lint e build em todo PR, e a Vercel publica a cada merge na `main`.
+
+Entre uma conversa e outra, o Claude Code guarda notas sobre como eu gosto de trabalhar (quem abre e quem faz merge dos PRs, como testar, as armadilhas que já apareceram). Assim cada sessão continua de onde a outra parou.
+
+Antes de subir pra Vercel, também pedi uma revisão de segurança: segredos no histórico do git, `requireAdmin()` em toda escrita, RLS no banco, validação do upload, redirecionamento aberto e `npm audit`.
 
 ## Stack
 
-- [Next.js](https://nextjs.org) (App Router) + TypeScript + Tailwind CSS
-- Postgres (Supabase) como banco de dados
-- Deploy: Vercel
+- [Next.js 16](https://nextjs.org) (App Router, Server Actions) + TypeScript + Tailwind CSS v4
+- Postgres no [Supabase](https://supabase.com), acessado direto pelo servidor com [`postgres`](https://github.com/porsager/postgres); fotos no Supabase Storage
+- Deploy na [Vercel](https://vercel.com), CI no GitHub Actions (lint + build)
 
 ## Modelo de dados
 
-Três tabelas (ver `supabase/migrations/0001_init.sql`):
+Quatro tabelas (ver `supabase/migrations/`):
 
-- **jogador** — cadastro (nome, apelido, número, foto, posição, se está ativo no grupo)
+- **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido, se está ativo no grupo)
 - **fut** — cada partida (data, placar time branco x time preto)
-- **participacao** — stats de um jogador em um fut específico (de que lado jogou, gols, assistências, presença)
+- **participacao** — números de um jogador num fut (de que lado jogou, gols, assistências)
+- **selecao_escolha** — as vagas da seleção que o admin trocou na mão
 
-Não existe uma tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A "seleção do fut" é calculada dinamicamente a partir das stats em `participacao` (gols + assistências); só as vagas que o admin troca na mão ficam guardadas, em `selecao_escolha`.
+Não existe tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A seleção do fut é calculada na hora a partir de `participacao`; só as trocas manuais ficam guardadas.
+
+## Nível das cartinhas
+
+Os critérios ficam em `src/lib/nivel.ts`.
+
+**Nível (70 a 95):** o admin escolhe o nível de cada jogador no cadastro (bronze até 75, prata até 79, ouro a partir de 80), e cada fut jogado depois disso mexe um pouquinho nele. A carta mostra o nível atual e a variação (▲/▼).
+
+Cada fut dá uma nota ao jogador:
+
+- **Gols e assistências** somam pontos
+- **Defesa**: metade do saldo do time no fut
+- **Peso por posição**: goleiro e zagueiro têm peso alto na defesa; meia e atacante, em gols e assistências
+
+A nota é comparada com a média do grupo dele naquele fut (goleiros + zagueiros, meias + atacantes): acima da média sobe, abaixo desce. Cada fut derruba no máximo 2 pontos e sobe no máximo 2. Subir fica mais difícil quanto mais alto o nível: o ganho máximo cai pela metade a cada 8 níveis. Quando o admin muda o nível na mão, só os futs cadastrados depois disso passam a contar.
+
+## Seleção do fut
+
+Critérios em `src/lib/selecao.ts`. A nota da seleção é **gols + assistências**, sem o saldo do time (senão quem fez 1 gol no time que ganhou de lavada passaria na frente de quem fez 2G/1A no que perdeu). Desempate: mais gols, depois o time que foi melhor no placar (é o que separa goleiros e zagueiros), depois ordem alfabética.
+
+As vagas são preenchidas pelos melhores de cada posição. Se faltar gente numa posição, a vaga vai pro melhor que sobrou e aparece como "improvisado". O primeiro da lista é o craque do fut.
+
+## Sorteio de times
+
+Critérios em `src/lib/sorteio.ts`. A força de cada time é a soma dos níveis das cartinhas. O sorteio:
+
+1. Divide cada posição entre os dois lados, intercalando: um goleiro pra cada time, zagueiros divididos, e assim por diante. Quem não tem posição completa os times
+2. Troca jogadores da mesma posição entre os times enquanto isso aproximar a força dos dois
+3. Repete isso 200 vezes com ordens aleatórias e escolhe ao acaso uma das divisões com diferença de até 2 pontos a mais que a melhor, pra "sortear de novo" trazer times diferentes
+
+Tudo roda no navegador, nada é salvo. O admin pode levar os times sorteados pro registro do fut.
 
 ## Rodando localmente
 
@@ -26,7 +140,7 @@ cp .env.example .env.local   # preencher as variáveis (ver abaixo)
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000).
+Abra [http://localhost:3000](http://localhost:3000). Pra testar no celular na mesma rede, `npm run dev -- -H 0.0.0.0` e abra pelo IP do computador (`next.config.ts` já libera `192.168.*.*` e `10.*.*.*`).
 
 ### Variáveis de ambiente
 
@@ -38,20 +152,6 @@ Abra [http://localhost:3000](http://localhost:3000).
 | `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
 | `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
 
-### Deploy na Vercel
-
-Importar o repositório na Vercel e cadastrar as mesmas variáveis de ambiente acima (a
-`SUPABASE_SERVICE_ROLE_KEY` precisa ir junto, senão as fotos não sobem).
-
-A `DATABASE_URL` tem que ser a do pooler do Supabase, em qualquer uma das duas portas:
-
-- **6543** (modo transação) — a recomendada pra serverless: o pooler não guarda prepared
-  statements, e `src/data/db.ts` desliga eles sozinho ao ver essa porta.
-- **5432** (modo sessão) — também funciona.
-
-Cada instância serverless abre o próprio pool (no máximo 5 conexões, devolvidas depois de
-20s paradas), pra não estourar o limite de conexões do Supabase com o site no ar.
-
 ### Banco de dados
 
 As migrações ficam em `supabase/migrations/` e são aplicadas em ordem:
@@ -62,33 +162,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f supabase/migrati
 
 (Repetir pra cada arquivo novo em `supabase/migrations/`, na ordem.)
 
-As tabelas têm RLS ativado sem policies: a chave publishable do Supabase não lê nem escreve nada. Todo acesso passa pelo servidor do Next.js (`src/data/`), usando a `DATABASE_URL`.
-
-### Fotos das cartinhas
-
-Ficam no bucket público `fotos` do Supabase Storage (criado pela migração `0004_bucket_fotos.sql`), em `jogadores/<id>/<timestamp>.jpg`; a URL pública vai na coluna `jogador.foto_url`. Qualquer um lê pela URL, mas só o servidor sobe e apaga, com a `SUPABASE_SERVICE_ROLE_KEY` (`src/data/fotos.ts`).
-
-O navegador recorta a foto num quadrado e reduz pra 400×400 JPEG (~30 KB) antes de enviar (`src/lib/foto.ts`), então foto de celular de vários MB passa no limite de 1 MB das Server Actions. Trocar ou remover a foto apaga a anterior do bucket, e excluir o jogador também; jogador arquivado mantém a foto.
-
-## Estrutura
-
-- `src/app/` — rotas e Server Actions
-- `src/data/` — camada de acesso a dados (só roda no servidor): queries, autenticação de admin
-- `src/components/` — componentes visuais (ex: cartinha do jogador)
-- `src/lib/` — constantes e helpers compartilhados entre servidor e cliente (`estilo.ts` tem as classes de botão, campo e painel)
-- `public/marca/escudo.png` — o escudo do time sem fundo, usado como máscara (pega a cor do tema)
-- `public/texturas/` — as estampas das camisas usadas de fundo
-
-## Identidade visual
-
-Tirada das camisas do grupo. Os temas seguem o sistema do aparelho até a pessoa escolher no botão do cabeçalho; a escolha fica no cookie `tema`.
-
-- **Escuro (camisa preta):** fundo preto com rosas vinho, detalhes dourados
-- **Claro (camisa branca):** fundo com mármore cinza, detalhes em azul-marinho
-
-As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-dourado`...), redefinidos por tema. Use os tokens em vez de cores fixas, assim o componente já funciona nos dois temas. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
-
-A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ouro, prata ou bronze pelo nível, e todas as medidas em `cqw` pra escalar com a largura da carta.
+As tabelas têm RLS ativado sem policies: a chave publishable do Supabase não lê nem escreve nada. Todo acesso passa pelo servidor do Next.js (`src/data/`), usando a `DATABASE_URL`, e toda escrita chama `requireAdmin()`.
 
 ### Dados de teste
 
@@ -101,43 +175,45 @@ npm run seed:limpar   # apaga só os dados de teste
 
 Tudo que o seed cria tem id começando com `5eed`, então a limpeza não encosta nos dados reais.
 
-## Nível das cartinhas e seleção do fut
+### Deploy na Vercel
 
-Os critérios ficam em `src/lib/nivel.ts`.
+Importar o repositório na Vercel e cadastrar as mesmas variáveis de ambiente acima (a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto, senão as fotos não sobem).
 
-**Nível (60 a 95):** o admin escolhe o nível de cada jogador no cadastro (bronze 60–69, prata 70–79, ouro 80–95), e os futs sobem ou descem **até 10 pontos** a partir dele. A carta mostra o nível atual e a variação (▲/▼).
+A `DATABASE_URL` tem que ser a do pooler do Supabase, em qualquer uma das duas portas:
 
-Cada fut dá uma nota ao jogador:
+- **6543** (modo transação) — a recomendada pra serverless: o pooler não guarda prepared statements, e `src/data/db.ts` desliga eles sozinho ao ver essa porta.
+- **5432** (modo sessão) — também funciona.
 
-- **Gols e assistências** somam pontos
-- **Defesa**: metade do saldo do time no fut (quanto sofreu a menos ou a mais que a média do jogo)
-- **Peso por posição**: goleiro e zagueiro têm peso alto na defesa e normal em gols/assistências; meia e atacante, o contrário. Sem posição, tudo normal
+Cada instância serverless abre o próprio pool (no máximo 5 conexões, devolvidas depois de 20s paradas), pra não estourar o limite de conexões do Supabase com o site no ar.
 
-A nota média por fut do jogador é comparada com a média do grupo dele (goleiros + zagueiros, meias + atacantes; quem não tem posição é comparado com todo mundo): acima da média sobe, abaixo desce. Com poucos jogos a variação é menor (1 fut conta 25%, 3 futs 50%), pra um jogo isolado não mexer demais na carta.
+## Detalhes
 
-A **seleção do fut** usa a mesma nota, só que daquele fut: os 5 melhores (com nota positiva), e o primeiro é o craque.
+### Fotos das cartinhas
 
-## Sorteio de times
+Ficam no bucket público `fotos` do Supabase Storage (migração `0004_bucket_fotos.sql`), em `jogadores/<id>/<timestamp>.jpg`; a URL pública vai na coluna `jogador.foto_url`. Qualquer um lê pela URL, mas só o servidor sobe e apaga, com a `SUPABASE_SERVICE_ROLE_KEY` (`src/data/fotos.ts`).
 
-Critérios em `src/lib/sorteio.ts`. A força de cada time é a soma dos níveis das cartinhas. O sorteio:
+Ao escolher a foto, abre um enquadramento (arrastar, pinça ou roda do mouse), e o navegador recorta e reduz pra 400×400 JPEG (~30 KB) antes de enviar (`src/lib/foto.ts`), então foto de celular de vários MB passa no limite de 1 MB das Server Actions. Trocar ou remover a foto apaga a anterior do bucket, e excluir o jogador também; jogador arquivado mantém a foto.
 
-1. Divide cada posição entre os dois lados, intercalando: um goleiro pra cada time, zagueiros divididos, e assim por diante. Quem não tem posição completa os times. Os times ficam do mesmo tamanho (ou com um a mais, se o número for ímpar)
-2. Troca jogadores da mesma posição entre os times enquanto isso aproximar a força dos dois
-3. Repete isso 200 vezes com ordens aleatórias e escolhe ao acaso uma das divisões com diferença de até 2 pontos a mais que a melhor, pra "sortear de novo" trazer times diferentes
+### Identidade visual
 
-Tudo roda no navegador, nada é salvo. O admin pode levar os times sorteados pro registro do fut (`/futs/novo?branco=…&preto=…`).
+Tirada das camisas do grupo. Os temas seguem o sistema do aparelho até a pessoa escolher no botão do cabeçalho; a escolha fica no cookie `tema`.
 
-## Admin
+- **Escuro (camisa preta):** fundo preto com rosas vinho, detalhes dourados
+- **Claro (camisa branca):** fundo com mármore cinza, detalhes em azul-marinho
 
-A lista de jogadores é pública. Para cadastrar, entre em `/admin/login` com a `ADMIN_PASSWORD`. A sessão fica num cookie assinado por 30 dias.
+As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-dourado`...), redefinidos por tema. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
 
-## Workflow de contribuição
+A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ouro, prata ou bronze pelo nível, e todas as medidas em `cqw` pra escalar com a largura da carta, do elenco no desktop ao campo no celular.
 
-Projeto pessoal, mas seguindo boas práticas:
+### Admin
 
-- `main` sempre estável e protegida — nada é commitado direto nela
-- Uma branch por mudança, prefixada por tipo: `feat/`, `fix/`, `chore/`, `docs/`
-- Commits seguindo [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `chore:`, `docs:`...)
-- Toda mudança vira Pull Request para `main`, revisado e aprovado manualmente antes do merge
-- CI (`.github/workflows/ci.yml`) roda lint e build em toda PR
-- Toda PR atualiza o [`ROADMAP.md`](ROADMAP.md), marcando o que foi entregue e se já foi testado
+Tudo é público pra ler. Pra lançar dados, entre em `/admin/login` com a `ADMIN_PASSWORD`. A sessão fica num cookie assinado (HMAC), `httpOnly`, por 30 dias.
+
+### Estrutura
+
+- `src/app/` — rotas e Server Actions
+- `src/data/` — acesso a dados (só roda no servidor): queries, fotos, autenticação de admin
+- `src/components/` — componentes visuais (cartinha, campo, placar, menu)
+- `src/lib/` — regras e helpers compartilhados entre servidor e cliente (nível, seleção, sorteio, ranking, `estilo.ts` com as classes de botão, campo e painel)
+- `supabase/migrations/` — o esquema do banco, em ordem
+- `docs/prints/` — os prints deste README

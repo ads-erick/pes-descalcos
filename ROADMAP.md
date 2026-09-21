@@ -35,6 +35,8 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **No ar na Vercel** — https://pes-descalcos.vercel.app, publicando sozinho a cada merge na `main`. Testado no ar, no celular (360px) e no desktop: todas as telas abrem sem erro, as fotos carregam, nada rola de lado e as telas de admin mandam pro login sem sessão. Elenco de verdade cadastrado (20 jogadores, todos com foto) e o primeiro fut registrado
 
+- [x] **README com prints e o fluxo de trabalho** — README refeito pra deixar o repositório público: prints das telas (os dois temas, seleção, celular, futs, rankings, sorteio e admin, tirados do site com os dados reais), uma nota deixando claro que o projeto foi feito inteiro com o Claude Code, e o fluxo pedido → reprodução → branch → testes → PR → revisão e merge. As regras do nível e da seleção, que estavam descritas na versão antiga, foram atualizadas. Tirando os prints apareceram três problemas no cabeçalho, que já estavam no ar: no desktop o acento do "PÉS" era cortado; em 320px o nome passava por baixo do botão de tema; e em tablet (768 a ~950px) o nome invadia o menu. Agora o layout de 3 colunas só começa em 1024px e antes disso o menu fica embaixo. Testado de 300 a 1600px, de 10 em 10, sem nada se sobrepondo e sem rolagem lateral
+
 ## Próximos passos
 
 Nada urgente: o site está no ar. O próximo passo é ir tirando itens do "Mais pra frente" conforme a galera for usando.
