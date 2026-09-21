@@ -37,6 +37,8 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **README com prints e o fluxo de trabalho** — README refeito pra deixar o repositório público: prints das telas (os dois temas, seleção, celular, futs, rankings, sorteio e admin, tirados do site com os dados reais), uma nota deixando claro que o projeto foi feito inteiro com o Claude Code, e o fluxo pedido → reprodução → branch → testes → PR → revisão e merge. As regras do nível e da seleção, que estavam descritas na versão antiga, foram atualizadas. Tirando os prints apareceram três problemas no cabeçalho, que já estavam no ar: no desktop o acento do "PÉS" era cortado; em 320px o nome passava por baixo do botão de tema; e em tablet (768 a ~950px) o nome invadia o menu. Agora o layout de 3 colunas só começa em 1024px e antes disso o menu fica embaixo. Testado de 300 a 1600px, de 10 em 10, sem nada se sobrepondo e sem rolagem lateral
 
+- [x] **Sem "(escolhido na mão)" na seleção** — quem o admin põe na mão numa vaga aparece na lista da seleção igual aos outros, sem o aviso. A troca continua funcionando igual, e a janela de troca ainda oferece voltar pra escolha automática. O print da seleção no README foi refeito sem o aviso
+
 ## Próximos passos
 
 Nada urgente: o site está no ar. O próximo passo é ir tirando itens do "Mais pra frente" conforme a galera for usando.
