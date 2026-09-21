@@ -79,7 +79,6 @@ export const campoPequeno =
   "h-10 rounded-md border-2 border-linha bg-superficie px-2 transition duration-150 focus:border-destaque focus:outline-2 focus:outline-offset-2 focus:outline-destaque";
 
 export const painel = "rounded-lg border-2 border-linha bg-superficie";
-export const painelClicavel = `${painel} block transition duration-150 hover:border-destaque ${foco}`;
 
 export const vazio =
   "rounded-lg border-2 border-dashed border-linha bg-superficie/60 p-8 text-center text-apagado";

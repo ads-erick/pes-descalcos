@@ -31,6 +31,8 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **Seleção pelos números + troca na mão** — a seleção (e o craque, e os destaques do fut) usava a mesma nota do nível, que soma metade do saldo do time: num 20x12, quem fez 1 gol no time que ganhou passava na frente de quem fez 2G/1A no que perdeu. Agora é gols + assistências, com desempate por gols e depois pelo placar do time (que é o que separa goleiros e zagueiros). O nível das cartinhas continua com o saldo. O admin clica numa carta (ou vaga vazia) da seleção e escolhe qualquer um que jogou o fut, de qualquer posição; a lista mostra "escolhido na mão" e dá pra voltar pra escolha automática. As escolhas ficam na tabela `selecao_escolha` (migração `0007`) e quem não jogou mais o fut (fut editado) é ignorado
 
+- [x] **Ajustes no celular** — na lista de futs com o "Editar" do admin, o placar espremia e só aparecia um lado, e o "Editar" (posicionado por cima do card) podia cobrir o placar quando o celular aumenta a letra; agora o "Editar" fica no fluxo ao lado do placar, que não encolhe, e o texto do resultado é que quebra linha. A carta pequena do campo (seleção no celular) voltou a mostrar o nome embaixo do apelido e os rótulos GOL/AST, maiores em relação à carta pra dar pra ler. O botão "Admin" do cabeçalho agora recarrega a página inteira: a navegação do Next não refaz o layout, então uma aba aberta antes do login (ou o atalho na tela inicial) continuava mostrando "Admin" mesmo logado, e tocar nele só voltava pro elenco. Depois do login você volta pra página onde estava
+
 ## Próximos passos
 
 Em ordem de prioridade:

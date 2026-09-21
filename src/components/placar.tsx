@@ -18,7 +18,7 @@ export function Placar({
     : "min-w-10 px-2 pt-1 text-3xl";
 
   return (
-    <div className="flex items-stretch overflow-hidden rounded-md border-2 border-tinta font-numero leading-none tabular-nums">
+    <div className="flex shrink-0 items-stretch overflow-hidden rounded-md border-2 border-tinta font-numero leading-none tabular-nums">
       <span className={`grid place-items-center ${tamanho} ${faixaTime.branco}`}>
         <span className={perdeu("branco")}>{branco}</span>
       </span>
