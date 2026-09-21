@@ -181,9 +181,6 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                             Craque
                           </span>
                         )}
-                        {vaga.manual && (
-                          <span className="ml-2 text-xs text-apagado">(escolhido na mão)</span>
-                        )}
                         {vaga.atuacao.posicao !== vaga.posicao && (
                           <span className="ml-2 text-xs text-apagado">
                             (improvisado
