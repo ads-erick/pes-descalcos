@@ -37,16 +37,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <header className="border-b-2 border-dourado bg-faixa text-sobre-faixa">
-          {/* Celular: marca + ações em cima, menu embaixo. Desktop: marca | menu | ações */}
-          <nav className="mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto] items-center gap-x-2 gap-y-3 px-4 py-3 sm:gap-x-4 md:grid-cols-[1fr_auto_1fr]">
+          {/* Até 1023px: marca + ações em cima, menu embaixo. A partir de 1024px: marca | menu | ações
+              (antes disso, em tablet, a marca invadia o menu) */}
+          <nav className="mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-3 px-4 py-3 sm:gap-x-4 lg:grid-cols-[1fr_auto_1fr]">
             {/* min-w-0 + truncate: em tela muito estreita o nome corta em vez de
-                empurrar a faixa e dar rolagem lateral na página inteira */}
+                empurrar a faixa e dar rolagem lateral na página inteira. O truncate corta o que
+                passa da linha, então ela precisa de folga pro acento do É */}
             <Link
               href="/jogadores"
-              className="flex min-w-0 items-center gap-2 justify-self-start sm:gap-3"
+              className="flex max-w-full min-w-0 items-center gap-2 justify-self-start sm:gap-3 lg:max-w-none"
             >
               <span className="escudo h-9 shrink-0 text-dourado sm:h-11" aria-hidden />
-              <span className="truncate font-slab text-base leading-none whitespace-nowrap uppercase sm:text-lg">
+              <span className="min-w-0 truncate py-0.5 font-slab text-base leading-tight whitespace-nowrap uppercase sm:text-lg">
                 Pés Descalços
                 <span className="ml-1.5 align-top font-numero text-sm tracking-widest text-dourado">
                   FC
@@ -56,11 +58,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
             {/* O -mx-4/px-4 estende a rolagem até a borda da tela; o overflow também
                 impede que o menu estique a coluna do grid em tela estreita */}
-            <div className="order-3 col-span-2 -mx-4 overflow-x-auto border-t border-dourado/25 px-4 pt-2 md:order-2 md:col-span-1 md:mx-0 md:overflow-x-visible md:border-0 md:px-0 md:pt-0">
+            <div className="order-3 col-span-2 -mx-4 overflow-x-auto border-t border-dourado/25 px-4 pt-2 lg:order-2 lg:col-span-1 lg:mx-0 lg:overflow-x-visible lg:border-0 lg:px-0 lg:pt-0">
               <Menu />
             </div>
 
-            <div className="order-2 flex shrink-0 items-center gap-2 justify-self-end sm:gap-3 md:order-3">
+            <div className="order-2 flex shrink-0 items-center gap-2 justify-self-end sm:gap-3 lg:order-3">
               <BotaoTema />
               {admin ? (
                 <form action={logoutAction}>

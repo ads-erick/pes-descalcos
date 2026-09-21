@@ -15,7 +15,7 @@ export function Menu() {
   const caminho = usePathname();
 
   return (
-    <ul className="flex items-center justify-between gap-1 font-numero text-lg tracking-wider uppercase sm:gap-2 sm:text-xl md:justify-center md:gap-8">
+    <ul className="flex items-center justify-between gap-1 font-numero text-lg tracking-wider uppercase sm:gap-2 sm:text-xl md:justify-center md:gap-10 lg:gap-8">
       {ITENS.map(({ href, label }) => {
         const atual = caminho === href || caminho.startsWith(`${href}/`);
         return (
