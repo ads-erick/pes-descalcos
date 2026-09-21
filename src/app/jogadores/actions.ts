@@ -95,7 +95,9 @@ export async function editarJogadorAction(
   const { estado, dados, foto } = validar(formData);
   if (estado) return estado;
 
-  await atualizarJogador(id, dados, foto);
+  // O campo vem preenchido com o nível atual da carta; só conta como troca se mudou
+  const mudouNivel = String(dados.nivelBase) !== formData.get("nivelAtual");
+  await atualizarJogador(id, dados, foto, mudouNivel);
   revalidatePath("/jogadores");
   revalidatePath("/futs");
   redirect("/jogadores");

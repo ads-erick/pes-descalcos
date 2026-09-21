@@ -6,7 +6,7 @@ import { sql } from "./db";
 import { requireAdmin } from "./auth";
 import { apagarFoto, enviarFoto } from "./fotos";
 import type { Posicao } from "@/lib/jogador";
-import { mediasPorGrupo, nivel } from "@/lib/nivel";
+import { type AtuacaoNoFut, grupoDa, nivel, nota, variacoesPorFut } from "@/lib/nivel";
 
 export type JogadorResumo = {
   id: string;
@@ -45,33 +45,70 @@ const colunas = (j: NovoJogador) => ({
   nivel_base: j.nivelBase,
 });
 
-// Cartinhas de todo mundo, arquivados inclusive (a seleção de um fut antigo pode ter
-// quem já saiu). A média do grupo usada no nível continua sendo só a do elenco atual.
+// Cartinhas de todo mundo, arquivados inclusive (a seleção de um fut antigo pode ter quem já saiu)
 const listarCartas = cache(async (): Promise<(JogadorResumo & { ativo: boolean })[]> => {
   await connection();
-  const jogadores = await sql<(Omit<JogadorResumo, "nivel"> & { saldo: number; ativo: boolean })[]>`
-    select
-      j.id, j.nome, j.apelido, j.numero, j.posicao, j.ativo,
-      j.foto_url as "fotoUrl",
-      j.nivel_base as "nivelBase",
-      count(p.id) filter (where p.presente)::int as jogos,
-      coalesce(sum(p.gols), 0)::int as gols,
-      coalesce(sum(p.assistencias), 0)::int as assistencias,
-      coalesce(sum(
-        case p.cor_time
+  const [jogadores, participacoes] = await Promise.all([
+    sql<(Omit<JogadorResumo, "nivel"> & { ativo: boolean; nivelBaseEm: Date })[]>`
+      select
+        j.id, j.nome, j.apelido, j.numero, j.posicao, j.ativo,
+        j.foto_url as "fotoUrl",
+        j.nivel_base as "nivelBase",
+        j.nivel_base_em as "nivelBaseEm",
+        count(p.id) filter (where p.presente)::int as jogos,
+        coalesce(sum(p.gols), 0)::int as gols,
+        coalesce(sum(p.assistencias), 0)::int as assistencias
+      from jogador j
+      left join participacao p on p.jogador_id = j.id
+      group by j.id
+    `,
+    // Todo mundo que jogou cada fut, na ordem em que os futs aconteceram
+    sql<
+      {
+        jogadorId: string;
+        futId: string;
+        futCriadoEm: Date;
+        posicao: Posicao | null;
+        gols: number;
+        assistencias: number;
+        saldo: number;
+      }[]
+    >`
+      select
+        p.jogador_id as "jogadorId", p.fut_id as "futId", f.criado_em as "futCriadoEm",
+        j.posicao, p.gols, p.assistencias,
+        coalesce(case p.cor_time
           when 'branco' then f.placar_branco - f.placar_preto
           when 'preto' then f.placar_preto - f.placar_branco
-        end
-      ), 0)::int as saldo
-    from jogador j
-    left join participacao p on p.jogador_id = j.id
-    left join fut f on f.id = p.fut_id
-    group by j.id
-  `;
+        end, 0)::int as saldo
+      from participacao p
+      join fut f on f.id = p.fut_id
+      join jogador j on j.id = p.jogador_id
+      where p.presente
+      order by f.data, f.criado_em
+    `,
+  ]);
 
-  const medias = mediasPorGrupo(jogadores.filter((j) => j.ativo));
+  const atuacoes = participacoes.map((p) => ({
+    ...p,
+    grupo: grupoDa(p.posicao),
+    pontos: nota(p, p.posicao),
+  })) satisfies AtuacaoNoFut[];
+  const variacoes = variacoesPorFut(atuacoes);
+
+  const porJogador = Map.groupBy(atuacoes, (a) => a.jogadorId);
+
   return jogadores
-    .map(({ saldo, ...j }) => ({ ...j, nivel: nivel({ ...j, saldo }, j.nivelBase, medias) }))
+    .map(({ nivelBaseEm, ...j }) => ({
+      ...j,
+      // Só conta o que o jogador fez depois da última vez que o nível foi escolhido na mão
+      nivel: nivel(
+        j.nivelBase,
+        (porJogador.get(j.id) ?? [])
+          .filter((a) => a.futCriadoEm > nivelBaseEm)
+          .map((a) => variacoes.get(a)!),
+      ),
+    }))
     .sort(
       (a, b) =>
         b.nivel - a.nivel ||
@@ -130,10 +167,18 @@ export async function listarEscalaveis(futId?: string): Promise<JogadorEscalavel
   `;
 }
 
-export async function atualizarJogador(id: string, jogador: NovoJogador, foto: MudancaFoto) {
+// Trocar o nível faz ele valer a partir de agora: os futs de antes param de contar
+export async function atualizarJogador(
+  id: string,
+  jogador: NovoJogador,
+  foto: MudancaFoto,
+  mudouNivel: boolean,
+) {
   await requireAdmin();
+  const { nivel_base, ...resto } = colunas(jogador);
+  const nivel = mudouNivel ? { nivel_base, nivel_base_em: new Date() } : {};
   if (!foto) {
-    await sql`update jogador set ${sql(colunas(jogador))} where id = ${id}`;
+    await sql`update jogador set ${sql({ ...resto, ...nivel })} where id = ${id}`;
     return;
   }
 
@@ -141,7 +186,7 @@ export async function atualizarJogador(id: string, jogador: NovoJogador, foto: M
     select foto_url as "fotoUrl" from jogador where id = ${id}
   `;
   const fotoUrl = foto === "remover" ? null : await enviarFoto(id, foto);
-  await sql`update jogador set ${sql({ ...colunas(jogador), foto_url: fotoUrl })} where id = ${id}`;
+  await sql`update jogador set ${sql({ ...resto, ...nivel, foto_url: fotoUrl })} where id = ${id}`;
   await apagarFoto(anterior?.fotoUrl ?? null);
 }
 
