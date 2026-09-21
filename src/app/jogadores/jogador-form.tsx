@@ -175,16 +175,17 @@ export function JogadorForm({
             className={campo}
           />
           <p id="nivelBase-ajuda" className="mt-1 text-xs text-apagado">
-            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80).
+            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80). Dá pra
+            mudar quando quiser; os futs só somam ou tiram até 2 pontos em cima daqui.
           </p>
         </Campo>
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          {children && <div className="mr-auto">{children}</div>}
+        <div className="flex items-center gap-3 pt-2">
           <Link href="/jogadores" className={botaoSecundario}>
             Cancelar
           </Link>
-          <button type="submit" disabled={pending} className={botaoPrimario}>
+          {children}
+          <button type="submit" disabled={pending} className={`${botaoPrimario} ml-auto`}>
             {pending ? "Salvando..." : "Salvar"}
           </button>
         </div>

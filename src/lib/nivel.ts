@@ -24,8 +24,14 @@ export const NIVEL_MIN = 70;
 export const NIVEL_MAX = 95;
 // Sugestão do formulário pra quem ainda não tem nível escolhido
 export const NIVEL_PADRAO = 70;
-// Quanto as estatísticas podem mexer no nível escolhido, pra cima ou pra baixo
-const VARIACAO_MAX = 10;
+// Quanto as estatísticas podem tirar do nível escolhido. O nível é escolhido na mão;
+// os futs só dão um empurrãozinho em cima dele.
+const QUEDA_MAX = 2;
+// E quanto podem somar, no melhor dos casos (lá embaixo, pra quem tem nível baixo)
+const GANHO_MAX = 2;
+// Subir fica exponencialmente mais difícil: a cada MEIA_VIDA níveis acima do mínimo o ganho
+// máximo cai pela metade. Com 70 dá pra ganhar 2, com 78 só 1, com 86 meio ponto, e por aí vai.
+const MEIA_VIDA = 8;
 // Quanto cada ponto de nota por fut acima (ou abaixo) da média do grupo vale em nível
 const NIVEL_POR_PONTO = 5;
 // Com poucos jogos o nível fica perto do escolhido: com 3 jogos conta metade, com 9 conta 75%
@@ -77,15 +83,20 @@ export function mediasPorGrupo(jogadores: Estatisticas[]): Record<Grupo, number>
   return { defesa: media("defesa"), ataque: media("ataque"), todos: media("todos") };
 }
 
-// Nível escolhido no cadastro + até 10 pontos pelas estatísticas: jogar acima da média do grupo
-// sobe, abaixo desce. Gols e assistências só aumentam a nota; o que derruba é produzir menos que
-// o grupo ou o time tomar muito gol.
+// Teto do que as estatísticas podem somar em cima de um nível escolhido
+export function ganhoMaximo(nivelBase: number) {
+  return GANHO_MAX * 0.5 ** ((nivelBase - NIVEL_MIN) / MEIA_VIDA);
+}
+
+// Nível escolhido no cadastro + o empurrão das estatísticas: jogar acima da média do grupo sobe,
+// abaixo desce. Gols e assistências só aumentam a nota; o que derruba é produzir menos que o
+// grupo ou o time tomar muito gol. Quanto maior o nível escolhido, menos dá pra subir.
 export function nivel(j: Estatisticas, nivelBase: number, medias: Record<Grupo, number>) {
   if (j.jogos === 0) return nivelBase;
   const acimaDaMedia = nota(j, j.posicao) / j.jogos - medias[grupoDa(j.posicao)];
   const confianca = j.jogos / (j.jogos + JOGOS_PRA_CONFIAR);
   const variacao = acimaDaMedia * NIVEL_POR_PONTO * confianca;
-  const limitada = Math.min(VARIACAO_MAX, Math.max(-VARIACAO_MAX, variacao));
+  const limitada = Math.min(ganhoMaximo(nivelBase), Math.max(-QUEDA_MAX, variacao));
   return Math.round(Math.min(NIVEL_MAX, Math.max(NIVEL_MIN, nivelBase + limitada)));
 }
 
