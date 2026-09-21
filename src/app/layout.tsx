@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Alfa_Slab_One, Barlow, Bebas_Neue, Caveat_Brush } from "next/font/google";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { BotaoAdmin } from "@/components/botao-admin";
 import { BotaoTema } from "@/components/botao-tema";
 import { Menu } from "@/components/menu";
 import { isAdmin } from "@/data/auth";
@@ -81,9 +82,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   </button>
                 </form>
               ) : (
-                <Link href="/admin/login" className={botaoNav}>
-                  Admin
-                </Link>
+                <BotaoAdmin />
               )}
             </div>
           </nav>

@@ -42,7 +42,7 @@ export default async function FutsPage() {
             <li key={fut.id} className="relative">
               <Link
                 href={`/futs/${fut.id}`}
-                className={`${painelClicavel} flex items-center justify-between gap-4 p-3 pl-4 ${admin ? "pr-28" : ""}`}
+                className={`${painelClicavel} flex items-center justify-between gap-3 p-3 pl-4 sm:gap-4 ${admin ? "pr-26 sm:pr-28" : ""}`}
               >
                 <div className="min-w-0">
                   <p className="font-numero text-2xl leading-none tracking-wide">{fut.data}</p>

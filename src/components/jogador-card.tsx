@@ -157,7 +157,9 @@ export function JogadorCard({
             {nomeNaCarta}
           </h2>
           {/* Linha sempre presente (vazia sem apelido) pra todas as cartas terem a mesma altura */}
-          <p className="truncate text-[4.5cqw] leading-tight font-semibold opacity-70 @max-[7rem]:hidden">
+          {/* Na carta pequena (o campo no celular) as letras miúdas crescem em relação à
+              carta: no tamanho normal elas dariam uns 3px */}
+          <p className="truncate text-[4.5cqw] leading-tight font-semibold opacity-70 @max-[7rem]:text-[8cqw]">
             {jogador.apelido ? jogador.nome : "\u00a0"}
           </p>
           <div className="mx-auto mt-[2cqw] h-px w-[80%]" style={{ background: estilo.linha }} />
@@ -193,8 +195,7 @@ function Stat({
       className="flex flex-col-reverse"
       style={ultima ? undefined : { borderRight: `1px solid ${linha}` }}
     >
-      {/* Na carta pequena sobra só o número: o rótulo viraria um borrão de 4px */}
-      <dt className="font-numero text-[5cqw] leading-none tracking-wider opacity-70 @max-[7rem]:hidden">
+      <dt className="font-numero text-[5cqw] leading-none tracking-wider opacity-70 @max-[7rem]:text-[8cqw]">
         {label}
       </dt>
       <dd className="font-numero text-[11cqw] leading-none">{valor}</dd>
