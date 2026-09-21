@@ -33,12 +33,11 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **Ajustes no celular** — na lista de futs com o "Editar" do admin, o placar espremia e só aparecia um lado, e o "Editar" (posicionado por cima do card) podia cobrir o placar quando o celular aumenta a letra; agora o "Editar" fica no fluxo ao lado do placar, que não encolhe, e o texto do resultado é que quebra linha. A carta pequena do campo (seleção no celular) voltou a mostrar o nome embaixo do apelido e os rótulos GOL/AST, maiores em relação à carta pra dar pra ler. O botão "Admin" do cabeçalho agora recarrega a página inteira: a navegação do Next não refaz o layout, então uma aba aberta antes do login (ou o atalho na tela inicial) continuava mostrando "Admin" mesmo logado, e tocar nele só voltava pro elenco. Depois do login você volta pra página onde estava
 
+- [x] **No ar na Vercel** — https://pes-descalcos.vercel.app, publicando sozinho a cada merge na `main`. Testado no ar, no celular (360px) e no desktop: todas as telas abrem sem erro, as fotos carregam, nada rola de lado e as telas de admin mandam pro login sem sessão. Elenco de verdade cadastrado (20 jogadores, todos com foto) e o primeiro fut registrado
+
 ## Próximos passos
 
-Em ordem de prioridade:
-
-1. [ ] **Deploy na Vercel** — publicar o site pra galera acessar. A `DATABASE_URL` precisa ser a do pooler (a conexão direta do Supabase é só IPv6 e a Vercel não alcança), e a `SUPABASE_SERVICE_ROLE_KEY` precisa ir junto pras fotos. Passo a passo no README.
-2. [ ] **Elenco de verdade no ar** — o banco já está zerado; falta cadastrar os jogadores reais com foto, nível e número, pra estrear com o grupo.
+Nada urgente: o site está no ar. O próximo passo é ir tirando itens do "Mais pra frente" conforme a galera for usando.
 
 ## Mais pra frente
 
@@ -55,6 +54,7 @@ Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 ## Pendências técnicas
 
 - [ ] Senha de admin única para todos os admins; se entrarem mais pessoas, trocar por login individual.
+- [ ] A senha de admin e o segredo da sessão na produção são os mesmos do desenvolvimento. Trocar na Vercel (e dar Redeploy) se o projeto deixar de ser só entre amigos.
 - [ ] Jogador arquivado não tem tela pra voltar ao elenco; por enquanto é `update jogador set ativo = true` no banco.
 - [ ] Sem testes automatizados: os fluxos são verificados a cada PR por um script de navegador contra o banco, mas o script é descartável e não está versionado.
 - [ ] Os números do nível (5 de nível por ponto acima da média, variação máxima de 10, 3 jogos pra "confiar") foram calibrados com os dados de teste; revisar quando tiver uns 10 futs reais.
