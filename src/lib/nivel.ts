@@ -20,7 +20,7 @@ export function pesosDa(posicao: Posicao | null): Pesos {
   return posicao ? PESOS[posicao] : PESOS_SEM_POSICAO;
 }
 
-export const NIVEL_MIN = 60;
+export const NIVEL_MIN = 70;
 export const NIVEL_MAX = 95;
 // Sugestão do formulário pra quem ainda não tem nível escolhido
 export const NIVEL_PADRAO = 70;
@@ -93,6 +93,6 @@ export type Raridade = "bronze" | "prata" | "ouro";
 
 export function raridade(nivel: number): Raridade {
   if (nivel >= 80) return "ouro";
-  if (nivel >= 70) return "prata";
+  if (nivel >= 76) return "prata";
   return "bronze";
 }

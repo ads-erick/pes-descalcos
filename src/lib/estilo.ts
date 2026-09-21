@@ -51,7 +51,7 @@ export const botaoChip = `${botao} ${pequeno} px-2.5 ${contorno}`;
 
 // Excluir: mesma forma dos outros, só que na cor de perigo
 export const botaoPerigo = `${botao} ${grande} px-4 ${contornoPerigo}`;
-export const botaoPerigoChip = `${botao} ${pequeno} px-2.5 ${contornoPerigo}`;
+export const botaoPerigoPequeno = `${botao} ${medio} px-3 ${contornoPerigo}`;
 
 // Ações do cabeçalho (tema, entrar/sair): dourado, porque vivem na faixa escura
 export const botaoNav = `${botaoBase} ${focoNaFaixa} ${desabilitado} ${impresso} ${medio} px-3 border-2 border-dourado/60 text-sobre-faixa hover:border-dourado hover:bg-dourado hover:text-sobre-dourado`;
