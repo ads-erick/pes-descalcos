@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 import {
@@ -8,12 +7,19 @@ import {
   editarJogadorAction,
   type JogadorFormState,
 } from "@/app/jogadores/actions";
+import { CampoFoto, type FotoEscolhida } from "@/app/jogadores/campo-foto";
 import { JogadorCard } from "@/components/jogador-card";
 import type { JogadorEditavel, JogadorResumo } from "@/data/jogadores";
-import { botaoPerigoChip, botaoPrimario, botaoSecundario, campo } from "@/lib/estilo";
-import { reduzirFoto } from "@/lib/foto";
+import { botaoPrimario, botaoSecundario, campo } from "@/lib/estilo";
 import { POSICAO_LABEL, POSICOES, type Posicao, iniciais } from "@/lib/jogador";
 import { NIVEL_MAX, NIVEL_MIN, NIVEL_PADRAO } from "@/lib/nivel";
+
+// Solta os blob: da foto antiga; o original pode seguir vivo na foto nova
+// (é o mesmo arquivo, só reenquadrado)
+function descartar(foto: FotoEscolhida, nova?: FotoEscolhida) {
+  URL.revokeObjectURL(foto.url);
+  if (foto.imagem !== nova?.imagem) URL.revokeObjectURL(foto.imagem.url);
+}
 
 export function JogadorForm({
   jogador,
@@ -30,7 +36,7 @@ export function JogadorForm({
     jogador ? editarJogadorAction : criarJogadorAction,
     {},
   );
-  const [foto, setFoto] = useState<{ blob: Blob; url: string } | null>(null);
+  const [foto, setFoto] = useState<FotoEscolhida | null>(null);
   const [removerFoto, setRemoverFoto] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -92,16 +98,17 @@ export function JogadorForm({
         {removerFoto && <input type="hidden" name="removerFoto" value="on" />}
 
         <CampoFoto
+          escolhida={foto}
           atual={fotoAtual}
           iniciais={iniciais(previa.apelido || previa.nome || "?")}
           erroServidor={state.erros?.foto?.[0]}
           aoEscolher={(nova) => {
-            if (foto) URL.revokeObjectURL(foto.url);
+            if (foto) descartar(foto, nova);
             setFoto(nova);
             setRemoverFoto(false);
           }}
           aoRemover={() => {
-            if (foto) URL.revokeObjectURL(foto.url);
+            if (foto) descartar(foto);
             setFoto(null);
             setRemoverFoto(Boolean(jogador?.fotoUrl));
           }}
@@ -187,89 +194,6 @@ export function JogadorForm({
       <aside className="order-first mx-auto w-44 sm:w-52 lg:sticky lg:top-8 lg:order-none lg:mx-auto lg:w-full lg:max-w-[19rem]">
         <JogadorCard jogador={cartaPrevia} />
       </aside>
-    </div>
-  );
-}
-
-function CampoFoto({
-  atual,
-  iniciais,
-  erroServidor,
-  aoEscolher,
-  aoRemover,
-}: {
-  atual: string | null;
-  iniciais: string;
-  erroServidor?: string;
-  aoEscolher: (foto: { blob: Blob; url: string }) => void;
-  aoRemover: () => void;
-}) {
-  const [processando, setProcessando] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
-
-  async function escolher(e: React.ChangeEvent<HTMLInputElement>) {
-    const arquivo = e.target.files?.[0];
-    e.target.value = "";
-    if (!arquivo) return;
-
-    setProcessando(true);
-    setErro(null);
-    try {
-      const blob = await reduzirFoto(arquivo);
-      aoEscolher({ blob, url: URL.createObjectURL(blob) });
-    } catch {
-      setErro("Não deu pra abrir essa imagem. Tente uma foto JPG ou PNG.");
-    } finally {
-      setProcessando(false);
-    }
-  }
-
-  const mensagem = erro ?? erroServidor;
-
-  return (
-    <div>
-      {/* Sem rótulo: o avatar clicável e o botão de escolher foto já dizem o que é */}
-      <div className="flex items-center gap-4">
-        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-linha bg-superficie-2 font-slab text-2xl text-apagado">
-          {atual ? (
-            <Image
-              src={atual}
-              alt="Foto do jogador"
-              width={80}
-              height={80}
-              unoptimized
-              className="size-full object-cover"
-            />
-          ) : (
-            iniciais
-          )}
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <label
-            className={`${botaoSecundario} cursor-pointer`}
-          >
-            {processando ? "Preparando..." : atual ? "Trocar foto" : "Escolher foto"}
-            <input
-              id="foto"
-              type="file"
-              accept="image/*"
-              onChange={escolher}
-              disabled={processando}
-              className="sr-only"
-            />
-          </label>
-          {atual && (
-            <button type="button" onClick={aoRemover} className={botaoPerigoChip}>
-              Remover foto
-            </button>
-          )}
-        </div>
-      </div>
-      {mensagem && (
-        <p role="alert" className="mt-1 text-sm text-perigo">
-          {mensagem}
-        </p>
-      )}
     </div>
   );
 }
