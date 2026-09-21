@@ -16,7 +16,7 @@ Três tabelas (ver `supabase/migrations/0001_init.sql`):
 - **fut** — cada partida (data, placar time branco x time preto)
 - **participacao** — stats de um jogador em um fut específico (de que lado jogou, gols, assistências, presença)
 
-Não existe uma tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A "seleção do fut" é calculada dinamicamente a partir das stats em `participacao`, não fica persistida no banco.
+Não existe uma tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A "seleção do fut" é calculada dinamicamente a partir das stats em `participacao` (gols + assistências); só as vagas que o admin troca na mão ficam guardadas, em `selecao_escolha`.
 
 ## Rodando localmente
 

@@ -29,6 +29,8 @@ O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atua
 
 - [x] **Enquadrar a foto** — o recorte deixou de ser automático: ao escolher a foto abre um enquadramento com o quadrado que vai ser salvo, arrastando pra centralizar e aproximando pela barra, pela pinça (celular) ou pela roda do mouse. O círculo pontilhado mostra o que sobra no avatar. Na cartinha a foto virou um medalhão redondo menor, com moldura na cor da raridade, no lugar da foto grande que se desfazia num borrão embaixo. Dá pra reabrir pelo botão "Enquadrar" sem procurar o arquivo de novo, e "Trocar"/"Enquadrar"/"Remover" viraram botões do mesmo tamanho na mesma linha, no lugar de um chip pequeno embaixo do outro (#22)
 
+- [x] **Seleção pelos números + troca na mão** — a seleção (e o craque, e os destaques do fut) usava a mesma nota do nível, que soma metade do saldo do time: num 20x12, quem fez 1 gol no time que ganhou passava na frente de quem fez 2G/1A no que perdeu. Agora é gols + assistências, com desempate por gols e depois pelo placar do time (que é o que separa goleiros e zagueiros). O nível das cartinhas continua com o saldo. O admin clica numa carta (ou vaga vazia) da seleção e escolhe qualquer um que jogou o fut, de qualquer posição; a lista mostra "escolhido na mão" e dá pra voltar pra escolha automática. As escolhas ficam na tabela `selecao_escolha` (migração `0007`) e quem não jogou mais o fut (fut editado) é ignorado
+
 ## Próximos passos
 
 Em ordem de prioridade:

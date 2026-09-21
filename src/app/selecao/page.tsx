@@ -5,14 +5,17 @@ import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CampoFut7 } from "@/components/campo-fut7";
 import { CartaMenu } from "@/components/carta-menu";
 import { JogadorCard } from "@/components/jogador-card";
+import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, listarFuts } from "@/data/futs";
 import { buscarCartas } from "@/data/jogadores";
+import { buscarEscolhas } from "@/data/selecao";
 import { botaoSecundario, larguraCampo, larguraPadrao, painel, sombraCartao, sombraTarja, vazio, zoomCarta } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
-import { escalarSelecao, selecaoDoFut } from "@/lib/selecao";
+import { escalarSelecao, rankingDoFut, selecaoDoFut } from "@/lib/selecao";
 import { AlvoPrevia, Previa, PreviaCartas } from "./previa-carta";
 import { SeletorFut } from "./seletor-fut";
+import { TrocarVaga } from "./trocar-vaga";
 
 export const metadata: Metadata = { title: "Seleção do fut" };
 
@@ -39,16 +42,35 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
 
   // Sem fut escolhido, abre no último
   const id = typeof pedido === "string" && ehUuid(pedido) ? pedido : futs[0].id;
-  const fut = await buscarDetalheFut(id);
+  const [fut, escolhas, admin] = await Promise.all([
+    buscarDetalheFut(id),
+    buscarEscolhas(id),
+    isAdmin(),
+  ]);
   if (!fut) notFound();
 
-  const vagas = escalarSelecao(fut.atuacoes, fut.placarBranco, fut.placarPreto);
+  const vagas = escalarSelecao(fut.atuacoes, fut.placarBranco, fut.placarPreto, escolhas);
   const escalados = vagas.flatMap((v) => (v.atuacao ? [v.atuacao] : []));
   const cartas = await buscarCartas(escalados.map((a) => a.jogadorId));
   // Mesmo craque da lista de futs: a maior nota do fut (se alguém pontuou)
   const craque = selecaoDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto)[0]?.jogadorId;
 
-  const porPosicao = Map.groupBy(vagas, (v) => v.posicao);
+  // O número da vaga vai junto: é ele que a troca manual guarda
+  const porPosicao = Map.groupBy(
+    vagas.map((vaga, numero) => ({ ...vaga, numero })),
+    (v) => v.posicao,
+  );
+  // Quem pode entrar numa vaga trocada na mão: todo mundo que jogou, pelos números
+  const opcoes = admin
+    ? rankingDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto).map((a) => ({
+        jogadorId: a.jogadorId,
+        nome: a.nome,
+        posicao: a.posicao,
+        corTime: a.corTime,
+        gols: a.gols,
+        assistencias: a.assistencias,
+      }))
+    : [];
 
   // A cartinha de um escalado, com os números do fut: serve no campo e na prévia
   function cartinha(atuacao: (typeof escalados)[number]) {
@@ -100,30 +122,42 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               daPosicao.map((vaga, i) => {
                 const lugar = LUGAR[posicao];
                 const carta = vaga.atuacao && cartas.get(vaga.atuacao.jogadorId);
+                const conteudo =
+                  vaga.atuacao && carta ? (
+                    // O zoom fica aqui fora pra tarja de craque crescer junto com a carta
+                    <AlvoPrevia id={vaga.atuacao.jogadorId} className={`relative ${zoomCarta}`}>
+                      {cartinha(vaga.atuacao)}
+                      {vaga.atuacao.jogadorId === craque && (
+                        <span className={`${sombraTarja} absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
+                          <span className="escudo h-3" aria-hidden />
+                          Craque
+                        </span>
+                      )}
+                    </AlvoPrevia>
+                  ) : (
+                    <div className="grid aspect-[5/7] place-items-center rounded-lg border-2 border-dashed border-white/50 font-numero text-lg tracking-wider text-white/70">
+                      {POSICAO_SIGLA[posicao]}
+                    </div>
+                  );
                 return (
                   <div
                     key={`${posicao}-${i}`}
                     className="absolute w-[23%] -translate-x-1/2"
                     style={{ top: lugar.top, left: lugar.lefts[i] }}
                   >
-                    {vaga.atuacao && carta ? (
-                      // O zoom fica aqui fora pra tarja de craque crescer junto com a carta
-                      <AlvoPrevia
-                        id={vaga.atuacao.jogadorId}
-                        className={`relative ${zoomCarta}`}
+                    {admin ? (
+                      <TrocarVaga
+                        futId={fut.id}
+                        vaga={vaga.numero}
+                        posicao={posicao}
+                        atual={vaga.atuacao?.jogadorId ?? null}
+                        manual={vaga.manual}
+                        opcoes={opcoes}
                       >
-                        {cartinha(vaga.atuacao)}
-                        {vaga.atuacao.jogadorId === craque && (
-                          <span className={`${sombraTarja} absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
-                            <span className="escudo h-3" aria-hidden />
-                            Craque
-                          </span>
-                        )}
-                      </AlvoPrevia>
+                        {conteudo}
+                      </TrocarVaga>
                     ) : (
-                      <div className="grid aspect-[5/7] place-items-center rounded-lg border-2 border-dashed border-white/50 font-numero text-lg tracking-wider text-white/70">
-                        {POSICAO_SIGLA[posicao]}
-                      </div>
+                      conteudo
                     )}
                   </div>
                 );
@@ -146,6 +180,9 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                           <span className="ml-2 font-numero text-sm tracking-wider text-ouro uppercase">
                             Craque
                           </span>
+                        )}
+                        {vaga.manual && (
+                          <span className="ml-2 text-xs text-apagado">(escolhido na mão)</span>
                         )}
                         {vaga.atuacao.posicao !== vaga.posicao && (
                           <span className="ml-2 text-xs text-apagado">
