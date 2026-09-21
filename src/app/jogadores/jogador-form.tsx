@@ -28,7 +28,7 @@ export function JogadorForm({
 }: {
   jogador?: JogadorEditavel;
   // Cartinha atual de quem já está no elenco: de onde saem os números da carreira
-  // e a variação de nível que as estatísticas já deram
+  // e o nível que os futs já deram
   carta?: JogadorResumo;
   children?: React.ReactNode;
 }) {
@@ -51,7 +51,8 @@ export function JogadorForm({
     apelido: jogador?.apelido ?? "",
     numero: jogador?.numero?.toString() ?? "",
     posicao: jogador?.posicao ?? "",
-    nivelBase: String(jogador?.nivelBase ?? NIVEL_PADRAO),
+    // O campo mostra o nível da carta hoje; digitar outro troca o nível a partir de agora
+    nivelBase: String(carta?.nivel ?? jogador?.nivelBase ?? NIVEL_PADRAO),
   };
 
   // Os campos seguem sem controle do React; a prévia só espelha o que está digitado
@@ -87,14 +88,14 @@ export function JogadorForm({
     gols: carta?.gols ?? 0,
     assistencias: carta?.assistencias ?? 0,
     nivelBase,
-    // O que os futs já somaram (ou tiraram) continua valendo, pra prévia bater com o elenco
-    nivel: entreLimites(nivelBase + (carta ? carta.nivel - carta.nivelBase : 0)),
+    nivel: nivelBase,
   };
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-24 xl:gap-32">
       <form ref={formRef} onChange={espelhar} action={enviar} className="space-y-4">
         {jogador && <input type="hidden" name="id" value={jogador.id} />}
+        {carta && <input type="hidden" name="nivelAtual" value={carta.nivel} />}
         {removerFoto && <input type="hidden" name="removerFoto" value="on" />}
 
         <CampoFoto
@@ -175,16 +176,17 @@ export function JogadorForm({
             className={campo}
           />
           <p id="nivelBase-ajuda" className="mt-1 text-xs text-apagado">
-            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80).
+            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80). Dá pra
+            trocar quando quiser; depois disso cada fut sobe ou desce no máximo 2.
           </p>
         </Campo>
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          {children && <div className="mr-auto">{children}</div>}
+        <div className="flex items-center gap-3 pt-2">
           <Link href="/jogadores" className={botaoSecundario}>
             Cancelar
           </Link>
-          <button type="submit" disabled={pending} className={botaoPrimario}>
+          {children}
+          <button type="submit" disabled={pending} className={`${botaoPrimario} ml-auto`}>
             {pending ? "Salvando..." : "Salvar"}
           </button>
         </div>
