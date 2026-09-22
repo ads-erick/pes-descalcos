@@ -122,7 +122,14 @@ button:not(:disabled),
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  left: 0;
+  top: 0;
+  /* Com inset: 0 a camada acompanhava a janela, e aí a estampa dava um zoom quando a barra de
+     rolagem aparecia (janela ~15px mais estreita) ou quando a barra de endereço do celular sumia.
+     vw e lvh não mudam nessas horas, então a estampa fica igual em todas as telas. */
+  width: 100vw;
+  height: 100vh;
+  height: 100lvh;
   z-index: -1;
   pointer-events: none;
   background: var(--textura) center / cover no-repeat;

@@ -98,13 +98,6 @@ export function SorteioTimes({
 
       {times && (
         <section aria-label="Times sorteados" className="space-y-4">
-          <p className="text-center text-sm text-apagado">
-            Diferença de força:{" "}
-            <span className="font-numero text-xl text-tinta">
-              {Math.abs(forca(times.branco) - forca(times.preto))}
-            </span>{" "}
-            (soma dos níveis de cada time)
-          </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Time cor="branco" jogadores={times.branco} />
             <Time cor="preto" jogadores={times.preto} />

@@ -6,19 +6,9 @@ O que está sendo feito, o que vem a seguir e o que já está no ar. Toda PR atu
 
 Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
-## Em andamento
-
-- [~] **Supabase sempre acordado + backup diário** — o plano grátis do Supabase pausa o projeto depois de uma semana sem uso. Um cron da Vercel chama `/api/manter-ativo` todo dia, que faz uma consulta no banco. Junto vem um backup diário criptografado do banco pelo GitHub Actions (o repositório é público, então o arquivo só sai de lá criptografado). O keep-alive já está validado em produção; falta o primeiro backup passar (#31, #33)
-
 ## Próximos passos
 
-Pedidos da galera, na ordem em que devem sair. Primeiro os ajustes rápidos:
-
-- [ ] **Fundo com o mesmo enquadramento em todas as telas** — a estampa do fundo (nos dois temas) dá um leve zoom pra dentro ou pra fora dependendo da tela. Causa provável: ela é `cover` numa camada fixa do tamanho da janela (`body::before` em `globals.css`), então quando a página é comprida e aparece a barra de rolagem a janela fica uns 15px mais estreita e a imagem é reescalada; no celular a barra de endereço que some e volta faz o mesmo com a altura. A estampa tem que ficar do mesmo tamanho e na mesma posição em todas as telas.
-- [ ] **Sorteio sem a "Diferença de força"** — tirar a linha "Diferença de força: X (soma dos níveis de cada time)" embaixo dos times sorteados (`src/app/sorteio/sorteio-times.tsx`). O sorteio continua equilibrando do mesmo jeito.
-- [ ] **Carta do craque copiada com o ícone de craque** — na seleção, copiar ou baixar a carta do craque hoje gera só a carta, porque o menu embrulha só ela e a tarja de craque fica de fora de propósito (#13). Agora a tarja tem que entrar na imagem, só na carta do craque.
-
-Depois as features:
+Pedidos da galera, na ordem em que devem sair:
 
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
 - [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
@@ -51,7 +41,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Elenco e jogadores
 
 - [x] **Cadastro, edição e exclusão** — formulário com validação e prévia da cartinha ao lado enquanto se digita. Jogador que já jogou é arquivado em vez de apagado, pra não sumir do histórico (#2, #5, #13)
-- [x] **Cartinhas no modelo FUT** — bronze, prata e ouro pelo nível, escudo do clube, foto num medalhão redondo com a cor da raridade. Pro admin, clicar na carta abre a edição. Botão direito (ou toque longo no celular) copia ou baixa a carta em PNG (#11, #13, #20, #22, #24)
+- [x] **Cartinhas no modelo FUT** — bronze, prata e ouro pelo nível, escudo do clube, foto num medalhão redondo com a cor da raridade. Pro admin, clicar na carta abre a edição. Botão direito (ou toque longo no celular) copia ou baixa a carta em PNG — na carta do craque da seleção, a tarja sai junto (#11, #13, #20, #22, #24, #34)
 - [x] **Foto do jogador** — escolhida no cadastro ou na edição, com enquadramento (arrastar, pinça, roda do mouse). O navegador recorta e reduz antes de enviar; fica no Supabase Storage e sai do bucket quando é trocada ou o jogador excluído (#10, #22)
 - [x] **Filtros no elenco** — busca por nome, apelido ou camisa (sem ligar pra acento) e filtro por posição (#19)
 - [x] **Nível** — de 70 a 95 (bronze 70–75, prata 76–79, ouro 80–95), escolhido pelo admin e sempre respeitado. Cada fut registrado depois mexe no máximo 2 pontos, comparando o jogador com a média do seu grupo (defesa ou ataque) naquele fut; subir fica mais difícil quanto mais alto. A carta mostra ▲/▼ com a variação. Critérios em `src/lib/nivel.ts` (#6, #7, #23, #25)
@@ -69,10 +59,12 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Rankings e sorteio
 
 - [x] **Rankings** — gols, assistências, craques e vitórias (com aproveitamento), filtrando por mês, ano ou desde sempre. Empate divide a colocação (#8, #17)
+- [x] **Sorteio sem a diferença de força** — cada time continua mostrando a própria força e a média; o que saiu foi a linha comparando os dois (#34)
 - [x] **Sorteio de times balanceados** — marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, uma posição de cada vez. O admin abre o registro do fut já com a escalação sorteada. Critérios em `src/lib/sorteio.ts` (#9)
 
 ### Visual e celular
 
+- [x] **Fundo igual em todas as telas** — a estampa era medida pela janela e dava um zoom quando a barra de rolagem aparecia ou a barra de endereço do celular sumia; agora vai por `vw`/`lvh`, que não mudam nessas horas (#34)
 - [x] **Identidade visual** — tema claro (camisa branca) e escuro (camisa preta), seguindo o sistema ou escolhido no cabeçalho; escudo, fontes retrô e um sistema único de botões com foco de teclado (#11, #13, #14)
 - [x] **Celular** — testado de 320px a 430px sem rolagem lateral: cabeçalho que encolhe, alvos de toque maiores, campos que não dão zoom no iPhone, carta pequena legível no campo. Cabeçalho testado de 300 a 1600px sem nada se sobrepondo (#20, #27, #29)
 
@@ -81,5 +73,6 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 - [x] **Base** — Next.js + TypeScript + Tailwind, Postgres no Supabase com RLS, CI com lint e build em toda PR (#1, #2)
 - [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava (#2, #27)
 - [x] **No ar na Vercel** — conexão com o banco ajustada pra serverless (pooler em modo transação, conexões liberadas depois de 20s paradas), validação geral de todas as telas antes do deploy e elenco de verdade cadastrado (#21, #28)
+- [x] **Supabase sempre acordado + backup diário** — o plano grátis pausa o projeto depois de uma semana sem uso: um cron da Vercel chama `/api/manter-ativo` todo dia e faz uma consulta no banco. Às 6h o GitHub Actions guarda um backup do banco e das fotos, criptografado com AES-256 porque o repositório é público, e fica 30 dias nos artifacts. Restauração testada (#31, #33)
 - [x] **Dados de teste** — `npm run seed:teste` cria jogadores e futs de mentira, `npm run seed:limpar` apaga (#6)
 - [x] **README** — prints das telas e o fluxo de trabalho feito com o Claude Code (#29)
