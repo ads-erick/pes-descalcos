@@ -151,6 +151,7 @@ Abra [http://localhost:3000](http://localhost:3000). Pra testar no celular na me
 | `DATABASE_URL` | Supabase → Connect → Connection String (URI), sempre a do **pooler** (a conexão direta é só IPv6 e a Vercel não alcança). Caracteres especiais da senha precisam ser codificados (`@` → `%40`) |
 | `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
 | `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
+| `CRON_SECRET` | Só na Vercel. Qualquer valor aleatório: `openssl rand -base64 32`. Protege a rota do cron que mantém o Supabase acordado |
 
 ### Banco de dados
 
@@ -187,6 +188,33 @@ A `DATABASE_URL` tem que ser a do pooler do Supabase, em qualquer uma das duas p
 Cada instância serverless abre o próprio pool (no máximo 5 conexões, devolvidas depois de 20s paradas), pra não estourar o limite de conexões do Supabase com o site no ar.
 
 ## Detalhes
+
+### Backup e Supabase acordado
+
+O plano grátis do Supabase não faz backup e pausa o projeto depois de 7 dias sem uso. Duas coisas cobrem isso, ambas grátis:
+
+- **Cron da Vercel** (`vercel.json`): todo dia chama `/api/manter-ativo`, que faz um `select 1` no banco. A rota só responde a quem manda a `CRON_SECRET`, que a Vercel envia sozinha.
+- **Backup diário** (`.github/workflows/backup.yml`, 06:00 de Brasília): roda `scripts/backup.sh`, que junta o dump do schema `public` e as fotos das cartinhas num `.tar.gz` criptografado com AES-256. O arquivo fica 30 dias nos artifacts da Action. Como o repositório é público, qualquer pessoa logada no GitHub consegue baixar o artifact, e por isso ele só sai criptografado.
+
+Secrets do repositório (Settings → Secrets and variables → Actions):
+
+| Secret | Valor |
+|---|---|
+| `DATABASE_URL` | A mesma da Vercel. Se for a porta 6543, o script troca sozinho pra 5432, porque o `pg_dump` precisa do modo sessão |
+| `BACKUP_PASSPHRASE` | Senha longa (`openssl rand -base64 32`). **Guardar num gerenciador de senhas:** sem ela o backup não abre |
+
+Pra rodar na hora: Actions → Backup → Run workflow.
+
+Pra restaurar, baixar o artifact da execução escolhida e:
+
+```bash
+unzip backup-*.zip
+gpg -d pes-descalcos-*.tar.gz.gpg | tar -xz        # pede a BACKUP_PASSPHRASE
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f pes-descalcos-*/banco.sql
+```
+
+O `banco.sql` apaga e recria as tabelas, então dá pra rodar por cima do banco atual. As fotos ficam em `fotos/jogadores/...`, com os mesmos caminhos do bucket. Num projeto Supabase novo, é preciso rodar antes a migração `0004_bucket_fotos.sql`, subir a pasta `jogadores` pro bucket `fotos` e trocar o domínio antigo em `jogador.foto_url`.
+
 
 ### Fotos das cartinhas
 

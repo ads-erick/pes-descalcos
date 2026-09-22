@@ -1,0 +1,44 @@
+name: Backup
+
+on:
+  schedule:
+    # Todo dia às 06:00 de Brasília
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # O runner vem com o pg_dump 16, que recusa banco mais novo; o 17 lê o 15 e o 17 do Supabase
+      - name: Instalar o cliente do Postgres 17
+        run: |
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-17
+
+      - name: Gerar o backup criptografado
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+          PG_DUMP: /usr/lib/postgresql/17/bin/pg_dump
+          PSQL: /usr/lib/postgresql/17/bin/psql
+        run: scripts/backup.sh backup
+
+      # Repositório público: qualquer um logado no GitHub baixa o artifact, por isso ele só sai criptografado
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backup-${{ github.run_number }}
+          path: backup/*.gpg
+          retention-days: 30
+          if-no-files-found: error
+          compression-level: 0
