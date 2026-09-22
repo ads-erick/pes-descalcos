@@ -14,6 +14,16 @@ saida="${1:?informe a pasta de saída}"
 PG_DUMP="${PG_DUMP:-pg_dump}"
 PSQL="${PSQL:-psql}"
 
+# Secret colado com quebra de linha no fim chega aqui com ela: o pg_dump tenta um banco chamado
+# "postgres\n" e o gpg criptografa com uma chave diferente da senha guardada. Apara as pontas.
+aparar() {
+  local v="$1"
+  v="${v#"${v%%[![:space:]]*}"}"
+  printf '%s' "${v%"${v##*[![:space:]]}"}"
+}
+DATABASE_URL="$(aparar "$DATABASE_URL")"
+BACKUP_PASSPHRASE="$(aparar "$BACKUP_PASSPHRASE")"
+
 # O pg_dump não funciona pelo pooler em modo transação (6543); a mesma URL na 5432 é o modo sessão
 url="${DATABASE_URL/:6543\//:5432/}"
 

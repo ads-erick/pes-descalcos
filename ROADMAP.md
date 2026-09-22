@@ -8,7 +8,7 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 ## Em andamento
 
-- [~] **Supabase sempre acordado + backup diário** — o plano grátis do Supabase pausa o projeto depois de uma semana sem uso. Um cron da Vercel chama `/api/manter-ativo` todo dia, que faz uma consulta no banco. Junto vem um backup diário criptografado do banco pelo GitHub Actions (o repositório é público, então o arquivo só sai de lá criptografado) (#31)
+- [~] **Supabase sempre acordado + backup diário** — o plano grátis do Supabase pausa o projeto depois de uma semana sem uso. Um cron da Vercel chama `/api/manter-ativo` todo dia, que faz uma consulta no banco. Junto vem um backup diário criptografado do banco pelo GitHub Actions (o repositório é público, então o arquivo só sai de lá criptografado). O keep-alive já está validado em produção; falta o primeiro backup passar (#31, #33)
 
 ## Próximos passos
 
