@@ -1,56 +1,37 @@
 # Roadmap
 
-O que já foi feito, o que vem a seguir e o que está só no radar. Toda PR atualiza este arquivo.
+O que está sendo feito, o que vem a seguir e o que já está no ar. Toda PR atualiza este arquivo.
 
-**Legenda:** `[x]` pronto e testado · `[~]` pronto, mas falta testar · `[ ]` a fazer
+**Legenda:** `[x]` pronto e testado · `[~]` pronto, mas falta testar ou mergear · `[ ]` a fazer
 
-## Feito
+Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
-- [x] **Base do projeto** — Next.js + TypeScript + Tailwind, CI com lint e build em toda PR (#1)
-- [x] **Banco de dados** — tabelas `jogador`, `fut` e `participacao`, RLS ativado (#1, #2)
-- [x] **Cadastro de jogadores** — lista pública em cartinhas, formulário com validação (#2)
-- [x] **Área de admin** — login por senha única, sessão em cookie assinado, cadastro bloqueado sem sessão (#2)
-- [x] **Registro do fut** — data, placar, escalação branco/preto, gols e assistências por jogador; estatísticas refletidas nas cartinhas (#3)
-- [x] **Editar e excluir jogadores e futs** — link "Editar" nas listas (só pra admin), mesmo formulário do cadastro já preenchido, botão excluir com confirmação. Jogador que já jogou algum fut é arquivado em vez de apagado, pra não sumir do histórico (#5)
-- [x] **Detalhe do fut + seleção do fut** — página de cada partida (clicando no fut da lista) com placar, escalação branco/preto e a seleção do fut: top 5 pela nota do fut, com o craque em destaque. O "destaque" da lista virou o craque, pela mesma regra (#6)
-- [x] **Nível das cartinhas** — nível de 60 a 95 no canto da carta (bronze 60–69, prata 70–79, ouro 80–95), calculado com peso por posição: goleiro e zagueiro pesam mais pelos gols sofridos, meia e atacante pelos gols e assistências. Gols e assistências nunca tiram nível. Critérios em `src/lib/nivel.ts`; elenco ordenado por nível (#6)
-- [x] **Dados de teste** — `npm run seed:teste` cria 20 jogadores e 10 futs pra testar o layout, `npm run seed:limpar` apaga (#6)
-- [x] **Nível escolhido no cadastro** — o admin define o nível de cada jogador (60–95) no formulário e os futs mexem até 10 pontos pra cima ou pra baixo, comparando a nota média por fut com a média do grupo (defesa: goleiro + zagueiro; ataque: meia + atacante). A carta mostra ▲/▼ com a variação (#7)
-- [x] **Rankings** — página nova no menu com gols, assistências e presença (com % dos futs), filtrando por este mês, este ano ou desde sempre. Empate divide a colocação e jogador arquivado continua contando nos períodos em que jogou (#8)
-- [x] **Sorteio de times balanceados** — página "Sorteio" no menu (aberta pra todo mundo): marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados (um goleiro pra cada time, zagueiros divididos...). "Sortear de novo" traz outra divisão equilibrada. O admin tem um botão que abre o registro do fut já com a escalação sorteada. O cabeçalho no celular também foi arrumado: os links descem pra uma segunda linha em vez de estourar a tela. Critérios em `src/lib/sorteio.ts` (#9)
-- [x] **Foto na cartinha** — o admin escolhe a foto no cadastro ou na edição do jogador (com prévia na hora), pode trocar ou remover. O navegador recorta e reduz a foto antes de enviar, então foto de celular funciona direto. Sem foto, a carta continua com as iniciais. Fotos no Supabase Storage (#10)
-- [x] **Identidade visual** — tema claro (camisa branca: mármore e azul-marinho) e escuro (camisa preta: rosas e dourado), seguindo o sistema ou escolhido no cabeçalho. Escudo do time no cabeçalho, no rodapé, nas cartinhas e no ícone da aba. Fontes retrô, cartinhas no modelo FUT (moldura de ouro, prata e bronze, foto grande, escudo do clube), placar com as cores das camisas, botão de voltar nas telas de edição. Pro admin, clicar na carta abre a edição (#11)
-- [x] **Seleção do fut no campo** — página "Seleção" no menu com um campo de fut7 visto de cima e os melhores do fut por posição: 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pela mesma nota do fut. Abre no último fut e dá pra escolher qualquer outro. Se faltar gente numa posição, a vaga vai pro melhor que sobrou (aparece como "improvisado"). As cartas da seleção são pretas, no estilo das cartas inform do FIFA, com o mesmo nível da carta normal e os números do fut (gols, assistências e pontos). Na página do fut, o top 5 virou "Destaques do fut", com um botão pra seleção no campo (#12)
-- [x] **Limpeza visual** — gols e assistências no formato `2G/1A` nas listas, sem a contagem de jogadores no cabeçalho dos times, sem os pontos repetidos fora das cartas, "Marcar todos"/"Limpar" do sorteio com cara de botão e o "Registrar fut" alinhado com a lista. Abrir o `next dev` pelo IP da rede (pra testar no celular) era bloqueado como origem cruzada e a página não ficava clicável; liberado em `next.config.ts` (#12)
+## Em andamento
 
-- [x] **Celular arrumado** — o cabeçalho cabia só em tela de 390px ou mais: abaixo disso "Sorteio" e "Sair" ficavam pra fora e a página inteira rolava de lado. Agora o escudo e o nome encolhem no celular, o "Sair" fica só com o ícone, o menu rola sozinho se precisar e o nome corta em vez de estourar a tela (testado de 320px a 430px). O menu da cartinha (copiar/baixar PNG), que só abria com o botão direito, abre com toque longo de meio segundo — segurar e arrastar continua rolando a página. Os campos de time/gols/assistência do fut foram pra 16px e 40px de altura, senão o Safari do iPhone dava zoom ao focar e o alvo de toque ficava pequeno; os campos de número abrem o teclado numérico. Na carta pequena do campo (seleção no celular), o que virava borrão de 4px — número da camisa, nome completo, ▲/▼ e os rótulos GOL/AST — some e sobram nível, posição, nome e os números (#20)
-
-- [x] **Pronto pra Vercel** — validação geral antes do deploy: lint, build e TypeScript limpos, e uma passada de navegador em todas as telas (elenco, futs, detalhe do fut, rankings, seleção, sorteio, login e os formulários) em 320px, 390px e 1440px, nos dois temas, sem erro de console, sem requisição quebrada e sem rolagem lateral. Os fluxos de admin foram testados de ponta a ponta: criar, editar e excluir jogador e fut, validação do formulário, arquivamento de quem já jogou (o histórico continua) e upload de foto (sobe pro Storage, aparece na carta e some do bucket quando a foto é trocada ou o jogador excluído). Nenhum bug encontrado. A conexão com o banco foi ajustada pra serverless: na Vercel cada instância abre o próprio pool, então as conexões agora voltam pro pooler depois de 20s paradas e o pooler em modo transação (porta 6543) é reconhecido sozinho, desligando os prepared statements que ele não guarda (`src/data/db.ts`). Banco zerado: os 21 jogadores e 10 futs de teste foram apagados pra estrear com os dados reais (#21)
-
-- [x] **Enquadrar a foto** — o recorte deixou de ser automático: ao escolher a foto abre um enquadramento com o quadrado que vai ser salvo, arrastando pra centralizar e aproximando pela barra, pela pinça (celular) ou pela roda do mouse. O círculo pontilhado mostra o que sobra no avatar. Na cartinha a foto virou um medalhão redondo menor, com moldura na cor da raridade, no lugar da foto grande que se desfazia num borrão embaixo. Dá pra reabrir pelo botão "Enquadrar" sem procurar o arquivo de novo, e "Trocar"/"Enquadrar"/"Remover" viraram botões do mesmo tamanho na mesma linha, no lugar de um chip pequeno embaixo do outro (#22)
-
-- [x] **Seleção pelos números + troca na mão** — a seleção (e o craque, e os destaques do fut) usava a mesma nota do nível, que soma metade do saldo do time: num 20x12, quem fez 1 gol no time que ganhou passava na frente de quem fez 2G/1A no que perdeu. Agora é gols + assistências, com desempate por gols e depois pelo placar do time (que é o que separa goleiros e zagueiros). O nível das cartinhas continua com o saldo. O admin clica numa carta (ou vaga vazia) da seleção e escolhe qualquer um que jogou o fut, de qualquer posição; a lista mostra "escolhido na mão" e dá pra voltar pra escolha automática. As escolhas ficam na tabela `selecao_escolha` (migração `0007`) e quem não jogou mais o fut (fut editado) é ignorado
-
-- [x] **Ajustes no celular** — na lista de futs com o "Editar" do admin, o placar espremia e só aparecia um lado, e o "Editar" (posicionado por cima do card) podia cobrir o placar quando o celular aumenta a letra; agora o "Editar" fica no fluxo ao lado do placar, que não encolhe, e o texto do resultado é que quebra linha. A carta pequena do campo (seleção no celular) voltou a mostrar o nome embaixo do apelido e os rótulos GOL/AST, maiores em relação à carta pra dar pra ler. O botão "Admin" do cabeçalho agora recarrega a página inteira: a navegação do Next não refaz o layout, então uma aba aberta antes do login (ou o atalho na tela inicial) continuava mostrando "Admin" mesmo logado, e tocar nele só voltava pro elenco. Depois do login você volta pra página onde estava
-
-- [x] **No ar na Vercel** — https://pes-descalcos.vercel.app, publicando sozinho a cada merge na `main`. Testado no ar, no celular (360px) e no desktop: todas as telas abrem sem erro, as fotos carregam, nada rola de lado e as telas de admin mandam pro login sem sessão. Elenco de verdade cadastrado (20 jogadores, todos com foto) e o primeiro fut registrado
-
-- [x] **README com prints e o fluxo de trabalho** — README refeito pra deixar o repositório público: prints das telas (os dois temas, seleção, celular, futs, rankings, sorteio e admin, tirados do site com os dados reais), uma nota deixando claro que o projeto foi feito inteiro com o Claude Code, e o fluxo pedido → reprodução → branch → testes → PR → revisão e merge. As regras do nível e da seleção, que estavam descritas na versão antiga, foram atualizadas. Tirando os prints apareceram três problemas no cabeçalho, que já estavam no ar: no desktop o acento do "PÉS" era cortado; em 320px o nome passava por baixo do botão de tema; e em tablet (768 a ~950px) o nome invadia o menu. Agora o layout de 3 colunas só começa em 1024px e antes disso o menu fica embaixo. Testado de 300 a 1600px, de 10 em 10, sem nada se sobrepondo e sem rolagem lateral
-
-- [x] **Sem "(escolhido na mão)" na seleção** — quem o admin põe na mão numa vaga aparece na lista da seleção igual aos outros, sem o aviso. A troca continua funcionando igual, e a janela de troca ainda oferece voltar pra escolha automática. O print da seleção no README foi refeito sem o aviso
+- [~] **Supabase sempre acordado + backup diário** — o plano grátis do Supabase pausa o projeto depois de uma semana sem uso. Um cron da Vercel chama `/api/manter-ativo` todo dia, que faz uma consulta no banco. Junto vem um backup diário criptografado do banco pelo GitHub Actions (o repositório é público, então o arquivo só sai de lá criptografado) (#31)
 
 ## Próximos passos
 
-Nada urgente: o site está no ar. O próximo passo é ir tirando itens do "Mais pra frente" conforme a galera for usando.
+Pedidos da galera, na ordem em que devem sair. Primeiro os ajustes rápidos:
+
+- [ ] **Fundo com o mesmo enquadramento em todas as telas** — a estampa do fundo (nos dois temas) dá um leve zoom pra dentro ou pra fora dependendo da tela. Causa provável: ela é `cover` numa camada fixa do tamanho da janela (`body::before` em `globals.css`), então quando a página é comprida e aparece a barra de rolagem a janela fica uns 15px mais estreita e a imagem é reescalada; no celular a barra de endereço que some e volta faz o mesmo com a altura. A estampa tem que ficar do mesmo tamanho e na mesma posição em todas as telas.
+- [ ] **Sorteio sem a "Diferença de força"** — tirar a linha "Diferença de força: X (soma dos níveis de cada time)" embaixo dos times sorteados (`src/app/sorteio/sorteio-times.tsx`). O sorteio continua equilibrando do mesmo jeito.
+- [ ] **Carta do craque copiada com o ícone de craque** — na seleção, copiar ou baixar a carta do craque hoje gera só a carta, porque o menu embrulha só ela e a tarja de craque fica de fora de propósito (#13). Agora a tarja tem que entrar na imagem, só na carta do craque.
+
+Depois as features:
+
+- [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
+- [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
+- [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
 
 ## Mais pra frente
 
 Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 
-- [ ] **Foto em outras telas** — a foto já aparece nas cartinhas (elenco e seleção do fut); falta levar pro sorteio, rankings e destaques do fut.
+- [ ] **Foto em outras telas** — a foto já aparece nas cartinhas (elenco e seleção); falta levar pro sorteio, rankings e destaques do fut.
 - [ ] **Rankings de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
+- [ ] **Página do jogador** — hoje a carta só abre a edição (pro admin). Uma página com os números da carreira, os futs que jogou e o gráfico do nível fut a fut.
 - [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
-- [ ] **Evolução do jogador** — gráfico do nível fut a fut, na página do jogador (que ainda não existe: hoje a carta só abre a edição).
 - [ ] **Time do ano** — a seleção do campo, mas com o ano inteiro. Fazer perto do fim do ano, reusando `escalarSelecao`.
 - [ ] **Votação de MVP** — a galera vota no melhor de cada fut. Precisa de login por jogador.
 - [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de login por jogador.
@@ -58,7 +39,47 @@ Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 ## Pendências técnicas
 
 - [ ] Senha de admin única para todos os admins; se entrarem mais pessoas, trocar por login individual.
-- [ ] A senha de admin e o segredo da sessão na produção são os mesmos do desenvolvimento. Trocar na Vercel (e dar Redeploy) se o projeto deixar de ser só entre amigos.
+- [ ] A senha de admin e o segredo da sessão na produção são os mesmos do desenvolvimento. Trocar na Vercel (e dar Redeploy), principalmente agora que o repositório é público.
 - [ ] Jogador arquivado não tem tela pra voltar ao elenco; por enquanto é `update jogador set ativo = true` no banco.
 - [ ] Sem testes automatizados: os fluxos são verificados a cada PR por um script de navegador contra o banco, mas o script é descartável e não está versionado.
-- [ ] Os números do nível (5 de nível por ponto acima da média, variação máxima de 10, 3 jogos pra "confiar") foram calibrados com os dados de teste; revisar quando tiver uns 10 futs reais.
+- [ ] Os números do nível (quanto cada fut mexe, a curva que deixa subir mais difícil lá em cima) foram calibrados com dados de teste; revisar quando tiver uns 10 futs reais.
+
+## Feito
+
+Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está na PR indicada.
+
+### Elenco e jogadores
+
+- [x] **Cadastro, edição e exclusão** — formulário com validação e prévia da cartinha ao lado enquanto se digita. Jogador que já jogou é arquivado em vez de apagado, pra não sumir do histórico (#2, #5, #13)
+- [x] **Cartinhas no modelo FUT** — bronze, prata e ouro pelo nível, escudo do clube, foto num medalhão redondo com a cor da raridade. Pro admin, clicar na carta abre a edição. Botão direito (ou toque longo no celular) copia ou baixa a carta em PNG (#11, #13, #20, #22, #24)
+- [x] **Foto do jogador** — escolhida no cadastro ou na edição, com enquadramento (arrastar, pinça, roda do mouse). O navegador recorta e reduz antes de enviar; fica no Supabase Storage e sai do bucket quando é trocada ou o jogador excluído (#10, #22)
+- [x] **Filtros no elenco** — busca por nome, apelido ou camisa (sem ligar pra acento) e filtro por posição (#19)
+- [x] **Nível** — de 70 a 95 (bronze 70–75, prata 76–79, ouro 80–95), escolhido pelo admin e sempre respeitado. Cada fut registrado depois mexe no máximo 2 pontos, comparando o jogador com a média do seu grupo (defesa ou ataque) naquele fut; subir fica mais difícil quanto mais alto. A carta mostra ▲/▼ com a variação. Critérios em `src/lib/nivel.ts` (#6, #7, #23, #25)
+
+### Futs
+
+- [x] **Registro do fut** — data, placar, escalação branco/preto, gols e assistências por jogador; editar e excluir (#3, #5)
+- [x] **Lista e detalhe** — a lista mostra o vencedor e o craque; o detalhe mostra placar, escalação e os destaques do fut (#6, #15)
+
+### Seleção
+
+- [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
+- [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
+
+### Rankings e sorteio
+
+- [x] **Rankings** — gols, assistências, craques e vitórias (com aproveitamento), filtrando por mês, ano ou desde sempre. Empate divide a colocação (#8, #17)
+- [x] **Sorteio de times balanceados** — marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, uma posição de cada vez. O admin abre o registro do fut já com a escalação sorteada. Critérios em `src/lib/sorteio.ts` (#9)
+
+### Visual e celular
+
+- [x] **Identidade visual** — tema claro (camisa branca) e escuro (camisa preta), seguindo o sistema ou escolhido no cabeçalho; escudo, fontes retrô e um sistema único de botões com foco de teclado (#11, #13, #14)
+- [x] **Celular** — testado de 320px a 430px sem rolagem lateral: cabeçalho que encolhe, alvos de toque maiores, campos que não dão zoom no iPhone, carta pequena legível no campo. Cabeçalho testado de 300 a 1600px sem nada se sobrepondo (#20, #27, #29)
+
+### Infra e projeto
+
+- [x] **Base** — Next.js + TypeScript + Tailwind, Postgres no Supabase com RLS, CI com lint e build em toda PR (#1, #2)
+- [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava (#2, #27)
+- [x] **No ar na Vercel** — conexão com o banco ajustada pra serverless (pooler em modo transação, conexões liberadas depois de 20s paradas), validação geral de todas as telas antes do deploy e elenco de verdade cadastrado (#21, #28)
+- [x] **Dados de teste** — `npm run seed:teste` cria jogadores e futs de mentira, `npm run seed:limpar` apaga (#6)
+- [x] **README** — prints das telas e o fluxo de trabalho feito com o Claude Code (#29)
