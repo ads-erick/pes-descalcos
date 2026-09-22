@@ -10,6 +10,9 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
+- [ ] **Prévia da carta do craque com a tarja** — na seleção (desktop), passar o mouse numa carta mostra ela grande embaixo à esquerda, mas a do craque aparece sem a tarja "Craque". A prévia monta as cartas com `cartinha(atuacao)` sem o `comTarja`; é passar `atuacao.jogadorId === craque` ali em `src/app/selecao/page.tsx`.
+- [ ] **Escolher o craque na mão** — na seleção, o admin clica com o botão direito numa carta (ou toque longo no celular) e o menu que já copia/baixa ganha um "Tornar craque" (e "Voltar pro craque automático" quando já foi trocado). Guarda numa coluna nova `fut.craque_id` (migration, nula = vale a conta). Hoje o craque é calculado em quatro lugares — lista de futs, detalhe do fut, rankings (contagem de craques) e seleção — e todos precisam respeitar a escolha. Só entra como craque quem está na seleção daquele fut.
+- [ ] **Limite de tentativas no login do admin** — hoje dá pra chutar a senha sem parar. Guardar as tentativas erradas numa tabela (IP + horário) e bloquear por 15 min depois de umas 5 erradas. Memória da instância não serve: na Vercel cada instância tem a sua e elas somem.
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
 - [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
@@ -25,6 +28,23 @@ Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 - [ ] **Time do ano** — a seleção do campo, mas com o ano inteiro. Fazer perto do fim do ano, reusando `escalarSelecao`.
 - [ ] **Votação de MVP** — a galera vota no melhor de cada fut. Precisa de login por jogador.
 - [ ] **Confirmação de presença** — a galera marca que vai no fut e o sorteio já abre com essa lista (hoje quem marca é quem está sorteando). Precisa de login por jogador.
+
+## Segurança
+
+Revisão de 22/09/2026. O que já está ok:
+
+- [x] **Segredos longe do navegador** — `DATABASE_URL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` e `CRON_SECRET` só aparecem em código de servidor (`src/data/*` tem `server-only`, que quebra o build se um componente de navegador importar). Conferido também no resultado: build com segredos falsos e busca por eles nos arquivos que vão pro navegador, nada encontrado. A única variável pública é a URL do Supabase, que é pública mesmo.
+- [x] **SQL injection** — toda consulta passa pelo `` sql`...` `` da lib `postgres`, que manda os valores separados da consulta (nunca concatena texto). Os `sql({...})` de insert/update só usam colunas fixas do código, e tudo que vem de formulário passa pelo `zod` antes. Não tem `sql.unsafe` em lugar nenhum. (Prompt injection não se aplica: o site não usa IA.)
+- [x] **Escrita só pro admin** — toda função que grava no banco chama `requireAdmin()` na camada de dados, então chamar a server action direto sem o cookie não adianta.
+- [x] **Banco fechado pra API pública do Supabase** — RLS ligado em todas as tabelas, sem policies: a chave pública não lê nem grava nada.
+- [x] **Supabase acordado** — cron diário em `/api/manter-ativo`, protegido pela `CRON_SECRET` (#31).
+
+O que falta (tudo grátis):
+
+- [ ] **Limite de tentativas no login** — está nos próximos passos. As outras server actions não precisam: sem o cookie de admin elas não fazem nada.
+- [ ] **Captcha no login (Cloudflare Turnstile)** — grátis e sem aquele "clique nos semáforos". Com o limite de tentativas o ganho é pequeno, então fica depois dele. Precisa criar a conta na Cloudflare e pôr as duas chaves na Vercel.
+- [ ] **Cabeçalhos de segurança** — `X-Frame-Options`/`frame-ancestors` (ninguém embute o site num iframe pra enganar o admin), `X-Content-Type-Options`, `Referrer-Policy`, via `headers()` no `next.config.ts`.
+- [ ] **Dependabot** — o GitHub abre PR sozinho quando sai correção de segurança numa dependência.
 
 ## Pendências técnicas
 
