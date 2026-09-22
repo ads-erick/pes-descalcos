@@ -73,12 +73,17 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
     : [];
 
   // A cartinha de um escalado, com os números do fut: serve no campo e na prévia
-  function cartinha(atuacao: (typeof escalados)[number]) {
+  function cartinha(atuacao: (typeof escalados)[number], comTarja = false) {
     const carta = cartas.get(atuacao.jogadorId);
     if (!carta) return null;
     return (
-      // Só a carta entra no menu: a tarja de craque fica de fora da imagem
-      <CartaMenu nome={carta.apelido ?? carta.nome} sufixo="seleção">
+      // O que está aqui dentro é o que vira o PNG do menu. Na carta do craque, o pt-2
+      // abre dentro dela o espaço da tarja, que senão ficaria fora da imagem (#13)
+      <CartaMenu
+        nome={carta.apelido ?? carta.nome}
+        sufixo="seleção"
+        className={comTarja ? "relative pt-2" : undefined}
+      >
         <JogadorCard
           jogador={carta}
           inform
@@ -87,6 +92,12 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             { label: "AST", valor: atuacao.assistencias },
           ]}
         />
+        {comTarja && (
+          <span className={`${sombraTarja} absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
+            <span className="escudo h-3" aria-hidden />
+            Craque
+          </span>
+        )}
       </CartaMenu>
     );
   }
@@ -126,24 +137,25 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                   vaga.atuacao && carta ? (
                     // O zoom fica aqui fora pra tarja de craque crescer junto com a carta
                     <AlvoPrevia id={vaga.atuacao.jogadorId} className={`relative ${zoomCarta}`}>
-                      {cartinha(vaga.atuacao)}
-                      {vaga.atuacao.jogadorId === craque && (
-                        <span className={`${sombraTarja} absolute -top-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
-                          <span className="escudo h-3" aria-hidden />
-                          Craque
-                        </span>
-                      )}
+                      {cartinha(vaga.atuacao, vaga.atuacao.jogadorId === craque)}
                     </AlvoPrevia>
                   ) : (
                     <div className="grid aspect-[5/7] place-items-center rounded-lg border-2 border-dashed border-white/50 font-numero text-lg tracking-wider text-white/70">
                       {POSICAO_SIGLA[posicao]}
                     </div>
                   );
+                // Sem ninguém pontuando não há craque: o !!craque evita que uma vaga vazia (undefined) case
+                const ehCraque = !!craque && vaga.atuacao?.jogadorId === craque;
                 return (
                   <div
                     key={`${posicao}-${i}`}
                     className="absolute w-[23%] -translate-x-1/2"
-                    style={{ top: lugar.top, left: lugar.lefts[i] }}
+                    style={{
+                      // A carta do craque leva o pt-2 da tarja: a vaga sobe o mesmo tanto
+                      // pra ela continuar no lugar de sempre no campo
+                      top: ehCraque ? `calc(${lugar.top} - 0.5rem)` : lugar.top,
+                      left: lugar.lefts[i],
+                    }}
                   >
                     {admin ? (
                       <TrocarVaga

@@ -28,10 +28,13 @@ export function CartaMenu({
   nome,
   // Entra no nome do arquivo pra carta da seleção não colidir com a do elenco
   sufixo,
+  // Vai na div que vira a imagem: é assim que a tarja de craque entra no PNG
+  className,
   children,
 }: {
   nome: string;
   sufixo?: string;
+  className?: string;
   children: ReactNode;
 }) {
   const carta = useRef<HTMLDivElement>(null);
@@ -161,7 +164,7 @@ export function CartaMenu({
         onPointerUp={cancelarToque}
         onPointerCancel={cancelarToque}
         onClickCapture={engolir}
-        className="select-none [-webkit-touch-callout:none]"
+        className={`select-none [-webkit-touch-callout:none] ${className ?? ""}`}
       >
         {children}
       </div>
