@@ -24,6 +24,10 @@ const nextConfig: NextConfig = {
   // Só vale no `next dev`: sem isso, abrir pelo IP da rede (pra testar no celular)
   // bloqueia os assets de desenvolvimento e a página não hidrata
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
+  // A tela de rankings virou "Estatísticas": link antigo salvo no WhatsApp continua abrindo
+  async redirects() {
+    return [{ source: "/rankings", destination: "/estatisticas", permanent: true }];
+  },
   async headers() {
     return [{ source: "/:path*", headers: cabecalhosDeSeguranca }];
   },

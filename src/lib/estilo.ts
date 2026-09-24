@@ -56,7 +56,7 @@ export const botaoPerigoPequeno = `${botao} ${medio} px-3 ${contornoPerigo}`;
 // Ações do cabeçalho (tema, entrar/sair): dourado, porque vivem na faixa escura
 export const botaoNav = `${botaoBase} ${focoNaFaixa} ${desabilitado} ${impresso} ${medio} px-3 border-2 border-dourado/60 text-sobre-faixa hover:border-dourado hover:bg-dourado hover:text-sobre-dourado`;
 
-// Grupo de botões colados (o seletor de período dos rankings)
+// Grupo de botões colados (o seletor de período das estatísticas)
 export const grupoBotoes =
   "flex overflow-hidden rounded-md border-2 border-tinta font-numero text-lg leading-none tracking-wider uppercase";
 // O anel fica pra dentro: o grupo tem overflow-hidden e cortaria um anel externo

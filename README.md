@@ -12,7 +12,7 @@
 
 ![Elenco nos dois temas: camisa preta à esquerda, camisa branca à direita](docs/prints/elenco-temas.jpg)
 
-Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinha no estilo FUT, cada fut fica registrado com placar, gols e assistências, e o site monta sozinho a seleção da rodada, os rankings da temporada e até sorteia times equilibrados.
+Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinha no estilo FUT, cada fut fica registrado com placar, gols e assistências, e o site monta sozinho a seleção da rodada, as estatísticas da temporada e até sorteia times equilibrados.
 
 > [!NOTE]
 > **Este projeto foi feito inteiro com o [Claude Code](https://claude.com/claude-code).**
@@ -32,13 +32,17 @@ Tudo foi pensado pro celular primeiro, que é onde a galera abre o site: cabeça
 
 ![Elenco, seleção e futs no celular](docs/prints/celular.png)
 
-### Futs e rankings
+### Futs
 
-Cada fut tem placar, resultado e os destaques da partida. Os rankings de gols, assistências, vitórias, seleções e craques podem ser vistos do mês, do ano ou desde sempre, e empate divide a colocação.
+Cada fut tem placar, resultado e os destaques da partida.
 
-| Detalhe do fut | Rankings |
-|---|---|
-| ![Detalhe do fut com placar e destaques](docs/prints/fut.jpg) | ![Rankings de gols, assistências, craques e vitórias](docs/prints/rankings.jpg) |
+![Detalhe do fut com placar e destaques](docs/prints/fut.jpg)
+
+### Estatísticas
+
+Quem mais fez gols, deu assistências, venceu, entrou na seleção do fut e foi craque, com uma frase explicando cada tabela. Dá pra ver do mês, do ano ou desde sempre, e empate divide a colocação.
+
+![Estatísticas de gols, assistências, vitórias, seleções e craques](docs/prints/estatisticas.jpg)
 
 ### Sorteio de times
 

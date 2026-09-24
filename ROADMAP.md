@@ -18,8 +18,8 @@ Pedidos da galera, na ordem em que devem sair:
 
 Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 
-- [ ] **Foto em outras telas** — a foto já aparece nas cartinhas (elenco e seleção); falta levar pro sorteio, rankings e destaques do fut.
-- [ ] **Rankings de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
+- [ ] **Foto em outras telas** — a foto já aparece nas cartinhas (elenco e seleção); falta levar pro sorteio, estatísticas e destaques do fut.
+- [ ] **Estatísticas de temporadas passadas** — escolher um ano específico (hoje é só mês e ano atuais ou tudo).
 - [ ] **Página do jogador** — hoje a carta só abre a edição (pro admin). Uma página com os números da carreira, os futs que jogou e o gráfico do nível fut a fut.
 - [ ] **Conquistas** — artilheiro do mês, sequência de presença, etc.
 - [ ] **Time do ano** — a seleção do campo, mas com o ano inteiro. Fazer perto do fim do ano, reusando `escalarSelecao`.
@@ -71,12 +71,13 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 - [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
 - [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque", do tamanho proporcional ao da carta, igual no campo (#36)
 - [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
-- [x] **Craque escolhido na mão** — o admin clica com o botão direito numa carta do campo (ou toque longo no celular) e escolhe "Tornar craque", ou "Voltar pro craque automático" na carta do escolhido. Vale qualquer um da seleção, mesmo sem gol nem assistência; se ele sair da seleção, o craque volta pra conta. Lista de futs, detalhe do fut, rankings e seleção mostram o mesmo craque. Sem escolha, o craque passa a ser o de melhores números entre os escalados (antes era o do fut inteiro, mesmo que tivesse sido trocado pra fora da seleção). Fica em `fut.craque_id` (#41)
+- [x] **Craque escolhido na mão** — o admin clica com o botão direito numa carta do campo (ou toque longo no celular) e escolhe "Tornar craque", ou "Voltar pro craque automático" na carta do escolhido. Vale qualquer um da seleção, mesmo sem gol nem assistência; se ele sair da seleção, o craque volta pra conta. Lista de futs, detalhe do fut, estatísticas e seleção mostram o mesmo craque. Sem escolha, o craque passa a ser o de melhores números entre os escalados (antes era o do fut inteiro, mesmo que tivesse sido trocado pra fora da seleção). Fica em `fut.craque_id` (#41)
 
-### Rankings e sorteio
+### Estatísticas e sorteio
 
-- [x] **Rankings** — gols, assistências, vitórias (com aproveitamento), seleções e craques, nessa ordem, filtrando por mês, ano ou desde sempre. Empate divide a colocação (#8, #17)
-- [x] **Mais vezes na seleção** — tabela "Seleções" nos rankings: quantas vezes cada um entrou na seleção do fut (os 7 do campo), contando as trocas que o admin fez na mão, igual aparece na tela da seleção. Com 5 tabelas, a tela passou a mostrar 3 em cima e 2 embaixo (5 lado a lado ficava apertado demais) (#43)
+- [x] **Estatísticas** — gols, assistências, vitórias (com aproveitamento), seleções e craques, nessa ordem, filtrando por mês, ano ou desde sempre. Empate divide a colocação. Cada tabela tem uma frase explicando o que conta (#8, #17, #43)
+- [x] **Mais vezes na seleção** — tabela "Seleções": quantas vezes cada um entrou na seleção do fut (os 7 do campo), contando as trocas que o admin fez na mão, igual aparece na tela da seleção. Com 5 tabelas, a tela passou a mostrar 3 em cima e 2 embaixo (5 lado a lado ficava apertado demais) (#43)
+- [x] **Rankings viraram Estatísticas** — a aba e a página mudaram de nome e o endereço agora é `/estatisticas`; link antigo pra `/rankings` redireciona sozinho. No celular estreito (abaixo de 360px) a fonte do menu encolhe um pouco pro nome maior caber sem rolar (#43)
 - [x] **Sorteio sem a diferença de força** — cada time continua mostrando a própria força e a média; o que saiu foi a linha comparando os dois (#34)
 - [x] **Sorteio de times balanceados** — marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, uma posição de cada vez. O admin abre o registro do fut já com a escalação sorteada. Critérios em `src/lib/sorteio.ts` (#9)
 
