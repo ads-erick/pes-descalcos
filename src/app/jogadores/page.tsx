@@ -10,6 +10,13 @@ export const metadata: Metadata = { title: "Elenco" };
 
 export default async function JogadoresPage() {
   const [jogadores, admin] = await Promise.all([listarJogadores(), isAdmin()]);
+  const semJogadores = jogadores.length === 0;
+
+  const novoJogador = admin && (
+    <Link href="/jogadores/novo" className={botaoPrimario}>
+      Novo jogador
+    </Link>
+  );
 
   return (
     <main className={larguraLarga}>
@@ -17,19 +24,16 @@ export default async function JogadoresPage() {
         titulo="Elenco"
         subtitulo={`${jogadores.length} ${jogadores.length === 1 ? "jogador" : "jogadores"} no elenco`}
       >
-        {admin && (
-          <Link href="/jogadores/novo" className={botaoPrimario}>
-            Novo jogador
-          </Link>
-        )}
+        {/* Com elenco, o botão desce pra linha dos filtros; vazio, não tem filtro */}
+        {semJogadores && novoJogador}
       </CabecalhoPagina>
 
-      {jogadores.length === 0 ? (
+      {semJogadores ? (
         <p className={vazio}>
           Nenhum jogador cadastrado ainda.
         </p>
       ) : (
-        <ListaElenco jogadores={jogadores} admin={admin} />
+        <ListaElenco jogadores={jogadores} admin={admin} acao={novoJogador} />
       )}
     </main>
   );
