@@ -6,7 +6,10 @@ import { cartaParaPng, nomeArquivoCarta } from "@/lib/carta-imagem";
 import { painel, sombraCartao } from "@/lib/estilo";
 
 type Posicao = { x: number; y: number };
-type Estado = "parado" | "copiando" | "baixando" | "copiado" | "erro";
+type Estado = "parado" | "copiando" | "baixando" | "copiado" | "erro" | "salvando" | "erroSalvar";
+
+// Ação a mais no menu, depois de copiar/baixar (ex.: "Tornar craque" na seleção)
+export type AcaoCarta = { rotulo: string; acao: () => Promise<void> };
 
 const LARGURA = 208; // w-52, pra não deixar o menu sair da tela
 const TOQUE_LONGO_MS = 500;
@@ -30,11 +33,13 @@ export function CartaMenu({
   sufixo,
   // Vai na div que vira a imagem: é assim que a tarja de craque entra no PNG
   className,
+  acoes = [],
   children,
 }: {
   nome: string;
   sufixo?: string;
   className?: string;
+  acoes?: AcaoCarta[];
   children: ReactNode;
 }) {
   const carta = useRef<HTMLDivElement>(null);
@@ -150,7 +155,17 @@ export function CartaMenu({
     }
   }
 
-  const ocupado = estado === "copiando" || estado === "baixando";
+  async function executar(acao: () => Promise<void>) {
+    setEstado("salvando");
+    try {
+      await acao();
+      setMenu(null);
+    } catch {
+      setEstado("erroSalvar");
+    }
+  }
+
+  const ocupado = estado === "copiando" || estado === "baixando" || estado === "salvando";
 
   return (
     <>
@@ -180,7 +195,8 @@ export function CartaMenu({
             className={`${painel} ${sombraCartao} fixed z-50 w-52 overflow-hidden py-1 text-sm`}
             style={{
               left: Math.min(menu.x, window.innerWidth - LARGURA - 8),
-              top: Math.min(menu.y, window.innerHeight - 96),
+              // Uns 40px por item: o menu não passa do fim da tela
+              top: Math.min(menu.y, window.innerHeight - 16 - 40 * (2 + acoes.length)),
             }}
           >
             {copiavel && (
@@ -195,8 +211,16 @@ export function CartaMenu({
             <ItemMenu onClick={baixar} disabled={ocupado}>
               {estado === "baixando" ? "Gerando…" : "Baixar carta (PNG)"}
             </ItemMenu>
+            {acoes.map(({ rotulo, acao }) => (
+              <ItemMenu key={rotulo} onClick={() => executar(acao)} disabled={ocupado}>
+                {estado === "salvando" ? "Salvando…" : rotulo}
+              </ItemMenu>
+            ))}
             {estado === "erro" && (
               <p className="px-3 pt-1 pb-0.5 text-xs text-perigo">Não rolou gerar a imagem.</p>
+            )}
+            {estado === "erroSalvar" && (
+              <p className="px-3 pt-1 pb-0.5 text-xs text-perigo">Não rolou salvar. Tenta de novo.</p>
             )}
           </div>,
           document.body,

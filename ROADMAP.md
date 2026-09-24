@@ -10,7 +10,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Escolher o craque na mão** — na seleção, o admin clica com o botão direito numa carta (ou toque longo no celular) e o menu que já copia/baixa ganha um "Tornar craque" (e "Voltar pro craque automático" quando já foi trocado). Guarda numa coluna nova `fut.craque_id` (migration, nula = vale a conta). Hoje o craque é calculado em quatro lugares — lista de futs, detalhe do fut, rankings (contagem de craques) e seleção — e todos precisam respeitar a escolha. Só entra como craque quem está na seleção daquele fut.
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
 - [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
 - [ ] **Tema claro mais fiel à camisa branca** — os rastros da estampa no fundo do tema claro (`public/texturas/marmore.svg`) não estão 100% iguais aos da camisa. **Depende do Erick mandar uma foto da camisa em qualidade melhor** pra redesenhar a estampa a partir dela. O tema escuro (`rosas.svg`) não entra.
@@ -72,6 +71,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 - [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
 - [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque", do tamanho proporcional ao da carta, igual no campo (#36)
 - [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
+- [x] **Craque escolhido na mão** — o admin clica com o botão direito numa carta do campo (ou toque longo no celular) e escolhe "Tornar craque", ou "Voltar pro craque automático" na carta do escolhido. Vale qualquer um da seleção, mesmo sem gol nem assistência; se ele sair da seleção, o craque volta pra conta. Lista de futs, detalhe do fut, rankings e seleção mostram o mesmo craque. Sem escolha, o craque passa a ser o de melhores números entre os escalados (antes era o do fut inteiro, mesmo que tivesse sido trocado pra fora da seleção). Fica em `fut.craque_id` (#41)
 
 ### Rankings e sorteio
 

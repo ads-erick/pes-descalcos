@@ -5,10 +5,18 @@ import { LinkVoltar } from "@/components/link-voltar";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
+import { buscarEscolhas } from "@/data/selecao";
 import { botaoPequeno, faixaTime, larguraPadrao, painel, sombraTarja, tituloPagina, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA } from "@/lib/jogador";
-import { NOME_TIME, selecaoDoFut, vencedor, type CorTime } from "@/lib/selecao";
+import {
+  NOME_TIME,
+  TAMANHO_SELECAO,
+  craqueDoFut,
+  selecaoDoFut,
+  vencedor,
+  type CorTime,
+} from "@/lib/selecao";
 
 export async function generateMetadata({ params }: PageProps<"/futs/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -20,11 +28,27 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   const { id } = await params;
   if (!ehUuid(id)) notFound();
 
-  const [fut, admin] = await Promise.all([buscarDetalheFut(id), isAdmin()]);
+  const [fut, escolhas, admin] = await Promise.all([
+    buscarDetalheFut(id),
+    buscarEscolhas(id),
+    isAdmin(),
+  ]);
   if (!fut) notFound();
 
   const venceu = vencedor(fut.placarBranco, fut.placarPreto);
-  const selecao = selecaoDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto);
+  // O craque abre os destaques. Sem escolha do admin ele já é o primeiro; escolhido na
+  // mão, sobe pro topo (mesmo sem ter pontuado) e o resto segue pelos números
+  const craque = craqueDoFut(
+    fut.atuacoes,
+    fut.placarBranco,
+    fut.placarPreto,
+    escolhas,
+    fut.craqueId,
+  )?.atuacao;
+  const outros = selecaoDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto).filter(
+    (a) => a.jogadorId !== craque?.jogadorId,
+  );
+  const selecao = (craque ? [craque, ...outros] : outros).slice(0, TAMANHO_SELECAO);
 
   return (
     <main className={larguraPadrao}>
@@ -62,36 +86,39 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
           </p>
         ) : (
           <ol className="space-y-2">
-            {selecao.map((atuacao, i) => (
-              <li
-                key={atuacao.jogadorId}
-                className={`flex items-center gap-3 rounded-lg border-2 p-3 ${
-                  i === 0 ? "border-ouro bg-ouro-suave" : "border-linha bg-superficie"
-                }`}
-              >
-                <span
-                  className={`w-7 text-center font-numero text-3xl leading-none ${
-                    i === 0 ? "text-ouro" : "text-apagado"
+            {selecao.map((atuacao, i) => {
+              const ehCraque = atuacao.jogadorId === craque?.jogadorId;
+              return (
+                <li
+                  key={atuacao.jogadorId}
+                  className={`flex items-center gap-3 rounded-lg border-2 p-3 ${
+                    ehCraque ? "border-ouro bg-ouro-suave" : "border-linha bg-superficie"
                   }`}
                 >
-                  {i + 1}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold">
-                    {atuacao.nome}
-                    {i === 0 && (
-                      <span className={`${sombraTarja} ml-2 inline-flex items-center gap-1 rounded-sm bg-ouro px-1.5 pt-0.5 font-numero text-sm leading-none tracking-wider text-superficie uppercase`}>
-                        <span className="escudo h-3.5" aria-hidden />
-                        Craque do fut
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-xs text-apagado">
-                    {NOME_TIME[atuacao.corTime]} · {atuacao.gols}G/{atuacao.assistencias}A
-                  </p>
-                </div>
-              </li>
-            ))}
+                  <span
+                    className={`w-7 text-center font-numero text-3xl leading-none ${
+                      ehCraque ? "text-ouro" : "text-apagado"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold">
+                      {atuacao.nome}
+                      {ehCraque && (
+                        <span className={`${sombraTarja} ml-2 inline-flex items-center gap-1 rounded-sm bg-ouro px-1.5 pt-0.5 font-numero text-sm leading-none tracking-wider text-superficie uppercase`}>
+                          <span className="escudo h-3.5" aria-hidden />
+                          Craque do fut
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs text-apagado">
+                      {NOME_TIME[atuacao.corTime]} · {atuacao.gols}G/{atuacao.assistencias}A
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         )}
       </section>
