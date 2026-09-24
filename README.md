@@ -22,7 +22,7 @@ Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinh
 
 ### Seleção do fut
 
-Os melhores de cada fut num campo de fut7 (1 goleiro, 2 zagueiros, 2 meias, 2 atacantes), em cartas pretas no estilo das cartas inform do FIFA. A escolha é pelos números do fut (gols + assistências), e o craque ganha a tarja dourada. Passando o mouse numa carta do campo, ela aparece grande do lado.
+Os melhores de cada fut num campo de fut7 (1 goleiro, 2 zagueiros, 2 meias, 2 atacantes), em cartas pretas no estilo das cartas inform do FIFA. A escolha é pelos números do fut (gols + assistências), e o craque ganha a tarja dourada (o admin pode escolher outro). Passando o mouse numa carta do campo, ela aparece grande do lado.
 
 ![Seleção do fut no campo](docs/prints/selecao.jpg)
 
@@ -96,12 +96,12 @@ Antes de subir pra Vercel, também pedi uma revisão de segurança: segredos no 
 Cinco tabelas (ver `supabase/migrations/`):
 
 - **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido, se está ativo no grupo)
-- **fut** — cada partida (data, placar time branco x time preto)
+- **fut** — cada partida (data, placar time branco x time preto e, se o admin escolheu, o craque)
 - **participacao** — números de um jogador num fut (de que lado jogou, gols, assistências)
 - **selecao_escolha** — as vagas da seleção que o admin trocou na mão
 - **login_tentativa** — tentativas de login do admin (só um hash do IP), pro bloqueio depois de 5 senhas erradas em 15 min
 
-Não existe tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A seleção do fut é calculada na hora a partir de `participacao`; só as trocas manuais ficam guardadas.
+Não existe tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A seleção do fut é calculada na hora a partir de `participacao`; só as trocas manuais (e o craque escolhido na mão) ficam guardadas.
 
 ## Nível das cartinhas
 
@@ -121,7 +121,7 @@ A nota é comparada com a média do grupo dele naquele fut (goleiros + zagueiros
 
 Critérios em `src/lib/selecao.ts`. A nota da seleção é **gols + assistências**, sem o saldo do time (senão quem fez 1 gol no time que ganhou de lavada passaria na frente de quem fez 2G/1A no que perdeu). Desempate: mais gols, depois o time que foi melhor no placar (é o que separa goleiros e zagueiros), depois ordem alfabética.
 
-As vagas são preenchidas pelos melhores de cada posição. Se faltar gente numa posição, a vaga vai pro melhor que sobrou e aparece como "improvisado". O primeiro da lista é o craque do fut.
+As vagas são preenchidas pelos melhores de cada posição. Se faltar gente numa posição, a vaga vai pro melhor que sobrou e aparece como "improvisado". O craque do fut é o de melhores números entre os escalados (se alguém pontuou). O admin pode trocar: botão direito (ou toque longo no celular) numa carta do campo e "Tornar craque", que vale pra qualquer um da seleção. Se o escolhido sair da seleção, o craque volta pra conta.
 
 ## Sorteio de times
 

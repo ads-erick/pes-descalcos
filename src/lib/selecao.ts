@@ -52,7 +52,7 @@ export function rankingDoFut<T extends Atuacao>(
     );
 }
 
-// Só entra quem fez gol ou deu assistência; o primeiro da lista é o craque do fut.
+// Os destaques do fut: só entra quem fez gol ou deu assistência, dos melhores números pro pior.
 export function selecaoDoFut<T extends Atuacao>(
   atuacoes: T[],
   placarBranco: number,
@@ -132,4 +132,25 @@ export function escalarSelecao<T extends Atuacao>(
   }
 
   return vagas;
+}
+
+// O craque do fut sai da seleção escalada (já com as trocas na mão). O admin pode tornar
+// craque qualquer um dela, mesmo sem gol nem assistência; sem escolha, ou se o escolhido
+// saiu da seleção, é o de melhores números entre os escalados — e só se ele pontuou.
+export function craqueDoFut<T extends Atuacao>(
+  atuacoes: T[],
+  placarBranco: number,
+  placarPreto: number,
+  escolhas: ReadonlyMap<number, string>,
+  craqueId: string | null,
+): { atuacao: AtuacaoPontuada<T>; manual: boolean } | null {
+  const vagas = escalarSelecao(atuacoes, placarBranco, placarPreto, escolhas);
+  const escalados = new Set(vagas.flatMap((v) => (v.atuacao ? [v.atuacao.jogadorId] : [])));
+
+  const ranking = rankingDoFut(atuacoes, placarBranco, placarPreto);
+  const escolhido = ranking.find((a) => a.jogadorId === craqueId && escalados.has(a.jogadorId));
+  if (escolhido) return { atuacao: escolhido, manual: true };
+
+  const melhor = ranking.find((a) => a.pontos > 0 && escalados.has(a.jogadorId));
+  return melhor ? { atuacao: melhor, manual: false } : null;
 }

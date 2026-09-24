@@ -12,7 +12,8 @@ import { buscarEscolhas } from "@/data/selecao";
 import { botaoSecundario, larguraCampo, larguraPadrao, painel, sombraCartao, sombraTarja, vazio, zoomCarta } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
-import { escalarSelecao, rankingDoFut, selecaoDoFut } from "@/lib/selecao";
+import { craqueDoFut, escalarSelecao, rankingDoFut } from "@/lib/selecao";
+import { trocarCraque } from "./actions";
 import { AlvoPrevia, Previa, PreviaCartas } from "./previa-carta";
 import { SeletorFut } from "./seletor-fut";
 import { TrocarVaga } from "./trocar-vaga";
@@ -52,8 +53,28 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
   const vagas = escalarSelecao(fut.atuacoes, fut.placarBranco, fut.placarPreto, escolhas);
   const escalados = vagas.flatMap((v) => (v.atuacao ? [v.atuacao] : []));
   const cartas = await buscarCartas(escalados.map((a) => a.jogadorId));
-  // Mesmo craque da lista de futs: a maior nota do fut (se alguém pontuou)
-  const craque = selecaoDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto)[0]?.jogadorId;
+  // Mesmo craque da lista de futs: o escolhido pelo admin, ou a maior nota da seleção
+  const escolhaCraque = craqueDoFut(
+    fut.atuacoes,
+    fut.placarBranco,
+    fut.placarPreto,
+    escolhas,
+    fut.craqueId,
+  );
+  const craque = escolhaCraque?.atuacao.jogadorId;
+
+  // Pro admin, o menu da carta (botão direito ou toque longo) também troca o craque
+  const futId = fut.id;
+  function acoesDaCarta(jogadorId: string) {
+    if (!admin) return [];
+    if (jogadorId !== craque) {
+      return [{ rotulo: "Tornar craque", acao: trocarCraque.bind(null, futId, jogadorId) }];
+    }
+    if (escolhaCraque?.manual) {
+      return [{ rotulo: "Voltar pro craque automático", acao: trocarCraque.bind(null, futId, null) }];
+    }
+    return [];
+  }
 
   // O número da vaga vai junto: é ele que a troca manual guarda
   const porPosicao = Map.groupBy(
@@ -84,6 +105,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
       <CartaMenu
         nome={carta.apelido ?? carta.nome}
         sufixo="seleção"
+        acoes={acoesDaCarta(atuacao.jogadorId)}
         className={comTarja ? (grande ? "@container relative pt-[7%]" : "relative pt-2") : undefined}
       >
         <JogadorCard

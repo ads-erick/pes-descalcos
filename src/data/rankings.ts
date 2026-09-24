@@ -1,9 +1,10 @@
 import "server-only";
 import { connection } from "next/server";
 import { sql } from "./db";
+import { buscarEscolhasDeTodos } from "./selecao";
 import type { Posicao } from "@/lib/jogador";
 import { inicioDoPeriodo, type Periodo } from "@/lib/ranking";
-import { selecaoDoFut, type Atuacao } from "@/lib/selecao";
+import { craqueDoFut, type Atuacao } from "@/lib/selecao";
 
 export type EstatisticaDoPeriodo = {
   jogadorId: string;
@@ -25,14 +26,23 @@ type AtuacaoDoFut = Atuacao & {
   futId: string;
   placarBranco: number;
   placarPreto: number;
+  craqueId: string | null;
 };
 
-// Craque do fut é o primeiro da seleção: dá pra contar só refazendo a conta fut a fut
-function contarCraques(atuacoes: AtuacaoDoFut[]): Map<string, number> {
+// O craque sai da seleção de cada fut (com as trocas e a escolha do admin): dá pra
+// contar só refazendo a conta fut a fut
+function contarCraques(
+  atuacoes: AtuacaoDoFut[],
+  escolhas: Map<string, Map<number, string>>,
+): Map<string, number> {
   const craques = new Map<string, number>();
-  for (const doFut of Map.groupBy(atuacoes, (a) => a.futId).values()) {
-    const [craque] = selecaoDoFut(doFut, doFut[0].placarBranco, doFut[0].placarPreto);
-    if (craque) craques.set(craque.jogadorId, (craques.get(craque.jogadorId) ?? 0) + 1);
+  for (const [futId, doFut] of Map.groupBy(atuacoes, (a) => a.futId)) {
+    const { placarBranco, placarPreto, craqueId } = doFut[0];
+    const escolhasDoFut = escolhas.get(futId) ?? new Map();
+    const craque = craqueDoFut(doFut, placarBranco, placarPreto, escolhasDoFut, craqueId);
+    if (!craque) continue;
+    const { jogadorId } = craque.atuacao;
+    craques.set(jogadorId, (craques.get(jogadorId) ?? 0) + 1);
   }
   return craques;
 }
@@ -42,7 +52,7 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
   await connection();
   const desde = inicioDoPeriodo(periodo);
 
-  const [[{ futs }], jogadores, atuacoes] = await Promise.all([
+  const [[{ futs }], jogadores, atuacoes, escolhas] = await Promise.all([
     sql<{ futs: number }[]>`
       select count(*)::int as futs
       from fut
@@ -73,6 +83,7 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
         p.fut_id as "futId",
         f.placar_branco as "placarBranco",
         f.placar_preto as "placarPreto",
+        f.craque_id as "craqueId",
         p.jogador_id as "jogadorId",
         coalesce(j.apelido, j.nome) as nome,
         j.posicao,
@@ -83,9 +94,10 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
       join jogador j on j.id = p.jogador_id
       where ${desde}::date is null or f.data >= ${desde}::date
     `,
+    buscarEscolhasDeTodos(),
   ]);
 
-  const craques = contarCraques(atuacoes);
+  const craques = contarCraques(atuacoes, escolhas);
 
   return {
     futs,
