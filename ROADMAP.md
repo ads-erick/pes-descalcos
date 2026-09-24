@@ -31,18 +31,15 @@ Sem ordem fechada, mais ou menos do mais útil pro mais enfeite:
 
 Revisão de 22/09/2026. O que já está ok:
 
-- [x] **Segredos longe do navegador** — `DATABASE_URL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` e `CRON_SECRET` só aparecem em código de servidor (`src/data/*` tem `server-only`, que quebra o build se um componente de navegador importar). Conferido também no resultado: build com segredos falsos e busca por eles nos arquivos que vão pro navegador, nada encontrado. A única variável pública é a URL do Supabase, que é pública mesmo.
+- [x] **Segredos longe do navegador** — `DATABASE_URL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` e `CRON_SECRET` só aparecem em código de servidor (`src/data/*` tem `server-only`, que quebra o build se um componente de navegador importar). Conferido também no resultado: build com segredos falsos e busca por eles nos arquivos que vão pro navegador, nada encontrado. Vão pro navegador só a URL do Supabase e a chave do site do Turnstile, que são públicas mesmo.
 - [x] **SQL injection** — toda consulta passa pelo `` sql`...` `` da lib `postgres`, que manda os valores separados da consulta (nunca concatena texto). Os `sql({...})` de insert/update só usam colunas fixas do código, e tudo que vem de formulário passa pelo `zod` antes. Não tem `sql.unsafe` em lugar nenhum. (Prompt injection não se aplica: o site não usa IA.)
 - [x] **Escrita só pro admin** — toda função que grava no banco chama `requireAdmin()` na camada de dados, então chamar a server action direto sem o cookie não adianta.
 - [x] **Banco fechado pra API pública do Supabase** — RLS ligado em todas as tabelas, sem policies: a chave pública não lê nem grava nada.
 - [x] **Supabase acordado** — cron diário em `/api/manter-ativo`, protegido pela `CRON_SECRET` (#31).
 - [x] **Limite de tentativas no login** — 5 senhas erradas em 15 min bloqueiam aquele IP até a mais antiga sair da janela, com o aviso de quantos minutos faltam. As tentativas ficam na tabela `login_tentativa` (a memória da instância não serve na Vercel), só com um HMAC do IP; IPv6 conta pela rede /64, que é o bloco de uma casa. Tentativas em paralelo não furam a contagem (lock por IP no banco), e a senha certa zera o contador. As outras server actions não precisam: sem o cookie de admin elas não fazem nada (#37).
 - [x] **Captcha no login (Cloudflare Turnstile)**: grátis e quase sempre sem clicar em nada. O servidor confere o token na Cloudflare antes de olhar a senha, então sem passar pelo captcha a tentativa nem conta pro limite; se a Cloudflare não responder, recusa. Cada token vale uma vez: depois de uma senha errada o widget gera outro sozinho. Só liga com `TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY` configuradas (#38).
-
-O que falta (tudo grátis):
-
-- [ ] **Cabeçalhos de segurança** — `X-Frame-Options`/`frame-ancestors` (ninguém embute o site num iframe pra enganar o admin), `X-Content-Type-Options`, `Referrer-Policy`, via `headers()` no `next.config.ts`.
-- [ ] **Dependabot** — o GitHub abre PR sozinho quando sai correção de segurança numa dependência.
+- [x] **Cabeçalhos de segurança**: todas as páginas mandam `frame-ancestors 'none'` + `X-Frame-Options: DENY` (outro site não embute o nosso num iframe pra enganar o admin), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` sem câmera/microfone/localização e uma CSP parcial (`base-uri`, `form-action`, `object-src`). Não é CSP completa: bloquear scripts exigiria nonce e deixaria todas as páginas dinâmicas. O HSTS a Vercel já manda; o `X-Powered-By` saiu (#39).
+- [x] **Dependabot e secret scanning**: o GitHub avisa quando sai falha de segurança numa dependência (npm e Actions) e abre PR com a correção sozinho. Só correção de segurança, não toda versão nova. Também ligados o secret scanning e o push protection: um `git push` com senha ou chave no código é barrado (#39).
 
 ## Pendências técnicas
 

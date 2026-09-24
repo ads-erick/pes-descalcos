@@ -1,0 +1,15 @@
+# Só PR de correção de segurança: com open-pull-requests-limit 0 o Dependabot não abre
+# PR pra toda versão nova, mas as atualizações de segurança continuam (elas têm limite
+# próprio). As atualizações de segurança são ligadas em Settings > Code security.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
