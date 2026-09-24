@@ -49,10 +49,11 @@ export function ListaElenco({
           onChange={(evento) => setBusca(evento.target.value)}
           placeholder="Buscar por nome ou número"
           aria-label="Buscar jogador"
-          className={`${campo} sm:max-w-xs`}
+          className={`${campo} min-w-0 flex-1 basis-40 sm:max-w-xs`}
         />
 
-        <nav aria-label="Posição" className={grupoBotoes}>
+        {/* No celular os filtros descem: a busca divide a linha com o botão do admin */}
+        <nav aria-label="Posição" className={`${grupoBotoes} max-sm:order-last`}>
           <button
             type="button"
             onClick={() => setPosicao(null)}
@@ -77,7 +78,7 @@ export function ListaElenco({
 
         {/* Só aparece filtrando: sem filtro a contagem já está no subtítulo */}
         {(busca.trim() !== "" || posicao !== null) && (
-          <p aria-live="polite" className="text-sm text-apagado">
+          <p aria-live="polite" className="text-sm text-apagado max-sm:order-last">
             {filtrados.length} de {jogadores.length}
           </p>
         )}
