@@ -39,6 +39,10 @@
   --sobre-faixa: #f5f7fa;
   --realce: #ffffff;
   --sobre-realce: #1b3f78;
+  /* Símbolo da barra da camisa (componente Bardo) */
+  --bardo: #1b3f78;
+  --bardo-furo: #ffffff;
+  --bardo-aro: #ffffff;
   --dourado: #d8b65c;
   /* Texto por cima do dourado: igual nos dois temas, porque --dourado não muda */
   --sobre-dourado: #140f0a;
@@ -65,6 +69,9 @@
     --sobre-faixa: #e8cf8a;
     --realce: #d8b65c;
     --sobre-realce: #140f0a;
+    --bardo: #d8b65c;
+    --bardo-furo: #070505;
+    --bardo-aro: transparent;
     --dourado: #d8b65c;
     --perigo: #f0786b;
     --textura: url("/texturas/rosas.svg");
@@ -87,6 +94,9 @@
   --sobre-faixa: #e8cf8a;
   --realce: #d8b65c;
   --sobre-realce: #140f0a;
+  --bardo: #d8b65c;
+  --bardo-furo: #070505;
+  --bardo-aro: transparent;
   --dourado: #d8b65c;
   --perigo: #f0786b;
   --textura: url("/texturas/rosas.svg");
