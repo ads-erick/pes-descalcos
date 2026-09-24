@@ -107,6 +107,14 @@
   --color-perigo: var(--perigo);
 }
 
+/* Barra de rolagem sempre visível (vazia em página curta): sem isso a janela ficava ~15px mais
+   larga só nelas e tudo que é centralizado (o menu, principalmente) andava ao trocar de página.
+   O scrollbar-gutter: stable resolvia o mesmo, mas deixava uma faixa lisa cortando o cabeçalho
+   e o rodapé na direita */
+html {
+  overflow-y: scroll;
+}
+
 body {
   background-color: var(--fundo);
   color: var(--tinta);
