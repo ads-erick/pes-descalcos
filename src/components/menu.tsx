@@ -7,15 +7,16 @@ const ITENS = [
   { href: "/jogadores", label: "Elenco" },
   { href: "/futs", label: "Futs" },
   { href: "/selecao", label: "Seleção" },
-  { href: "/rankings", label: "Rankings" },
+  { href: "/estatisticas", label: "Estatísticas" },
   { href: "/sorteio", label: "Sorteio" },
 ];
 
 export function Menu() {
   const caminho = usePathname();
 
+  // Abaixo de 360px a fonte encolhe um pouco pro "Estatísticas" caber sem rolar até 320px
   return (
-    <ul className="flex items-center justify-between gap-1 font-numero text-lg tracking-wider uppercase sm:gap-2 sm:text-xl md:justify-center md:gap-10 lg:gap-8">
+    <ul className="flex items-center justify-between gap-1 font-numero text-lg tracking-wider uppercase max-[359px]:text-base max-[359px]:tracking-wide sm:gap-2 sm:text-xl md:justify-center md:gap-10 lg:gap-8">
       {ITENS.map(({ href, label }) => {
         const atual = caminho === href || caminho.startsWith(`${href}/`);
         return (

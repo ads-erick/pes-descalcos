@@ -4,7 +4,7 @@ import { sql } from "./db";
 import { buscarEscolhasDeTodos } from "./selecao";
 import type { Posicao } from "@/lib/jogador";
 import { inicioDoPeriodo, type Periodo } from "@/lib/ranking";
-import { craqueDoFut, type Atuacao } from "@/lib/selecao";
+import { craqueDoFut, escalarSelecao, type Atuacao } from "@/lib/selecao";
 
 export type EstatisticaDoPeriodo = {
   jogadorId: string;
@@ -14,6 +14,7 @@ export type EstatisticaDoPeriodo = {
   gols: number;
   assistencias: number;
   vitorias: number;
+  selecoes: number;
   craques: number;
 };
 
@@ -29,22 +30,29 @@ type AtuacaoDoFut = Atuacao & {
   craqueId: string | null;
 };
 
-// O craque sai da seleção de cada fut (com as trocas e a escolha do admin): dá pra
-// contar só refazendo a conta fut a fut
-function contarCraques(
+// A seleção (com as trocas na mão) e o craque (com a escolha do admin) saem de cada fut:
+// dá pra contar só refazendo a conta fut a fut
+function contarSelecoes(
   atuacoes: AtuacaoDoFut[],
   escolhas: Map<string, Map<number, string>>,
-): Map<string, number> {
+): { selecoes: Map<string, number>; craques: Map<string, number> } {
+  const selecoes = new Map<string, number>();
   const craques = new Map<string, number>();
+  const somar = (contagem: Map<string, number>, jogadorId: string) =>
+    contagem.set(jogadorId, (contagem.get(jogadorId) ?? 0) + 1);
+
   for (const [futId, doFut] of Map.groupBy(atuacoes, (a) => a.futId)) {
     const { placarBranco, placarPreto, craqueId } = doFut[0];
     const escolhasDoFut = escolhas.get(futId) ?? new Map();
+
+    for (const vaga of escalarSelecao(doFut, placarBranco, placarPreto, escolhasDoFut)) {
+      if (vaga.atuacao) somar(selecoes, vaga.atuacao.jogadorId);
+    }
+
     const craque = craqueDoFut(doFut, placarBranco, placarPreto, escolhasDoFut, craqueId);
-    if (!craque) continue;
-    const { jogadorId } = craque.atuacao;
-    craques.set(jogadorId, (craques.get(jogadorId) ?? 0) + 1);
+    if (craque) somar(craques, craque.atuacao.jogadorId);
   }
-  return craques;
+  return { selecoes, craques };
 }
 
 // Arquivados entram: os gols deles continuam valendo no período em que jogaram
@@ -58,7 +66,7 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
       from fut
       where ${desde}::date is null or data >= ${desde}::date
     `,
-    sql<Omit<EstatisticaDoPeriodo, "craques">[]>`
+    sql<Omit<EstatisticaDoPeriodo, "selecoes" | "craques">[]>`
       select
         j.id as "jogadorId",
         coalesce(j.apelido, j.nome) as nome,
@@ -97,10 +105,14 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
     buscarEscolhasDeTodos(),
   ]);
 
-  const craques = contarCraques(atuacoes, escolhas);
+  const { selecoes, craques } = contarSelecoes(atuacoes, escolhas);
 
   return {
     futs,
-    jogadores: jogadores.map((j) => ({ ...j, craques: craques.get(j.jogadorId) ?? 0 })),
+    jogadores: jogadores.map((j) => ({
+      ...j,
+      selecoes: selecoes.get(j.jogadorId) ?? 0,
+      craques: craques.get(j.jogadorId) ?? 0,
+    })),
   };
 }

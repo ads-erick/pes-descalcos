@@ -12,10 +12,12 @@ import {
   rankear,
 } from "@/lib/ranking";
 
-export const metadata: Metadata = { title: "Rankings" };
+export const metadata: Metadata = { title: "Estatísticas" };
 
 type Coluna = {
   titulo: string;
+  // O que a tabela conta, pra quem bate o olho entender
+  explicacao: string;
   vazio: string;
   valor: (j: EstatisticaDoPeriodo) => number;
   detalhe: (j: EstatisticaDoPeriodo) => string;
@@ -26,38 +28,49 @@ const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um :
 const COLUNAS: Coluna[] = [
   {
     titulo: "Gols",
+    explicacao: "Gols marcados nos futs do período.",
     vazio: "Ninguém marcou ainda.",
     valor: (j) => j.gols,
     detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
   },
   {
     titulo: "Assistências",
+    explicacao: "Passes que terminaram em gol.",
     vazio: "Ninguém deu assistência ainda.",
     valor: (j) => j.assistencias,
     detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
   },
   {
-    titulo: "Craques",
-    vazio: "Ninguém foi craque ainda.",
-    valor: (j) => j.craques,
-    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
-  },
-  {
     titulo: "Vitórias",
+    explicacao: "Futs em que o time do jogador ganhou. Empate não conta.",
     vazio: "Ninguém venceu ainda.",
     valor: (j) => j.vitorias,
     detalhe: (j) => `${Math.round((j.vitorias / j.jogos) * 100)}% dos jogos`,
   },
+  {
+    titulo: "Seleções",
+    explicacao: "Vezes em que entrou na seleção do fut: o time dos 7 melhores do dia, do goleiro ao ataque.",
+    vazio: "Ninguém entrou na seleção ainda.",
+    valor: (j) => j.selecoes,
+    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
+  },
+  {
+    titulo: "Craques",
+    explicacao: "Vezes em que foi o craque do fut, o melhor jogador da seleção do dia.",
+    vazio: "Ninguém foi craque ainda.",
+    valor: (j) => j.craques,
+    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
+  },
 ];
 
-export default async function RankingsPage({ searchParams }: PageProps<"/rankings">) {
+export default async function EstatisticasPage({ searchParams }: PageProps<"/estatisticas">) {
   const periodo = lerPeriodo((await searchParams).periodo);
   const { futs, jogadores } = await buscarRankings(periodo);
 
   return (
     <main className={larguraLarga}>
       <CabecalhoPagina
-        titulo="Rankings"
+        titulo="Estatísticas"
         subtitulo={`${descreverPeriodo(periodo)} · ${plural(futs, "fut", "futs")}`}
       >
         <nav
@@ -67,7 +80,7 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
           {PERIODOS.map((p) => (
             <Link
               key={p}
-              href={`/rankings?periodo=${p}`}
+              href={`/estatisticas?periodo=${p}`}
               aria-current={p === periodo ? "page" : undefined}
               className={`${grupoBotoesItem} ${p === periodo ? grupoBotoesItemAtual : ""}`}
             >
@@ -77,17 +90,22 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
         </nav>
       </CabecalhoPagina>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {COLUNAS.map((coluna) => {
+      {/* 5 tabelas em 3 + 2: as de cima com um terço da largura, as de baixo com metade */}
+      <div className="grid gap-4 md:grid-cols-6">
+        {COLUNAS.map((coluna, i) => {
           const ranking = rankear(jogadores, coluna.valor);
           return (
             <section
               key={coluna.titulo}
-              className={`${painel} overflow-hidden`}
+              className={`${painel} overflow-hidden ${i < 3 ? "md:col-span-2" : "md:col-span-3"}`}
             >
               <h2 className="border-b-2 border-dourado bg-faixa px-4 pt-2 pb-1.5 font-slab text-lg text-sobre-faixa uppercase">
                 {coluna.titulo}
               </h2>
+              {/* Altura de 2 linhas pra todas: as listas lado a lado começam alinhadas */}
+              <p className="px-4 pt-3 text-xs text-apagado md:min-h-[calc(2lh+0.75rem)]">
+                {coluna.explicacao}
+              </p>
               {ranking.length === 0 ? (
                 <p className="py-6 text-center text-sm text-apagado">{coluna.vazio}</p>
               ) : (
