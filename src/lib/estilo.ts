@@ -56,6 +56,8 @@ export const botaoContador = `${botao} size-9 pt-0.5 text-xl ${contorno}`;
 // Excluir: mesma forma dos outros, só que na cor de perigo
 export const botaoPerigo = `${botao} ${grande} px-4 ${contornoPerigo}`;
 export const botaoPerigoPequeno = `${botao} ${medio} px-3 ${contornoPerigo}`;
+// Só o ícone (o X de tirar do fut), na altura do botaoChip ao lado
+export const botaoPerigoIcone = `${botao} size-8 ${contornoPerigo}`;
 
 // Ações do cabeçalho (tema, entrar/sair): na cor de realce, porque vivem na faixa
 export const botaoNav = `${botaoBase} ${focoNaFaixa} ${desabilitado} ${impresso} ${medio} px-3 border-2 border-realce/60 text-sobre-faixa hover:border-realce hover:bg-realce hover:text-sobre-realce`;
