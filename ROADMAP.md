@@ -81,6 +81,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Visual e celular
 
 - [x] **Fundo igual em todas as telas** — a estampa era medida pela janela e dava um zoom quando a barra de rolagem aparecia ou a barra de endereço do celular sumia; agora vai por `vw`/`lvh`, que não mudam nessas horas (#34)
+- [x] **Menu parado no lugar** — o menu andava uns 7px pro lado nas páginas curtas (como a lista de futs), que não tinham barra de rolagem e por isso ficavam mais largas. Agora a barra aparece sempre, vazia quando não tem o que rolar, e o menu fica na mesma posição em todas as telas. O bloco Admin/Sair não influenciava. No celular a barra não ocupa espaço, então nada muda lá (#40)
 - [x] **Identidade visual** — tema claro (camisa branca) e escuro (camisa preta), seguindo o sistema ou escolhido no cabeçalho; escudo, fontes retrô e um sistema único de botões com foco de teclado (#11, #13, #14)
 - [x] **Celular** — testado de 320px a 430px sem rolagem lateral: cabeçalho que encolhe, alvos de toque maiores, campos que não dão zoom no iPhone, carta pequena legível no campo. Cabeçalho testado de 300 a 1600px sem nada se sobrepondo (#20, #27, #29)
 
