@@ -369,11 +369,12 @@ function LinhaJogador({
       </div>
 
       {aberta && (
-        <div className="mt-2 flex flex-wrap gap-2 pb-1 pl-8">
+        // trocar embaixo do nome, tirar na ponta direita (embaixo das assistências)
+        <div className="mt-2 flex flex-wrap gap-2 pb-1 sm:pl-8">
           <button type="button" onClick={onTrocarTime} className={botaoChip}>
             ⇄ Passar pro {outro}
           </button>
-          <button type="button" onClick={onTirar} className={`${botaoChip} text-perigo`}>
+          <button type="button" onClick={onTirar} className={`${botaoChip} ml-auto text-perigo`}>
             Tirar do fut
           </button>
         </div>
