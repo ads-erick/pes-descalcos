@@ -72,8 +72,10 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
       }))
     : [];
 
-  // A cartinha de um escalado, com os números do fut: serve no campo e na prévia
-  function cartinha(atuacao: (typeof escalados)[number], comTarja = false) {
+  // A cartinha de um escalado, com os números do fut: serve no campo e na prévia.
+  // Na prévia a carta é bem maior, então a tarja vai em proporção da largura dela
+  // (cqw e %) em vez de tamanho fixo — as mesmas proporções que ela tem no campo
+  function cartinha(atuacao: (typeof escalados)[number], comTarja = false, grande = false) {
     const carta = cartas.get(atuacao.jogadorId);
     if (!carta) return null;
     return (
@@ -82,7 +84,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
       <CartaMenu
         nome={carta.apelido ?? carta.nome}
         sufixo="seleção"
-        className={comTarja ? "relative pt-2" : undefined}
+        className={comTarja ? (grande ? "@container relative pt-[7%]" : "relative pt-2") : undefined}
       >
         <JogadorCard
           jogador={carta}
@@ -93,8 +95,14 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           ]}
         />
         {comTarja && (
-          <span className={`${sombraTarja} absolute top-0 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-sm bg-dourado px-1.5 pt-0.5 font-numero text-xs leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase sm:text-sm`}>
-            <span className="escudo h-3" aria-hidden />
+          <span
+            className={`${sombraTarja} absolute top-0 left-1/2 flex -translate-x-1/2 items-center bg-dourado font-numero leading-none tracking-wider whitespace-nowrap text-sobre-dourado uppercase ${
+              grande
+                ? "gap-[3.5cqw] rounded-[3.5cqw] px-[5cqw] pt-[1.7cqw] text-[12cqw]"
+                : "gap-1 rounded-sm px-1.5 pt-0.5 text-xs sm:text-sm"
+            }`}
+          >
+            <span className={`escudo ${grande ? "h-[10cqw]" : "h-3"}`} aria-hidden />
             Craque
           </span>
         )}
@@ -215,7 +223,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <Previa
               className="hidden lg:col-start-1 lg:row-start-4 lg:block"
               cartas={escalados.flatMap((atuacao) => {
-                const carta = cartinha(atuacao, atuacao.jogadorId === craque);
+                const carta = cartinha(atuacao, atuacao.jogadorId === craque, true);
                 return carta ? [{ id: atuacao.jogadorId, carta }] : [];
               })}
             />

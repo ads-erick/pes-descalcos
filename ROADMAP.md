@@ -73,7 +73,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Seleção
 
 - [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
-- [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque" (#36)
+- [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque", do tamanho proporcional ao da carta, igual no campo (#36)
 - [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
 
 ### Rankings e sorteio
