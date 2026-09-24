@@ -10,7 +10,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Tema claro mais fiel à camisa branca** — os rastros da estampa no fundo do tema claro (`public/texturas/marmore.svg`) não estão 100% iguais aos da camisa. **Depende do Erick mandar uma foto da camisa em qualidade melhor** pra redesenhar a estampa a partir dela. O tema escuro (`rosas.svg`) não entra.
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
 
 ## Mais pra frente
@@ -85,6 +84,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 - [x] **Fundo igual em todas as telas** — a estampa era medida pela janela e dava um zoom quando a barra de rolagem aparecia ou a barra de endereço do celular sumia; agora vai por `vw`/`lvh`, que não mudam nessas horas (#34)
 - [x] **Menu parado no lugar** — o menu andava uns 7px pro lado nas páginas curtas (como a lista de futs), que não tinham barra de rolagem e por isso ficavam mais largas. Agora a barra aparece sempre, vazia quando não tem o que rolar, e o menu fica na mesma posição em todas as telas. O bloco Admin/Sair não influenciava. No celular a barra não ocupa espaço, então nada muda lá (#40)
+- [x] **Tema claro com a cara da camisa branca** — a estampa do fundo foi redesenhada a partir das fotos da camisa: faixas de "mármore líquido" que correm juntas, fazem voltas e afinam em ponta, no lugar das linhas borradas de antes. Sai de `scripts/textura-marmore.py` (ruído distorcido + contornos vetorizados, 22 KB com gzip). A paleta passou do creme pro branco frio da camisa, o azul ficou o do número e das listras, e como a camisa branca só tem azul e branco, na faixa do cabeçalho o dourado virou branco, com as três listras do ombro logo abaixo. O dourado ficou onde é troféu (craque, 1º lugar, cartinhas). O tema escuro não mudou (#46)
 - [x] **Identidade visual** — tema claro (camisa branca) e escuro (camisa preta), seguindo o sistema ou escolhido no cabeçalho; escudo, fontes retrô e um sistema único de botões com foco de teclado (#11, #13, #14)
 - [x] **Celular** — testado de 320px a 430px sem rolagem lateral: cabeçalho que encolhe, alvos de toque maiores, campos que não dão zoom no iPhone, carta pequena legível no campo. Cabeçalho testado de 300 a 1600px sem nada se sobrepondo (#20, #27, #29)
 

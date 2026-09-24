@@ -229,9 +229,9 @@ Ao escolher a foto, abre um enquadramento (arrastar, pinça ou roda do mouse), e
 Tirada das camisas do grupo. Os temas seguem o sistema do aparelho até a pessoa escolher no botão do cabeçalho; a escolha fica no cookie `tema`.
 
 - **Escuro (camisa preta):** fundo preto com rosas vinho, detalhes dourados
-- **Claro (camisa branca):** fundo com mármore cinza, detalhes em azul-marinho
+- **Claro (camisa branca):** branco frio com a estampa de mármore líquido cinza-azulada, detalhes no azul do número e as três listras do ombro embaixo do cabeçalho. A estampa (`public/texturas/marmore.svg`) sai de `scripts/textura-marmore.py`, que gera o desenho a partir de ruído e vetoriza em curvas
 
-As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-dourado`...), redefinidos por tema. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
+As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-realce`...), redefinidos por tema. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
 
 A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ouro, prata ou bronze pelo nível, e todas as medidas em `cqw` pra escalar com a largura da carta, do elenco no desktop ao campo no celular.
 
@@ -246,4 +246,5 @@ Tudo é público pra ler. Pra lançar dados, entre em `/admin/login` com a `ADMI
 - `src/components/` — componentes visuais (cartinha, campo, placar, menu)
 - `src/lib/` — regras e helpers compartilhados entre servidor e cliente (nível, seleção, sorteio, ranking, `estilo.ts` com as classes de botão, campo e painel)
 - `supabase/migrations/` — o esquema do banco, em ordem
+- `scripts/` — backup, dados de teste e o gerador da estampa do tema claro
 - `docs/prints/` — os prints deste README

@@ -10,9 +10,9 @@ const botaoBase =
 const foco =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-destaque has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-destaque";
 
-// Na faixa escura do cabeçalho o destaque some no fundo: lá o anel é dourado
+// Na faixa do cabeçalho o destaque some no fundo: lá o anel é da cor de realce (branco ou dourado)
 const focoNaFaixa =
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado";
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-realce";
 
 // has-disabled: pro <label> cujo input está desabilitado
 const desabilitado =
@@ -57,8 +57,8 @@ export const botaoContador = `${botao} size-9 pt-0.5 text-xl ${contorno}`;
 export const botaoPerigo = `${botao} ${grande} px-4 ${contornoPerigo}`;
 export const botaoPerigoPequeno = `${botao} ${medio} px-3 ${contornoPerigo}`;
 
-// Ações do cabeçalho (tema, entrar/sair): dourado, porque vivem na faixa escura
-export const botaoNav = `${botaoBase} ${focoNaFaixa} ${desabilitado} ${impresso} ${medio} px-3 border-2 border-dourado/60 text-sobre-faixa hover:border-dourado hover:bg-dourado hover:text-sobre-dourado`;
+// Ações do cabeçalho (tema, entrar/sair): na cor de realce, porque vivem na faixa
+export const botaoNav = `${botaoBase} ${focoNaFaixa} ${desabilitado} ${impresso} ${medio} px-3 border-2 border-realce/60 text-sobre-faixa hover:border-realce hover:bg-realce hover:text-sobre-realce`;
 
 // Grupo de botões colados (o seletor de período das estatísticas)
 export const grupoBotoes =
@@ -105,6 +105,6 @@ export const larguraEstreita = "mx-auto w-full max-w-sm px-4 py-12"; // login
 // Cabeçalho de cada lado no fut: o branco e o preto como as camisas.
 // Fixos de propósito: são as cores das camisas, não do tema — não viram com ele.
 export const faixaTime = {
-  branco: "bg-[#f7f3ea] text-[#1e3163]",
+  branco: "bg-[#f5f7fa] text-[#1b3f78]",
   preto: "bg-[#0e0a0b] text-[#e2c26e]",
 } as const;
