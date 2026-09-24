@@ -20,19 +20,19 @@ Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinh
 
 Os melhores de cada fut num campo de fut7 (1 goleiro, 2 zagueiros, 2 meias, 2 atacantes), em cartas pretas no estilo das cartas inform do FIFA. A escolha é pelos números do fut (gols + assistências), e o craque ganha a tarja dourada (o admin pode escolher outro). Passando o mouse numa carta do campo, ela aparece grande do lado.
 
-![Seleção do fut no campo](docs/prints/selecao.jpg)
+![Seleção do fut no campo](docs/prints/selecao-v2.jpg)
 
 ### No celular
 
 Tudo foi pensado pro celular primeiro, que é onde a galera abre o site: cabeçalho que cabe em 320px, toque longo na carta pra copiar ou baixar como imagem, campos que não dão zoom no iPhone.
 
-![Elenco, seleção e futs no celular](docs/prints/celular.png)
+![Elenco, seleção e futs no celular](docs/prints/celular-v2.png)
 
 ### Futs
 
 Cada fut tem placar, resultado e os destaques da partida.
 
-![Detalhe do fut com placar e destaques](docs/prints/fut.jpg)
+![Detalhe do fut com placar e destaques](docs/prints/fut-v2.jpg)
 
 ### Estatísticas
 
@@ -44,7 +44,7 @@ Quem mais fez gols, deu assistências, venceu, entrou na seleção do fut e foi 
 
 Marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, dividindo cada posição entre os dois lados. "Sortear de novo" traz outra divisão também equilibrada.
 
-![Sorteio de times balanceados](docs/prints/sorteio.jpg)
+![Sorteio de times balanceados](docs/prints/sorteio-v2.jpg)
 
 ### Área do admin
 
@@ -52,7 +52,7 @@ Só quem tem a senha lança os dados. O admin cadastra jogadores (com foto enqua
 
 | Cadastro do jogador | Troca de vaga na seleção |
 |---|---|
-| ![Formulário de jogador com prévia da cartinha](docs/prints/admin-jogador.jpg) | ![Janela de troca de jogador numa vaga da seleção](docs/prints/admin-troca.jpg) |
+| ![Formulário de jogador com prévia da cartinha](docs/prints/admin-jogador-v2.jpg) | ![Janela de troca de jogador numa vaga da seleção](docs/prints/admin-troca-v2.jpg) |
 
 ## Identidade visual
 
