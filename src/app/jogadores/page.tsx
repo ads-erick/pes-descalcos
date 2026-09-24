@@ -13,8 +13,10 @@ export default async function JogadoresPage() {
   const semJogadores = jogadores.length === 0;
 
   const novoJogador = admin && (
-    <Link href="/jogadores/novo" className={botaoPrimario}>
-      Novo jogador
+    <Link href="/jogadores/novo" aria-label="Novo jogador" className={botaoPrimario}>
+      {/* Curto no celular, pra caber na linha da busca */}
+      <span className="sm:hidden">+ Novo</span>
+      <span className="max-sm:hidden">Novo jogador</span>
     </Link>
   );
 
