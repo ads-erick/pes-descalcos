@@ -153,6 +153,7 @@ Abra [http://localhost:3000](http://localhost:3000). Pra testar no celular na me
 | `ADMIN_PASSWORD` | Senha de quem lança os dados, escolhida por vocês |
 | `ADMIN_SESSION_SECRET` | Qualquer valor aleatório: `openssl rand -base64 32` |
 | `CRON_SECRET` | Só na Vercel. Qualquer valor aleatório: `openssl rand -base64 32`. Protege a rota do cron que mantém o Supabase acordado |
+| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Cloudflare → Turnstile → Add widget (domínio do site na Vercel, modo Managed). Opcionais: sem as duas, o login fica sem captcha. Pra testar local tem as chaves de teste no `.env.example` |
 
 ### Banco de dados
 
@@ -236,7 +237,7 @@ A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ou
 
 ### Admin
 
-Tudo é público pra ler. Pra lançar dados, entre em `/admin/login` com a `ADMIN_PASSWORD`. A sessão fica num cookie assinado (HMAC), `httpOnly`, por 30 dias.
+Tudo é público pra ler. Pra lançar dados, entre em `/admin/login` com a `ADMIN_PASSWORD` (com as chaves do Turnstile configuradas, passa antes por um captcha da Cloudflare). A sessão fica num cookie assinado (HMAC), `httpOnly`, por 30 dias.
 
 ### Estrutura
 
