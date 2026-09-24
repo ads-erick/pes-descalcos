@@ -14,10 +14,6 @@
 
 Um site de brincadeira pro nosso grupo de futebol: cada jogador vira uma cartinha no estilo FUT, cada fut fica registrado com placar, gols e assistências, e o site monta sozinho a seleção da rodada, os rankings da temporada e até sorteia times equilibrados.
 
-> [!NOTE]
-> **Este projeto foi feito inteiro com o [Claude Code](https://claude.com/claude-code).**
-> Todo o código, os commits, os pull requests, os testes e este README foram escritos pelo Claude Code. O meu papel foi de dono do produto: dizer o que eu queria, testar no celular, apontar o que estava errado, revisar e aprovar cada PR. [Como a gente trabalhou](#como-foi-feito) está descrito mais abaixo.
-
 ## O que tem
 
 ### Seleção do fut
