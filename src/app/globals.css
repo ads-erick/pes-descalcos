@@ -20,7 +20,8 @@
 }
 
 /* Claro: branco frio da camisa, estampa cinza-azulada e o azul do número e das listras.
-   A camisa branca só tem azul e branco, então na faixa o realce é branco (no escuro, dourado) */
+   Na faixa, o menu e os botões vão em branco como a camisa (no escuro, dourado); o dourado
+   fica no escudo, no friso e na sombra dos botões */
 :root {
   color-scheme: light;
   --fundo: #eef0f3;
@@ -31,20 +32,13 @@
   --linha: #cdd3de;
   --destaque: #1b3f78;
   --sobre-destaque: #f5f7fa;
-  --sombra: #a3b0c6;
+  --sombra: #c9a14a;
   --ouro: #8f6a1f;
   --ouro-suave: #f1e6c6;
   --faixa: #1b3f78;
   --sobre-faixa: #f5f7fa;
   --realce: #ffffff;
   --sobre-realce: #1b3f78;
-  /* Listras do ombro: o cabeçalho é a primeira, o friso branco o vão, e aqui vêm as outras duas */
-  --listras: linear-gradient(
-    to bottom,
-    var(--faixa) 0 4px,
-    var(--superficie) 4px 8px,
-    var(--faixa) 8px 12px
-  );
   --dourado: #d8b65c;
   /* Texto por cima do dourado: igual nos dois temas, porque --dourado não muda */
   --sobre-dourado: #140f0a;
@@ -71,7 +65,6 @@
     --sobre-faixa: #e8cf8a;
     --realce: #d8b65c;
     --sobre-realce: #140f0a;
-    --listras: none;
     --dourado: #d8b65c;
     --perigo: #f0786b;
     --textura: url("/texturas/rosas.svg");
@@ -94,7 +87,6 @@
   --sobre-faixa: #e8cf8a;
   --realce: #d8b65c;
   --sobre-realce: #140f0a;
-  --listras: none;
   --dourado: #d8b65c;
   --perigo: #f0786b;
   --textura: url("/texturas/rosas.svg");
@@ -173,19 +165,6 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
-/* Listras do ombro da camisa branca logo abaixo do cabeçalho; no escuro --listras é none */
-@utility listras-ombro {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 100%;
-    height: 12px;
-    pointer-events: none;
-    background: var(--listras);
-  }
-}
 
 /* Escudo como máscara: pega a cor do texto (currentColor) */
 @utility escudo {

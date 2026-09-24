@@ -229,7 +229,7 @@ Ao escolher a foto, abre um enquadramento (arrastar, pinça ou roda do mouse), e
 Tirada das camisas do grupo. Os temas seguem o sistema do aparelho até a pessoa escolher no botão do cabeçalho; a escolha fica no cookie `tema`.
 
 - **Escuro (camisa preta):** fundo preto com rosas vinho, detalhes dourados
-- **Claro (camisa branca):** branco frio com a estampa de mármore líquido cinza-azulada, detalhes no azul do número e as três listras do ombro embaixo do cabeçalho. A estampa (`public/texturas/marmore.svg`) sai de `scripts/textura-marmore.py`, que gera o desenho a partir de ruído e vetoriza em curvas
+- **Claro (camisa branca):** branco frio com a estampa de mármore líquido cinza-azulada, detalhes no azul do número, menu do cabeçalho em branco e toques de dourado (escudo, frisos, sombra dos botões). A estampa (`public/texturas/marmore.svg`) sai de `scripts/textura-marmore.py`, que gera o desenho a partir de ruído e vetoriza em curvas
 
 As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-apagado`, `border-linha`, `bg-destaque`, `text-realce`...), redefinidos por tema. Fontes: Alfa Slab One (títulos, como no escudo), Bebas Neue (números e rótulos), Barlow (texto) e Caveat Brush (detalhes).
 
