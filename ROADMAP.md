@@ -10,7 +10,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Prévia da carta do craque com a tarja** — na seleção (desktop), passar o mouse numa carta mostra ela grande embaixo à esquerda, mas a do craque aparece sem a tarja "Craque". A prévia monta as cartas com `cartinha(atuacao)` sem o `comTarja`; é passar `atuacao.jogadorId === craque` ali em `src/app/selecao/page.tsx`.
 - [ ] **Escolher o craque na mão** — na seleção, o admin clica com o botão direito numa carta (ou toque longo no celular) e o menu que já copia/baixa ganha um "Tornar craque" (e "Voltar pro craque automático" quando já foi trocado). Guarda numa coluna nova `fut.craque_id` (migration, nula = vale a conta). Hoje o craque é calculado em quatro lugares — lista de futs, detalhe do fut, rankings (contagem de craques) e seleção — e todos precisam respeitar a escolha. Só entra como craque quem está na seleção daquele fut.
 - [ ] **Limite de tentativas no login do admin** — hoje dá pra chutar a senha sem parar. Guardar as tentativas erradas numa tabela (IP + horário) e bloquear por 15 min depois de umas 5 erradas. Memória da instância não serve: na Vercel cada instância tem a sua e elas somem.
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
@@ -74,6 +73,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Seleção
 
 - [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
+- [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque" (#36)
 - [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
 
 ### Rankings e sorteio

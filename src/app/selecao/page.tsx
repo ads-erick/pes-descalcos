@@ -215,7 +215,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <Previa
               className="hidden lg:col-start-1 lg:row-start-4 lg:block"
               cartas={escalados.flatMap((atuacao) => {
-                const carta = cartinha(atuacao);
+                const carta = cartinha(atuacao, atuacao.jogadorId === craque);
                 return carta ? [{ id: atuacao.jogadorId, carta }] : [];
               })}
             />
