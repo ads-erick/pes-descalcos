@@ -245,8 +245,17 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <Previa
               className="hidden lg:col-start-1 lg:row-start-4 lg:block"
               cartas={escalados.flatMap((atuacao) => {
-                const carta = cartinha(atuacao, atuacao.jogadorId === craque, true);
-                return carta ? [{ id: atuacao.jogadorId, carta }] : [];
+                const ehCraque = atuacao.jogadorId === craque;
+                const carta = cartinha(atuacao, ehCraque, true);
+                if (!carta) return [];
+                // O craque abre dentro dele o espaço da tarja; as outras ganham o mesmo
+                // espaço por fora (fora do PNG), senão a carta pulava ao trocar pro craque
+                return [
+                  {
+                    id: atuacao.jogadorId,
+                    carta: ehCraque ? carta : <div className="pt-[7%]">{carta}</div>,
+                  },
+                ];
               })}
             />
           )}
