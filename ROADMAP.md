@@ -8,9 +8,9 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 ## Próximos passos
 
-Pedidos da galera, na ordem em que devem sair:
+Nada travado como próximo agora. O backlog está em "Mais pra frente".
 
-- [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
+A **tela de replays** foi descartada (24/09/2026): os clipes ficam num serviço de terceiro (Meu Replay), e não dá pra trazer o play pro nosso site de forma limpa e dentro dos termos. Trazer o vídeo pra dentro estouraria o Supabase grátis; puxar da API deles seria raspagem (a "chave" fica exposta no app deles, mas segurança fraca deles não vira permissão nossa); e embutir a página deles num iframe traria o player ruim e os anúncios deles. As opções honestas restantes (link "abrir no Meu Replay", ou baixar e re-subir no YouTube na mão) não valeram o esforço/visual pra galera.
 
 ## Mais pra frente
 
