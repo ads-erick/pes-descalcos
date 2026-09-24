@@ -37,10 +37,10 @@ Revisão de 22/09/2026. O que já está ok:
 - [x] **Banco fechado pra API pública do Supabase** — RLS ligado em todas as tabelas, sem policies: a chave pública não lê nem grava nada.
 - [x] **Supabase acordado** — cron diário em `/api/manter-ativo`, protegido pela `CRON_SECRET` (#31).
 - [x] **Limite de tentativas no login** — 5 senhas erradas em 15 min bloqueiam aquele IP até a mais antiga sair da janela, com o aviso de quantos minutos faltam. As tentativas ficam na tabela `login_tentativa` (a memória da instância não serve na Vercel), só com um HMAC do IP; IPv6 conta pela rede /64, que é o bloco de uma casa. Tentativas em paralelo não furam a contagem (lock por IP no banco), e a senha certa zera o contador. As outras server actions não precisam: sem o cookie de admin elas não fazem nada (#37).
+- [x] **Captcha no login (Cloudflare Turnstile)**: grátis e quase sempre sem clicar em nada. O servidor confere o token na Cloudflare antes de olhar a senha, então sem passar pelo captcha a tentativa nem conta pro limite; se a Cloudflare não responder, recusa. Cada token vale uma vez: depois de uma senha errada o widget gera outro sozinho. Só liga com `TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY` configuradas (#38).
 
 O que falta (tudo grátis):
 
-- [ ] **Captcha no login (Cloudflare Turnstile)** — grátis e sem aquele "clique nos semáforos". Com o limite de tentativas no ar o ganho é pequeno. Precisa criar a conta na Cloudflare e pôr as duas chaves na Vercel.
 - [ ] **Cabeçalhos de segurança** — `X-Frame-Options`/`frame-ancestors` (ninguém embute o site num iframe pra enganar o admin), `X-Content-Type-Options`, `Referrer-Policy`, via `headers()` no `next.config.ts`.
 - [ ] **Dependabot** — o GitHub abre PR sozinho quando sai correção de segurança numa dependência.
 
@@ -90,7 +90,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Infra e projeto
 
 - [x] **Base** — Next.js + TypeScript + Tailwind, Postgres no Supabase com RLS, CI com lint e build em toda PR (#1, #2)
-- [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava. 5 senhas erradas bloqueiam o IP por até 15 min (#2, #27, #37)
+- [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava. 5 senhas erradas bloqueiam o IP por até 15 min, e tem captcha da Cloudflare (#2, #27, #37, #38)
 - [x] **No ar na Vercel** — conexão com o banco ajustada pra serverless (pooler em modo transação, conexões liberadas depois de 20s paradas), validação geral de todas as telas antes do deploy e elenco de verdade cadastrado (#21, #28)
 - [x] **Supabase sempre acordado + backup diário** — o plano grátis pausa o projeto depois de uma semana sem uso: um cron da Vercel chama `/api/manter-ativo` todo dia e faz uma consulta no banco. Às 6h o GitHub Actions guarda um backup do banco e das fotos, criptografado com AES-256 porque o repositório é público, e fica 30 dias nos artifacts. Restauração testada (#31, #33)
 - [x] **Dados de teste** — `npm run seed:teste` cria jogadores e futs de mentira, `npm run seed:limpar` apaga (#6)
