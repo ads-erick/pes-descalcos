@@ -7,7 +7,7 @@ import { BotaoExcluir } from "@/components/botao-excluir";
 import { isAdmin } from "@/data/auth";
 import { buscarFut } from "@/data/futs";
 import { listarEscalaveis } from "@/data/jogadores";
-import { larguraPadrao, tituloPagina } from "@/lib/estilo";
+import { larguraForm, tituloPagina } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 
 export const metadata: Metadata = { title: "Editar fut" };
@@ -21,7 +21,7 @@ export default async function EditarFutPage({ params }: PageProps<"/futs/[id]/ed
   if (!fut) notFound();
 
   return (
-    <main className={larguraPadrao}>
+    <main className={larguraForm}>
       <div className="mb-6">
         <LinkVoltar href={`/futs/${id}`} />
       </div>

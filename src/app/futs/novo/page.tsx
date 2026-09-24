@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { FutForm } from "@/app/futs/fut-form";
 import { isAdmin } from "@/data/auth";
 import { listarEscalaveis } from "@/data/jogadores";
-import { larguraPadrao, tituloPagina, vazio } from "@/lib/estilo";
+import { larguraForm, tituloPagina, vazio } from "@/lib/estilo";
 import type { CorTime } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Registrar fut" };
@@ -36,7 +36,7 @@ export default async function NovoFutPage({ searchParams }: PageProps<"/futs/nov
   );
 
   return (
-    <main className={larguraPadrao}>
+    <main className={larguraForm}>
       <div className="mb-6">
         <LinkVoltar href="/futs" />
       </div>

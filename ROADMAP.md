@@ -10,7 +10,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Tela de registrar/editar fut mais bonita e intuitiva** — hoje é uma pilha de caixas de texto, e cada jogador precisa escolher "branco" ou "preto" num campo. A ideia é seguir o jeito do detalhe do fut: as duas tabelas lado a lado, "Time branco" e "Time preto", com a identidade visual do site, e o admin adiciona o jogador direto na tabela do time dele, lançando gols e assistências ali mesmo. Menos campo de texto, mais elemento visual, pra lançar as estatísticas do fut ser rápido tanto no registro quanto na edição.
 - [ ] **Tema claro mais fiel à camisa branca** — os rastros da estampa no fundo do tema claro (`public/texturas/marmore.svg`) não estão 100% iguais aos da camisa. **Depende do Erick mandar uma foto da camisa em qualidade melhor** pra redesenhar a estampa a partir dela. O tema escuro (`rosas.svg`) não entra.
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
 
@@ -64,6 +63,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Futs
 
 - [x] **Registro do fut** — data, placar, escalação branco/preto, gols e assistências por jogador; editar e excluir (#3, #5)
+- [x] **Registro do fut no visual do detalhe** — placar de estádio com as cores das camisas e as tabelas "Time branco" e "Time preto" lado a lado. O jogador entra direto na tabela do time pelo "+ Adicionar" (com busca por nome ou número; Enter escala o primeiro da lista sem mandar o fut), gols e assistências vão nos botões − e +, e clicar no nome abre "Passar pro outro time" e "Tirar do fut". O placar vai somando os gols lançados; mexido na mão (gol contra, gol de quem não é do elenco) fica fixo, com um "Voltar a somar" se não bater. Vale pro registro, pra edição e pro fut aberto pelo sorteio. Testado de 320px ao desktop (#45)
 - [x] **Lista e detalhe** — a lista mostra o vencedor e o craque; o detalhe mostra placar, escalação e os destaques do fut (#6, #15)
 
 ### Seleção
