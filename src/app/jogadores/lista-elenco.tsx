@@ -18,9 +18,12 @@ import { POSICAO_LABEL, POSICAO_SIGLA, POSICOES, normalizar, type Posicao } from
 export function ListaElenco({
   jogadores,
   admin,
+  acao,
 }: {
   jogadores: JogadorResumo[];
   admin: boolean;
+  // Botão do admin (novo jogador), na ponta direita da linha dos filtros
+  acao?: React.ReactNode;
 }) {
   const [busca, setBusca] = useState("");
   const [posicao, setPosicao] = useState<Posicao | null>(null);
@@ -78,6 +81,8 @@ export function ListaElenco({
             {filtrados.length} de {jogadores.length}
           </p>
         )}
+
+        {acao && <div className="ml-auto">{acao}</div>}
       </div>
 
       {filtrados.length === 0 ? (

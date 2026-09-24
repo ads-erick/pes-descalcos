@@ -370,8 +370,8 @@ function LinhaJogador({
       </div>
 
       {aberta && (
-        // trocar colado na esquerda, tirar (só o X) na ponta direita
-        <div className="mt-2 flex items-center justify-between gap-2 pb-1">
+        // trocar e tirar (só o X) juntos na ponta direita, embaixo dos contadores
+        <div className="mt-2 flex items-center justify-end gap-2 pb-1">
           <button type="button" onClick={onTrocarTime} className={botaoChip}>
             ⇄ Passar pro {outro}
           </button>
