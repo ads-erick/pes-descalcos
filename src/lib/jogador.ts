@@ -16,6 +16,13 @@ export const POSICAO_SIGLA: Record<Posicao, string> = {
   atacante: "ATA",
 };
 
+// "jose" acha "José": acento e caixa não atrapalham a busca
+export const normalizar = (texto: string) =>
+  texto
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+
 export function iniciais(nome: string) {
   return nome
     .trim()

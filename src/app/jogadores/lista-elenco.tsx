@@ -13,14 +13,7 @@ import {
   vazio,
   zoomCarta,
 } from "@/lib/estilo";
-import { POSICAO_LABEL, POSICAO_SIGLA, POSICOES, type Posicao } from "@/lib/jogador";
-
-// "jose" acha "José": acento e caixa não atrapalham a busca
-const normalizar = (texto: string) =>
-  texto
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
+import { POSICAO_LABEL, POSICAO_SIGLA, POSICOES, normalizar, type Posicao } from "@/lib/jogador";
 
 export function ListaElenco({
   jogadores,

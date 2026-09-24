@@ -22,7 +22,12 @@ export type JogadorResumo = {
   nivel: number;
 };
 
-export type JogadorEscalavel = { id: string; nome: string; numero: number | null };
+export type JogadorEscalavel = {
+  id: string;
+  nome: string;
+  numero: number | null;
+  posicao: Posicao | null;
+};
 
 export type NovoJogador = {
   nome: string;
@@ -156,7 +161,7 @@ export async function buscarJogador(id: string): Promise<JogadorEditavel | null>
 export async function listarEscalaveis(futId?: string): Promise<JogadorEscalavel[]> {
   await connection();
   return sql<JogadorEscalavel[]>`
-    select j.id, coalesce(j.apelido, j.nome) as nome, j.numero
+    select j.id, coalesce(j.apelido, j.nome) as nome, j.numero, j.posicao
     from jogador j
     where j.ativo
       or exists (

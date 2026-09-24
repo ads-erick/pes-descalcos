@@ -49,6 +49,10 @@ export const botaoPequeno = `${botao} ${medio} px-3 ${contorno}`;
 // Ações pequenas dentro da tela (marcar todos, limpar)
 export const botaoChip = `${botao} ${pequeno} px-2.5 ${contorno}`;
 
+// Quadradinho de − e + dos contadores (gols e assistências no registro do fut).
+// Alvo de toque de 36px: no celular é o que mais se aperta na tela
+export const botaoContador = `${botao} size-9 pt-0.5 text-xl ${contorno}`;
+
 // Excluir: mesma forma dos outros, só que na cor de perigo
 export const botaoPerigo = `${botao} ${grande} px-4 ${contornoPerigo}`;
 export const botaoPerigoPequeno = `${botao} ${medio} px-3 ${contornoPerigo}`;
