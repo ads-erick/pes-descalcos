@@ -8,6 +8,7 @@ import type { JogadorEscalavel } from "@/data/jogadores";
 import {
   botaoChip,
   botaoContador,
+  botaoPerigoIcone,
   botaoPrimario,
   botaoSecundario,
   campo,
@@ -369,13 +370,29 @@ function LinhaJogador({
       </div>
 
       {aberta && (
-        // trocar embaixo do nome, tirar na ponta direita (embaixo das assistências)
-        <div className="mt-2 flex flex-wrap gap-2 pb-1 sm:pl-8">
+        // trocar colado na esquerda, tirar (só o X) na ponta direita
+        <div className="mt-2 flex items-center justify-between gap-2 pb-1">
           <button type="button" onClick={onTrocarTime} className={botaoChip}>
             ⇄ Passar pro {outro}
           </button>
-          <button type="button" onClick={onTirar} className={`${botaoChip} ml-auto text-perigo`}>
-            Tirar do fut
+          <button
+            type="button"
+            onClick={onTirar}
+            aria-label={`Tirar ${jogador.nome} do fut`}
+            title="Tirar do fut"
+            className={botaoPerigoIcone}
+          >
+            <svg
+              aria-hidden
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              className="size-3.5"
+            >
+              <path d="M3 3l10 10M13 3L3 13" />
+            </svg>
           </button>
         </div>
       )}
