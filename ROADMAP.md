@@ -10,7 +10,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Tema claro mais fiel à camisa branca** — os rastros da estampa no fundo do tema claro (`public/texturas/marmore.svg`) não estão 100% iguais aos da camisa. **Depende do Erick mandar uma foto da camisa em qualidade melhor** pra redesenhar a estampa a partir dela. O tema escuro (`rosas.svg`) não entra.
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
 
 ## Mais pra frente
@@ -70,6 +69,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 - [x] **Seleção do fut no campo** — campo de fut7 com 1 goleiro, 2 zagueiros, 2 meias e 2 atacantes, pelos números do fut (gols + assistências, desempate por gols e pelo placar do time). Cartas pretas no estilo inform, prévia grande da carta no desktop. Vaga sem gente da posição vai pro melhor que sobrou ("improvisado") (#12, #16, #18, #26, #27)
 - [x] **Tarja do craque na prévia** — a carta grande que aparece ao passar o mouse no campo (desktop) também leva a tarja "Craque", do tamanho proporcional ao da carta, igual no campo (#36)
+- [x] **Prévia sem pulo no craque** — na carta grande do lado da lista (desktop), a do craque ficava uns 14px mais baixa que as outras, porque só ela reservava o espaço da tarja em cima. Agora todas reservam o mesmo espaço (fora da imagem que se copia/baixa), e a carta fica parada ao trocar (#46)
 - [x] **Troca na mão** — o admin clica numa vaga e escolhe qualquer um que jogou o fut, ou volta pra escolha automática. Fica na tabela `selecao_escolha` (#26, #27, #30)
 - [x] **Craque escolhido na mão** — o admin clica com o botão direito numa carta do campo (ou toque longo no celular) e escolhe "Tornar craque", ou "Voltar pro craque automático" na carta do escolhido. Vale qualquer um da seleção, mesmo sem gol nem assistência; se ele sair da seleção, o craque volta pra conta. Lista de futs, detalhe do fut, estatísticas e seleção mostram o mesmo craque. Sem escolha, o craque passa a ser o de melhores números entre os escalados (antes era o do fut inteiro, mesmo que tivesse sido trocado pra fora da seleção). Fica em `fut.craque_id` (#41)
 
@@ -85,6 +85,8 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 - [x] **Fundo igual em todas as telas** — a estampa era medida pela janela e dava um zoom quando a barra de rolagem aparecia ou a barra de endereço do celular sumia; agora vai por `vw`/`lvh`, que não mudam nessas horas (#34)
 - [x] **Menu parado no lugar** — o menu andava uns 7px pro lado nas páginas curtas (como a lista de futs), que não tinham barra de rolagem e por isso ficavam mais largas. Agora a barra aparece sempre, vazia quando não tem o que rolar, e o menu fica na mesma posição em todas as telas. O bloco Admin/Sair não influenciava. No celular a barra não ocupa espaço, então nada muda lá (#40)
+- [x] **Cabeçalho e rodapé mais largos, com o símbolo da barra da camisa** — os dois passaram a ter a largura da tela da seleção (a maior do site) em vez da do elenco. O símbolo (disco com dois olhos e a boca, `src/components/bardo.tsx`) fica à direita, depois dos botões, a partir de 640px (no celular cortaria o nome do time); no rodapé fica à direita, com os direitos reservados no centro (no celular, empilhado embaixo). Azul com aro branco no claro, dourado no escuro. Testado de 300 a 1920px sem rolagem lateral nem nada se sobrepondo (#46)
+- [x] **Tema claro com a cara da camisa branca** — a estampa do fundo foi redesenhada a partir das fotos da camisa: faixas de "mármore líquido" que correm juntas, fazem voltas e afinam em ponta, no lugar das linhas borradas de antes. Sai de `scripts/textura-marmore.py` (ruído distorcido + contornos vetorizados, 22 KB com gzip). A paleta passou do creme pro branco frio da camisa, o azul ficou o do número e das listras, e o menu e os botões do cabeçalho ficaram brancos, como a camisa. O dourado continua no escudo, no friso do cabeçalho e do rodapé, na sombra dos botões e onde é troféu (craque, 1º lugar, cartinhas). O tema escuro não mudou (#46)
 - [x] **Identidade visual** — tema claro (camisa branca) e escuro (camisa preta), seguindo o sistema ou escolhido no cabeçalho; escudo, fontes retrô e um sistema único de botões com foco de teclado (#11, #13, #14)
 - [x] **Celular** — testado de 320px a 430px sem rolagem lateral: cabeçalho que encolhe, alvos de toque maiores, campos que não dão zoom no iPhone, carta pequena legível no campo. Cabeçalho testado de 300 a 1600px sem nada se sobrepondo (#20, #27, #29)
 

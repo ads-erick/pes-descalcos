@@ -24,10 +24,10 @@ export function Menu() {
             <Link
               href={href}
               aria-current={atual ? "page" : undefined}
-              className={`block rounded-sm border-b-2 px-1 pt-1 pb-0.5 transition duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dourado ${
+              className={`block rounded-sm border-b-2 px-1 pt-1 pb-0.5 transition duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-realce ${
                 atual
-                  ? "border-dourado text-dourado"
-                  : "border-transparent text-sobre-faixa/80 hover:text-dourado"
+                  ? "border-realce text-realce"
+                  : "border-transparent text-sobre-faixa/80 hover:text-realce"
               }`}
             >
               {label}
