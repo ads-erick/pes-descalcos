@@ -10,7 +10,7 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 
 Pedidos da galera, na ordem em que devem sair:
 
-- [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
+- [ ] **Tela de registrar/editar fut mais bonita e intuitiva** — hoje é uma pilha de caixas de texto, e cada jogador precisa escolher "branco" ou "preto" num campo. A ideia é seguir o jeito do detalhe do fut: as duas tabelas lado a lado, "Time branco" e "Time preto", com a identidade visual do site, e o admin adiciona o jogador direto na tabela do time dele, lançando gols e assistências ali mesmo. Menos campo de texto, mais elemento visual, pra lançar as estatísticas do fut ser rápido tanto no registro quanto na edição.
 - [ ] **Tema claro mais fiel à camisa branca** — os rastros da estampa no fundo do tema claro (`public/texturas/marmore.svg`) não estão 100% iguais aos da camisa. **Depende do Erick mandar uma foto da camisa em qualidade melhor** pra redesenhar a estampa a partir dela. O tema escuro (`rosas.svg`) não entra.
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
 
@@ -75,7 +75,8 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 ### Rankings e sorteio
 
-- [x] **Rankings** — gols, assistências, craques e vitórias (com aproveitamento), filtrando por mês, ano ou desde sempre. Empate divide a colocação (#8, #17)
+- [x] **Rankings** — gols, assistências, vitórias (com aproveitamento), seleções e craques, nessa ordem, filtrando por mês, ano ou desde sempre. Empate divide a colocação (#8, #17)
+- [x] **Mais vezes na seleção** — tabela "Seleções" nos rankings: quantas vezes cada um entrou na seleção do fut (os 7 do campo), contando as trocas que o admin fez na mão, igual aparece na tela da seleção. Com 5 tabelas, a tela passou a mostrar 3 em cima e 2 embaixo (5 lado a lado ficava apertado demais) (#43)
 - [x] **Sorteio sem a diferença de força** — cada time continua mostrando a própria força e a média; o que saiu foi a linha comparando os dois (#34)
 - [x] **Sorteio de times balanceados** — marca quem vai jogar e o sorteio divide branco x preto com a soma dos níveis mais parecida possível, uma posição de cada vez. O admin abre o registro do fut já com a escalação sorteada. Critérios em `src/lib/sorteio.ts` (#9)
 

@@ -37,16 +37,22 @@ const COLUNAS: Coluna[] = [
     detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
   },
   {
-    titulo: "Craques",
-    vazio: "Ninguém foi craque ainda.",
-    valor: (j) => j.craques,
-    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
-  },
-  {
     titulo: "Vitórias",
     vazio: "Ninguém venceu ainda.",
     valor: (j) => j.vitorias,
     detalhe: (j) => `${Math.round((j.vitorias / j.jogos) * 100)}% dos jogos`,
+  },
+  {
+    titulo: "Seleções",
+    vazio: "Ninguém entrou na seleção ainda.",
+    valor: (j) => j.selecoes,
+    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
+  },
+  {
+    titulo: "Craques",
+    vazio: "Ninguém foi craque ainda.",
+    valor: (j) => j.craques,
+    detalhe: (j) => plural(j.jogos, "jogo", "jogos"),
   },
 ];
 
@@ -77,13 +83,14 @@ export default async function RankingsPage({ searchParams }: PageProps<"/ranking
         </nav>
       </CabecalhoPagina>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {COLUNAS.map((coluna) => {
+      {/* 5 tabelas em 3 + 2: as de cima com um terço da largura, as de baixo com metade */}
+      <div className="grid gap-4 md:grid-cols-6">
+        {COLUNAS.map((coluna, i) => {
           const ranking = rankear(jogadores, coluna.valor);
           return (
             <section
               key={coluna.titulo}
-              className={`${painel} overflow-hidden`}
+              className={`${painel} overflow-hidden ${i < 3 ? "md:col-span-2" : "md:col-span-3"}`}
             >
               <h2 className="border-b-2 border-dourado bg-faixa px-4 pt-2 pb-1.5 font-slab text-lg text-sobre-faixa uppercase">
                 {coluna.titulo}

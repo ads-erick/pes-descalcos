@@ -34,7 +34,7 @@ Tudo foi pensado pro celular primeiro, que é onde a galera abre o site: cabeça
 
 ### Futs e rankings
 
-Cada fut tem placar, resultado e os destaques da partida. Os rankings de gols, assistências, craques e vitórias podem ser vistos do mês, do ano ou desde sempre, e empate divide a colocação.
+Cada fut tem placar, resultado e os destaques da partida. Os rankings de gols, assistências, vitórias, seleções e craques podem ser vistos do mês, do ano ou desde sempre, e empate divide a colocação.
 
 | Detalhe do fut | Rankings |
 |---|---|
