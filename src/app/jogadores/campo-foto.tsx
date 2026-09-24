@@ -82,20 +82,55 @@ export function CampoFoto({
     <div>
       {/* Sem rótulo: o avatar e os botões ao lado já dizem o que é */}
       <div className="flex items-center gap-4">
-        <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-linha bg-superficie-2 font-slab text-2xl text-apagado">
-          {atual ? (
-            <Image
-              src={atual}
-              alt="Foto do jogador"
-              width={80}
-              height={80}
-              unoptimized
-              className="size-full object-cover"
-            />
-          ) : (
-            iniciais
-          )}
-        </div>
+        {/* Atalho pro mouse e o toque: o círculo abre a mesma escolha do botão
+            "Trocar" (o teclado e o leitor de tela vão pelo botão). O "trocar foto" aparece por cima no
+            hover e enquanto o dedo aperta; o selo da câmera fica sempre, porque no
+            celular não tem hover pra avisar */}
+        <label
+          htmlFor="foto"
+          aria-hidden="true"
+          className={`group relative size-20 shrink-0 cursor-pointer rounded-full ${abrindo ? "pointer-events-none" : ""}`}
+        >
+          <span className="grid size-full place-items-center overflow-hidden rounded-full border-2 border-linha bg-superficie-2 font-slab text-2xl text-apagado">
+            {atual ? (
+              <Image
+                src={atual}
+                alt=""
+                width={80}
+                height={80}
+                unoptimized
+                className="size-full object-cover"
+              />
+            ) : (
+              iniciais
+            )}
+          </span>
+
+          {/* Véu preto fixo, como o do editor: a foto pode ser clara ou escura */}
+          <span
+            className={`absolute inset-0 grid place-items-center rounded-full bg-black/60 px-2 text-center font-numero text-sm leading-tight tracking-wider text-white uppercase transition duration-150 group-hover:opacity-100 group-active:opacity-100 ${abrindo ? "opacity-100" : "opacity-0"}`}
+          >
+            {abrindo ? "Abrindo..." : atual ? "Trocar foto" : "Escolher foto"}
+          </span>
+
+          <span
+            aria-hidden="true"
+            className="absolute -right-0.5 -bottom-0.5 grid size-7 place-items-center rounded-full border-2 border-superficie bg-destaque text-sobre-destaque"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-4"
+            >
+              <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+              <circle cx="12" cy="13" r="3.5" />
+            </svg>
+          </span>
+        </label>
 
         {/* Todos do mesmo tamanho e na mesma linha; só quebram se não couberem */}
         <div className="flex flex-wrap items-center gap-2">
