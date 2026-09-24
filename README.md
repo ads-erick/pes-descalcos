@@ -93,12 +93,13 @@ Antes de subir pra Vercel, também pedi uma revisão de segurança: segredos no 
 
 ## Modelo de dados
 
-Quatro tabelas (ver `supabase/migrations/`):
+Cinco tabelas (ver `supabase/migrations/`):
 
 - **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido, se está ativo no grupo)
 - **fut** — cada partida (data, placar time branco x time preto)
 - **participacao** — números de um jogador num fut (de que lado jogou, gols, assistências)
 - **selecao_escolha** — as vagas da seleção que o admin trocou na mão
+- **login_tentativa** — tentativas de login do admin (só um hash do IP), pro bloqueio depois de 5 senhas erradas em 15 min
 
 Não existe tabela de "times": os lados de cada fut são só `branco`/`preto`, escolhidos a cada partida. A seleção do fut é calculada na hora a partir de `participacao`; só as trocas manuais ficam guardadas.
 

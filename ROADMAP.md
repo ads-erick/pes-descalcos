@@ -11,7 +11,6 @@ Site: https://pes-descalcos.vercel.app (publica sozinho a cada merge na `main`)
 Pedidos da galera, na ordem em que devem sair:
 
 - [ ] **Escolher o craque na mão** — na seleção, o admin clica com o botão direito numa carta (ou toque longo no celular) e o menu que já copia/baixa ganha um "Tornar craque" (e "Voltar pro craque automático" quando já foi trocado). Guarda numa coluna nova `fut.craque_id` (migration, nula = vale a conta). Hoje o craque é calculado em quatro lugares — lista de futs, detalhe do fut, rankings (contagem de craques) e seleção — e todos precisam respeitar a escolha. Só entra como craque quem está na seleção daquele fut.
-- [ ] **Limite de tentativas no login do admin** — hoje dá pra chutar a senha sem parar. Guardar as tentativas erradas numa tabela (IP + horário) e bloquear por 15 min depois de umas 5 erradas. Memória da instância não serve: na Vercel cada instância tem a sua e elas somem.
 - [ ] **Foto pelo círculo do avatar** — no cadastro e na edição do jogador, passar o mouse (desktop) ou tocar (celular) no círculo da foto mostra um "trocar foto" por cima e abre a escolha do arquivo, que cai direto no enquadramento. Os botões "Trocar"/"Enquadrar"/"Remover" podem continuar como estão, ou só "Enquadrar"/"Remover" se o círculo resolver a troca. Mexe em `src/app/jogadores/campo-foto.tsx`.
 - [ ] **Mais vezes na seleção** — nova tabela na tela de Rankings: quem mais entrou na seleção do fut (o time do fut, 7 no campo), com o mesmo filtro de período das outras. Vale a seleção como ela aparece, ou seja, contando as trocas que o admin fez na mão (`selecao_escolha`).
 - [ ] **Tela de replays** — uma tela pra ver os replays dos futs. **Falta decidir de onde vêm os vídeos:** link por fut (YouTube, Drive...) cadastrado pelo admin é o mais simples e não gasta armazenamento; subir o vídeo pro Supabase Storage estoura o plano grátis rápido. Provável formato: um campo de link (ou vários) no registro do fut, o player na página do fut e uma página "Replays" listando os futs que têm vídeo.
@@ -37,18 +36,18 @@ Revisão de 22/09/2026. O que já está ok:
 - [x] **Escrita só pro admin** — toda função que grava no banco chama `requireAdmin()` na camada de dados, então chamar a server action direto sem o cookie não adianta.
 - [x] **Banco fechado pra API pública do Supabase** — RLS ligado em todas as tabelas, sem policies: a chave pública não lê nem grava nada.
 - [x] **Supabase acordado** — cron diário em `/api/manter-ativo`, protegido pela `CRON_SECRET` (#31).
+- [x] **Limite de tentativas no login** — 5 senhas erradas em 15 min bloqueiam aquele IP até a mais antiga sair da janela, com o aviso de quantos minutos faltam. As tentativas ficam na tabela `login_tentativa` (a memória da instância não serve na Vercel), só com um HMAC do IP; IPv6 conta pela rede /64, que é o bloco de uma casa. Tentativas em paralelo não furam a contagem (lock por IP no banco), e a senha certa zera o contador. As outras server actions não precisam: sem o cookie de admin elas não fazem nada (#37).
 
 O que falta (tudo grátis):
 
-- [ ] **Limite de tentativas no login** — está nos próximos passos. As outras server actions não precisam: sem o cookie de admin elas não fazem nada.
-- [ ] **Captcha no login (Cloudflare Turnstile)** — grátis e sem aquele "clique nos semáforos". Com o limite de tentativas o ganho é pequeno, então fica depois dele. Precisa criar a conta na Cloudflare e pôr as duas chaves na Vercel.
+- [ ] **Captcha no login (Cloudflare Turnstile)** — grátis e sem aquele "clique nos semáforos". Com o limite de tentativas no ar o ganho é pequeno. Precisa criar a conta na Cloudflare e pôr as duas chaves na Vercel.
 - [ ] **Cabeçalhos de segurança** — `X-Frame-Options`/`frame-ancestors` (ninguém embute o site num iframe pra enganar o admin), `X-Content-Type-Options`, `Referrer-Policy`, via `headers()` no `next.config.ts`.
 - [ ] **Dependabot** — o GitHub abre PR sozinho quando sai correção de segurança numa dependência.
 
 ## Pendências técnicas
 
 - [ ] Senha de admin única para todos os admins; se entrarem mais pessoas, trocar por login individual.
-- [ ] A senha de admin e o segredo da sessão na produção são os mesmos do desenvolvimento. Trocar na Vercel (e dar Redeploy), principalmente agora que o repositório é público.
+- [ ] A senha de admin e o segredo da sessão na produção são os mesmos do desenvolvimento. Não vazaram (o `.env.local` nunca foi pro git, conferido no histórico), mas o ideal é produção ter os próprios: trocar na Vercel e dar Redeploy quando der.
 - [ ] Jogador arquivado não tem tela pra voltar ao elenco; por enquanto é `update jogador set ativo = true` no banco.
 - [ ] Sem testes automatizados: os fluxos são verificados a cada PR por um script de navegador contra o banco, mas o script é descartável e não está versionado.
 - [ ] Os números do nível (quanto cada fut mexe, a curva que deixa subir mais difícil lá em cima) foram calibrados com dados de teste; revisar quando tiver uns 10 futs reais.
@@ -91,7 +90,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 ### Infra e projeto
 
 - [x] **Base** — Next.js + TypeScript + Tailwind, Postgres no Supabase com RLS, CI com lint e build em toda PR (#1, #2)
-- [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava (#2, #27)
+- [x] **Área de admin** — login por senha única, sessão em cookie assinado; depois do login volta pra página onde estava. 5 senhas erradas bloqueiam o IP por até 15 min (#2, #27, #37)
 - [x] **No ar na Vercel** — conexão com o banco ajustada pra serverless (pooler em modo transação, conexões liberadas depois de 20s paradas), validação geral de todas as telas antes do deploy e elenco de verdade cadastrado (#21, #28)
 - [x] **Supabase sempre acordado + backup diário** — o plano grátis pausa o projeto depois de uma semana sem uso: um cron da Vercel chama `/api/manter-ativo` todo dia e faz uma consulta no banco. Às 6h o GitHub Actions guarda um backup do banco e das fotos, criptografado com AES-256 porque o repositório é público, e fica 30 dias nos artifacts. Restauração testada (#31, #33)
 - [x] **Dados de teste** — `npm run seed:teste` cria jogadores e futs de mentira, `npm run seed:limpar` apaga (#6)

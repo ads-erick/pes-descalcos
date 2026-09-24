@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 const COOKIE = "admin_session";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
-function sign(value: string) {
+export function sign(value: string) {
   const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) throw new Error("ADMIN_SESSION_SECRET não configurado");
   return createHmac("sha256", secret).update(value).digest("base64url");
