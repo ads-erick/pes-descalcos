@@ -104,10 +104,16 @@ export const larguraPadrao = "mx-auto w-full max-w-3xl px-4 py-8"; // listas, de
 export const larguraCampo = "mx-auto w-full max-w-7xl px-4 py-8"; // seleção: lista de um lado e o campo de fut7 do outro
 export const larguraEstreita = "mx-auto w-full max-w-sm px-4 py-12"; // login
 
-// Cabeçalho de cada lado no fut: o branco e o preto como as camisas.
-// O preto é fixo. O branco, no tema claro, vira o azul da camisa com letra branca:
-// branco sobre o papel claro sumia, e no azul casa com a faixa do site
-export const faixaTime = {
-  branco: "bg-[#1b3f78] text-[#f5f7fa] dark:bg-[#f5f7fa] dark:text-[#1b3f78]",
+// Placar do fut: o branco e o preto como as camisas.
+// Fixos de propósito: são as cores das camisas, não do tema — não viram com ele.
+export const placarTime = {
+  branco: "bg-[#f5f7fa] text-[#1b3f78]",
   preto: "bg-[#0e0a0b] text-[#e2c26e]",
+} as const;
+
+// Cabeçalho de cada time (escalação, sorteio): igual ao placar, menos o branco no tema
+// claro, que vira o azul da camisa com letra branca pra casar com a faixa do site
+export const faixaTime = {
+  ...placarTime,
+  branco: "bg-[#1b3f78] text-[#f5f7fa] dark:bg-[#f5f7fa] dark:text-[#1b3f78]",
 } as const;

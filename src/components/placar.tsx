@@ -1,4 +1,4 @@
-import { faixaTime } from "@/lib/estilo";
+import { placarTime } from "@/lib/estilo";
 import type { CorTime } from "@/lib/selecao";
 
 // Placar de estádio antigo: cada lado com a cor da sua camisa, o perdedor fica apagado
@@ -19,10 +19,10 @@ export function Placar({
 
   return (
     <div className="flex shrink-0 items-stretch overflow-hidden rounded-md border-2 border-tinta font-numero leading-none tabular-nums">
-      <span className={`grid place-items-center ${tamanho} ${faixaTime.branco}`}>
+      <span className={`grid place-items-center ${tamanho} ${placarTime.branco}`}>
         <span className={perdeu("branco")}>{branco}</span>
       </span>
-      <span className={`grid place-items-center ${tamanho} ${faixaTime.preto}`}>
+      <span className={`grid place-items-center ${tamanho} ${placarTime.preto}`}>
         <span className={perdeu("preto")}>{preto}</span>
       </span>
     </div>

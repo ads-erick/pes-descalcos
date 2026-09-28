@@ -14,6 +14,7 @@ import {
   campo,
   campoPequeno,
   faixaTime,
+  placarTime,
   link,
   painel,
 } from "@/lib/estilo";
@@ -144,7 +145,7 @@ export function FutForm({
               value={placar(cor)}
               onChange={(e) => fixarPlacar(cor, Number.parseInt(e.target.value, 10) || 0)}
               onFocus={(e) => e.target.select()}
-              className={`w-1/2 [appearance:textfield] px-2 pt-3 pb-1 text-center font-numero text-6xl leading-none tabular-nums focus:-outline-offset-4 focus:outline-2 focus:outline-destaque sm:text-7xl [&::-webkit-inner-spin-button]:appearance-none ${faixaTime[cor]}`}
+              className={`w-1/2 [appearance:textfield] px-2 pt-3 pb-1 text-center font-numero text-6xl leading-none tabular-nums focus:-outline-offset-4 focus:outline-2 focus:outline-destaque sm:text-7xl [&::-webkit-inner-spin-button]:appearance-none ${placarTime[cor]}`}
             />
           ))}
         </div>
