@@ -105,8 +105,9 @@ export const larguraCampo = "mx-auto w-full max-w-7xl px-4 py-8"; // seleção: 
 export const larguraEstreita = "mx-auto w-full max-w-sm px-4 py-12"; // login
 
 // Cabeçalho de cada lado no fut: o branco e o preto como as camisas.
-// Fixos de propósito: são as cores das camisas, não do tema — não viram com ele.
+// O preto é fixo. O branco, no tema claro, vira o azul da camisa com letra branca:
+// branco sobre o papel claro sumia, e no azul casa com a faixa do site
 export const faixaTime = {
-  branco: "bg-[#f5f7fa] text-[#1b3f78]",
+  branco: "bg-[#1b3f78] text-[#f5f7fa] dark:bg-[#f5f7fa] dark:text-[#1b3f78]",
   preto: "bg-[#0e0a0b] text-[#e2c26e]",
 } as const;
