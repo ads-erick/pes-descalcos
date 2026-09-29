@@ -18,7 +18,7 @@ import {
   painel,
 } from "@/lib/estilo";
 import { POSICAO_SIGLA, normalizar } from "@/lib/jogador";
-import { NOME_TIME, type CorTime } from "@/lib/selecao";
+import { NOME_TIME, formatarHorario, type CorTime } from "@/lib/selecao";
 
 type Time = CorTime;
 type FutExistente = NovoFut & { id: string };
@@ -29,6 +29,11 @@ const OUTRO: Record<Time, Time> = { branco: "preto", preto: "branco" };
 const MAXIMO = 99;
 
 const limitar = (n: number) => Math.min(MAXIMO, Math.max(0, n));
+
+// Horários do fut de meia em meia hora, o dia inteiro: "00:00", "00:30", ... "23:30"
+const HORARIOS = Array.from({ length: 48 }, (_, i) =>
+  `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`,
+);
 
 // Na ordem do elenco (por nome); quem entrar depois vai pro fim da tabela do time
 function linhasIniciais(
@@ -128,19 +133,25 @@ export function FutForm({
             <label htmlFor="horario" className="font-numero text-xl tracking-wider uppercase">
               às
             </label>
-            <input
+            <select
               id="horario"
               name="horario"
-              type="time"
               defaultValue={fut?.horario ?? ""}
-              aria-describedby="horario-dica"
-              className={`${campo} max-w-32`}
-            />
+              className={`${campo} w-auto`}
+            >
+              <option value="">Sem horário</option>
+              {/* Fut salvo num horário quebrado (antes da lista) não perde o horário ao editar */}
+              {fut?.horario && !HORARIOS.includes(fut.horario) && (
+                <option value={fut.horario}>{formatarHorario(fut.horario)}</option>
+              )}
+              {HORARIOS.map((h) => (
+                <option key={h} value={h}>
+                  {formatarHorario(h)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-        <p id="horario-dica" className="mt-2 text-center text-xs text-apagado">
-          O horário é opcional.
-        </p>
 
         <div className="mx-auto mt-6 grid max-w-72 grid-cols-2 text-center font-numero text-xl tracking-wider uppercase">
           {TIMES.map((cor) => (
