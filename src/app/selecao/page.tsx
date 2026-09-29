@@ -153,10 +153,12 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           <div className="flex w-full items-end gap-3 lg:col-start-1 lg:row-start-2">
             <SeletorFut
               atual={fut.id}
-              futs={futs.map((f) => ({
-                id: f.id,
-                rotulo: `${f.data} · ${f.faltamDias !== null ? "a rolar" : `${f.placarBranco} x ${f.placarPreto}`}`,
-              }))}
+              futs={futs.map((f) => {
+                // Fut que ainda não rolou leva traço no placar, igual no Placar
+                const [branco, preto] =
+                  f.faltamDias !== null ? ["–", "–"] : [f.placarBranco, f.placarPreto];
+                return { id: f.id, rotulo: `${f.data} · ${branco} x ${preto}` };
+              })}
             />
             <Link href={`/futs/${fut.id}`} className={botaoSecundario}>
               Ver fut
