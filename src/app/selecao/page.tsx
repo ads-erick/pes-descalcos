@@ -154,9 +154,10 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <SeletorFut
               atual={fut.id}
               futs={futs.map((f) => {
-                // Fut que ainda não rolou leva traço no placar, igual no Placar
+                // Fut que ainda não rolou leva traço no placar, igual no Placar. Aqui vai o
+                // travessão longo: nessa fonte e nesse tamanho o curto some do lado do "·"
                 const [branco, preto] =
-                  f.faltamDias !== null ? ["–", "–"] : [f.placarBranco, f.placarPreto];
+                  f.faltamDias !== null ? ["—", "—"] : [f.placarBranco, f.placarPreto];
                 return { id: f.id, rotulo: `${f.data} · ${branco} x ${preto}` };
               })}
             />
