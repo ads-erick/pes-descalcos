@@ -132,11 +132,13 @@ As vagas são preenchidas pelos melhores de cada posição. Se faltar gente numa
 
 ### Sorteio de times
 
-Critérios em `src/lib/sorteio.ts`. A força de cada time é a soma dos níveis das cartinhas. O sorteio:
+Critérios em `src/lib/sorteio.ts`. O que se equilibra é a **média** dos níveis das cartinhas, não a soma: só 7 jogam por vez e o resto reveza, então com número ímpar o time com um a mais não pode ser mais fraco jogador a jogador pra compensar. O sorteio:
 
 1. Divide cada posição entre os dois lados, intercalando: um goleiro pra cada time, zagueiros divididos, e assim por diante. Quem não tem posição completa os times
-2. Troca jogadores da mesma posição entre os times enquanto isso aproximar a força dos dois
-3. Repete isso 200 vezes com ordens aleatórias e escolhe ao acaso uma das divisões com diferença de até 2 pontos a mais que a melhor, pra "sortear de novo" trazer times diferentes
+2. Troca jogadores da mesma posição entre os times enquanto isso aproximar a média dos dois
+3. Repete isso 200 vezes com ordens aleatórias e escolhe ao acaso uma das divisões com diferença de média de até 0,25 a mais que a melhor, pra "sortear de novo" trazer times diferentes
+
+Cada time mostra só a média, com uma casa decimal.
 
 Tudo roda no navegador, nada é salvo. O admin pode levar os times sorteados pro registro do fut.
 
