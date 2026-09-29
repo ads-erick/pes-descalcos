@@ -18,7 +18,7 @@ import {
   painel,
 } from "@/lib/estilo";
 import { POSICAO_SIGLA, normalizar } from "@/lib/jogador";
-import { NOME_TIME, type CorTime } from "@/lib/selecao";
+import { NOME_TIME, formatarHorario, type CorTime } from "@/lib/selecao";
 
 type Time = CorTime;
 type FutExistente = NovoFut & { id: string };
@@ -29,6 +29,11 @@ const OUTRO: Record<Time, Time> = { branco: "preto", preto: "branco" };
 const MAXIMO = 99;
 
 const limitar = (n: number) => Math.min(MAXIMO, Math.max(0, n));
+
+// Horários do fut de meia em meia hora, o dia inteiro: "00:00", "00:30", ... "23:30"
+const HORARIOS = Array.from({ length: 48 }, (_, i) =>
+  `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`,
+);
 
 // Na ordem do elenco (por nome); quem entrar depois vai pro fim da tabela do time
 function linhasIniciais(
@@ -122,6 +127,30 @@ export function FutForm({
             defaultValue={fut?.data ?? new Date().toISOString().slice(0, 10)}
             className={`${campo} max-w-48`}
           />
+          {/* Opcional: vai junto no texto dos times que a galera copia pro grupo.
+              Embrulhado pra o "às" não ficar sozinho no fim da linha no celular */}
+          <div className="flex items-center gap-3">
+            <label htmlFor="horario" className="font-numero text-xl tracking-wider uppercase">
+              às
+            </label>
+            <select
+              id="horario"
+              name="horario"
+              defaultValue={fut?.horario ?? ""}
+              className={`${campo} w-auto`}
+            >
+              <option value="">Sem horário</option>
+              {/* Fut salvo num horário quebrado (antes da lista) não perde o horário ao editar */}
+              {fut?.horario && !HORARIOS.includes(fut.horario) && (
+                <option value={fut.horario}>{formatarHorario(fut.horario)}</option>
+              )}
+              {HORARIOS.map((h) => (
+                <option key={h} value={h}>
+                  {formatarHorario(h)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="mx-auto mt-6 grid max-w-72 grid-cols-2 text-center font-numero text-xl tracking-wider uppercase">
