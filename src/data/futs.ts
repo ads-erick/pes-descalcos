@@ -27,6 +27,8 @@ const faltamDias = () => sql`
 export type FutResumo = {
   id: string;
   data: string;
+  // HH:MM, ou null quando não foi informado
+  horario: string | null;
   placarBranco: number;
   placarPreto: number;
   // null = já rolou
@@ -44,6 +46,8 @@ export type AtuacaoNoFut = Atuacao & {
 export type DetalheFut = {
   id: string;
   data: string;
+  // HH:MM, ou null quando não foi informado
+  horario: string | null;
   placarBranco: number;
   placarPreto: number;
   // null = já rolou
@@ -62,6 +66,7 @@ export type NovaParticipacao = {
 
 export type NovoFut = {
   data: string;
+  horario: string | null;
   placarBranco: number;
   placarPreto: number;
   participacoes: NovaParticipacao[];
@@ -70,6 +75,7 @@ export type NovoFut = {
 type LinhaFut = {
   id: string;
   data: string;
+  horario: string | null;
   placar_branco: number;
   placar_preto: number;
   craque_id: string | null;
@@ -82,7 +88,8 @@ export async function listarFuts(): Promise<FutResumo[]> {
   const [futs, atuacoes, escolhas] = await Promise.all([
     sql<LinhaFut[]>`
       select
-        f.id, to_char(f.data, 'DD/MM/YYYY') as data, f.placar_branco, f.placar_preto, f.craque_id,
+        f.id, to_char(f.data, 'DD/MM/YYYY') as data, to_char(f.horario, 'HH24:MI') as horario,
+        f.placar_branco, f.placar_preto, f.craque_id,
         ${faltamDias()} as "faltamDias"
       from fut f
       order by f.data desc, f.criado_em desc
@@ -116,6 +123,7 @@ export async function listarFuts(): Promise<FutResumo[]> {
     return {
       id: fut.id,
       data: fut.data,
+      horario: fut.horario,
       placarBranco: fut.placar_branco,
       placarPreto: fut.placar_preto,
       faltamDias: fut.faltamDias,
@@ -133,7 +141,8 @@ export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | n
   const [[fut], atuacoes] = await Promise.all([
     sql<LinhaFut[]>`
       select
-        f.id, to_char(f.data, 'DD/MM/YYYY') as data, f.placar_branco, f.placar_preto, f.craque_id,
+        f.id, to_char(f.data, 'DD/MM/YYYY') as data, to_char(f.horario, 'HH24:MI') as horario,
+        f.placar_branco, f.placar_preto, f.craque_id,
         ${faltamDias()} as "faltamDias"
       from fut f
       where f.id = ${id}
@@ -158,6 +167,7 @@ export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | n
   return {
     id: fut.id,
     data: fut.data,
+    horario: fut.horario,
     placarBranco: fut.placar_branco,
     placarPreto: fut.placar_preto,
     faltamDias: fut.faltamDias,
@@ -187,8 +197,10 @@ export async function buscarFut(id: string): Promise<(NovoFut & { id: string }) 
   await connection();
 
   const [[fut], participacoes] = await Promise.all([
-    sql<{ id: string; data: string; placar_branco: number; placar_preto: number }[]>`
-      select id, to_char(data, 'YYYY-MM-DD') as data, placar_branco, placar_preto
+    sql<{ id: string; data: string; horario: string | null; placar_branco: number; placar_preto: number }[]>`
+      select
+        id, to_char(data, 'YYYY-MM-DD') as data, to_char(horario, 'HH24:MI') as horario,
+        placar_branco, placar_preto
       from fut
       where id = ${id}
     `,
@@ -207,6 +219,7 @@ export async function buscarFut(id: string): Promise<(NovoFut & { id: string }) 
   return {
     id: fut.id,
     data: fut.data,
+    horario: fut.horario,
     placarBranco: fut.placar_branco,
     placarPreto: fut.placar_preto,
     participacoes,
@@ -236,8 +249,8 @@ export async function criarFut(fut: NovoFut) {
 
   await sql.begin(async (tx) => {
     const [criado] = await tx<{ id: string }[]>`
-      insert into fut (data, placar_branco, placar_preto)
-      values (${fut.data}, ${fut.placarBranco}, ${fut.placarPreto})
+      insert into fut (data, horario, placar_branco, placar_preto)
+      values (${fut.data}, ${fut.horario}, ${fut.placarBranco}, ${fut.placarPreto})
       returning id
     `;
     await inserirParticipacoes(tx, criado.id, fut.participacoes);
@@ -251,7 +264,7 @@ export async function atualizarFut(id: string, fut: NovoFut) {
   await sql.begin(async (tx) => {
     await tx`
       update fut
-      set data = ${fut.data}, placar_branco = ${fut.placarBranco}, placar_preto = ${fut.placarPreto}
+      set data = ${fut.data}, horario = ${fut.horario}, placar_branco = ${fut.placarBranco}, placar_preto = ${fut.placarPreto}
       where id = ${id}
     `;
     await tx`delete from participacao where fut_id = ${id}`;

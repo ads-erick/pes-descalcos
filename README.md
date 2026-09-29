@@ -103,7 +103,7 @@ Antes de subir pra Vercel, também pedi uma revisão de segurança: segredos no 
 Cinco tabelas (o esquema fica em `supabase/migrations/`):
 
 - **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido, se está ativo no grupo)
-- **fut** — cada partida (data, placar time branco x time preto e, se o admin escolheu, o craque)
+- **fut** — cada partida (data, horário se informado, placar time branco x time preto e, se o admin escolheu, o craque)
 - **participacao** — números de um jogador num fut (de que lado jogou, gols, assistências)
 - **selecao_escolha** — as vagas da seleção que o admin trocou na mão
 - **login_tentativa** — tentativas de login do admin (só um hash do IP), pro bloqueio depois de 5 senhas erradas em 15 min

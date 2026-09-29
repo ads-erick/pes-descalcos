@@ -25,12 +25,23 @@ export function vencedor(placarBranco: number, placarPreto: number): CorTime | n
   return placarBranco > placarPreto ? "branco" : "preto";
 }
 
-// O que aparece embaixo do placar
-export function resultadoDoFut(placarBranco: number, placarPreto: number, faltamDias: number | null) {
+// "20:00" vira "20h" e "19:30" vira "19h30", do jeito que se fala
+export function formatarHorario(horario: string) {
+  const [hora, minuto] = horario.split(":");
+  return `${Number(hora)}h${minuto === "00" ? "" : minuto}`;
+}
+
+// O que aparece embaixo do placar. O horário só aparece no fut que ainda vai rolar
+export function resultadoDoFut(
+  placarBranco: number,
+  placarPreto: number,
+  faltamDias: number | null,
+  horario?: string | null,
+) {
   if (faltamDias !== null) {
     const quando =
       faltamDias === 0 ? "é hoje" : faltamDias === 1 ? "é amanhã" : `daqui a ${faltamDias} dias`;
-    return `Ainda vai rolar · ${quando}`;
+    return `Ainda vai rolar · ${quando}${horario ? `, às ${formatarHorario(horario)}` : ""}`;
   }
   const venceu = vencedor(placarBranco, placarPreto);
   return venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate";

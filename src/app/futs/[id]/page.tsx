@@ -70,7 +70,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
           <span className="w-16 text-left sm:w-20">Preto</span>
         </div>
         <p className={`mt-4 font-script text-2xl ${aRolar ? "text-ouro" : "text-apagado"}`}>
-          {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias)}
+          {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias, fut.horario)}
         </p>
       </section>
 
@@ -137,6 +137,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
             <BotaoCopiarTimes
               futId={fut.id}
               data={fut.data}
+              horario={fut.horario}
               atuacoes={fut.atuacoes.map(({ nome, posicao, corTime }) => ({ nome, posicao, corTime }))}
               className={botaoPequeno}
             />

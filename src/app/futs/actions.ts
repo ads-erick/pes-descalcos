@@ -14,6 +14,10 @@ const inteiroNaoNegativo = z.coerce
 
 const futSchema = z.object({
   data: z.iso.date("Informe a data do fut"),
+  // Opcional: campo vazio vira null. Alguns navegadores mandam os segundos junto
+  horario: z
+    .union([z.literal(""), z.string().regex(/^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/, "Horário inválido")])
+    .transform((h) => (h ? h.slice(0, 5) : null)),
   placarBranco: inteiroNaoNegativo,
   placarPreto: inteiroNaoNegativo,
 });
@@ -30,11 +34,13 @@ export type FutFormState = { erro?: string };
 function lerFut(formData: FormData): { erro: string } | { fut: NovoFut } {
   const fut = futSchema.safeParse({
     data: formData.get("data"),
+    horario: formData.get("horario") ?? "",
     placarBranco: formData.get("placarBranco") || 0,
     placarPreto: formData.get("placarPreto") || 0,
   });
   if (!fut.success) {
-    return { erro: z.flattenError(fut.error).fieldErrors.data?.[0] ?? "Dados do fut inválidos" };
+    const erros = z.flattenError(fut.error).fieldErrors;
+    return { erro: erros.data?.[0] ?? erros.horario?.[0] ?? "Dados do fut inválidos" };
   }
 
   const participacoes: NovaParticipacao[] = [];

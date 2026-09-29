@@ -49,7 +49,7 @@ export default async function FutsPage() {
                 <p
                   className={`mt-1 text-sm ${fut.faltamDias !== null ? "font-semibold text-ouro" : "text-apagado"}`}
                 >
-                  {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias)}
+                  {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias, fut.horario)}
                   {fut.craque && (
                     <>
                       {" · craque: "}
@@ -66,6 +66,7 @@ export default async function FutsPage() {
                   <BotaoCopiarTimes
                     futId={fut.id}
                     data={fut.data}
+                    horario={fut.horario}
                     atuacoes={fut.atuacoes.map(({ nome, posicao, corTime }) => ({ nome, posicao, corTime }))}
                     className={`${botaoChip} relative mt-2.5`}
                   />

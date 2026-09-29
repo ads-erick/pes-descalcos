@@ -122,7 +122,25 @@ export function FutForm({
             defaultValue={fut?.data ?? new Date().toISOString().slice(0, 10)}
             className={`${campo} max-w-48`}
           />
+          {/* Opcional: vai junto no texto dos times que a galera copia pro grupo.
+              Embrulhado pra o "às" não ficar sozinho no fim da linha no celular */}
+          <div className="flex items-center gap-3">
+            <label htmlFor="horario" className="font-numero text-xl tracking-wider uppercase">
+              às
+            </label>
+            <input
+              id="horario"
+              name="horario"
+              type="time"
+              defaultValue={fut?.horario ?? ""}
+              aria-describedby="horario-dica"
+              className={`${campo} max-w-32`}
+            />
+          </div>
         </div>
+        <p id="horario-dica" className="mt-2 text-center text-xs text-apagado">
+          O horário é opcional.
+        </p>
 
         <div className="mx-auto mt-6 grid max-w-72 grid-cols-2 text-center font-numero text-xl tracking-wider uppercase">
           {TIMES.map((cor) => (

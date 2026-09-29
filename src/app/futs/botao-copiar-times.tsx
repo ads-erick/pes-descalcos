@@ -8,11 +8,13 @@ import { textoDosTimes } from "@/lib/texto-times";
 export function BotaoCopiarTimes({
   futId,
   data,
+  horario,
   atuacoes,
   className,
 }: {
   futId: string;
   data: string;
+  horario: string | null;
   atuacoes: Pick<Atuacao, "nome" | "posicao" | "corTime">[];
   className: string;
 }) {
@@ -26,7 +28,7 @@ export function BotaoCopiarTimes({
   }, [estado]);
 
   async function copiar() {
-    const texto = textoDosTimes(data, atuacoes, `${location.origin}/futs/${futId}`);
+    const texto = textoDosTimes(data, horario, atuacoes, `${location.origin}/futs/${futId}`);
     setEstado((await copiarTexto(texto)) ? "copiado" : "falhou");
   }
 
