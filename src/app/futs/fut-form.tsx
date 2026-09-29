@@ -8,6 +8,7 @@ import type { JogadorEscalavel } from "@/data/jogadores";
 import {
   botaoChip,
   botaoContador,
+  botaoPequeno,
   botaoPerigoIcone,
   botaoPrimario,
   botaoSecundario,
@@ -399,9 +400,10 @@ function LinhaJogador({
       </div>
 
       {aberta && (
-        // trocar e tirar (só o X) juntos na ponta direita, embaixo dos contadores
-        <div className="mt-2 flex items-center justify-end gap-2 pb-1">
-          <button type="button" onClick={onTrocarTime} className={botaoChip}>
+        // trocar e tirar (só o X) juntos na ponta direita, embaixo dos contadores,
+        // na mesma altura do − e + (36px), senão parecem de outro tamanho
+        <div className="mt-2 flex items-center justify-end gap-3 pb-1">
+          <button type="button" onClick={onTrocarTime} className={botaoPequeno}>
             ⇄ Passar pro {outro}
           </button>
           <button
@@ -418,7 +420,7 @@ function LinhaJogador({
               stroke="currentColor"
               strokeWidth="2.5"
               strokeLinecap="round"
-              className="size-3.5"
+              className="size-4"
             >
               <path d="M3 3l10 10M13 3L3 13" />
             </svg>
