@@ -41,8 +41,11 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
     );
   }
 
-  // Sem fut escolhido, abre no último
-  const id = typeof pedido === "string" && ehUuid(pedido) ? pedido : futs[0].id;
+  // Sem fut escolhido, abre no último que já rolou
+  const id =
+    typeof pedido === "string" && ehUuid(pedido)
+      ? pedido
+      : (futs.find((f) => f.faltamDias === null) ?? futs[0]).id;
   const [fut, escolhas, admin] = await Promise.all([
     buscarDetalheFut(id),
     buscarEscolhas(id),
@@ -50,17 +53,20 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
   ]);
   if (!fut) notFound();
 
-  const vagas = escalarSelecao(fut.atuacoes, fut.placarBranco, fut.placarPreto, escolhas);
-  const escalados = vagas.flatMap((v) => (v.atuacao ? [v.atuacao] : []));
-  const cartas = await buscarCartas(escalados.map((a) => a.jogadorId));
-  // Mesmo craque da lista de futs: o escolhido pelo admin, ou a maior nota da seleção
-  const escolhaCraque = craqueDoFut(
-    fut.atuacoes,
+  // Fut que ainda não rolou não tem seleção: o campo fica só com as vagas vazias
+  const aRolar = fut.faltamDias !== null;
+  const vagas = escalarSelecao(
+    aRolar ? [] : fut.atuacoes,
     fut.placarBranco,
     fut.placarPreto,
     escolhas,
-    fut.craqueId,
   );
+  const escalados = vagas.flatMap((v) => (v.atuacao ? [v.atuacao] : []));
+  const cartas = await buscarCartas(escalados.map((a) => a.jogadorId));
+  // Mesmo craque da lista de futs: o escolhido pelo admin, ou a maior nota da seleção
+  const escolhaCraque = aRolar
+    ? null
+    : craqueDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto, escolhas, fut.craqueId);
   const craque = escolhaCraque?.atuacao.jogadorId;
 
   // Pro admin, o menu da carta (botão direito ou toque longo) também troca o craque
@@ -82,7 +88,8 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
     (v) => v.posicao,
   );
   // Quem pode entrar numa vaga trocada na mão: todo mundo que jogou, pelos números
-  const opcoes = admin
+  const podeTrocar = admin && !aRolar;
+  const opcoes = podeTrocar
     ? rankingDoFut(fut.atuacoes, fut.placarBranco, fut.placarPreto).map((a) => ({
         jogadorId: a.jogadorId,
         nome: a.nome,
@@ -148,7 +155,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               atual={fut.id}
               futs={futs.map((f) => ({
                 id: f.id,
-                rotulo: `${f.data} · ${f.placarBranco} x ${f.placarPreto}`,
+                rotulo: `${f.data} · ${f.faltamDias !== null ? "a rolar" : `${f.placarBranco} x ${f.placarPreto}`}`,
               }))}
             />
             <Link href={`/futs/${fut.id}`} className={botaoSecundario}>
@@ -187,7 +194,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                       left: lugar.lefts[i],
                     }}
                   >
-                    {admin ? (
+                    {podeTrocar ? (
                       <TrocarVaga
                         futId={fut.id}
                         vaga={vaga.numero}
@@ -206,6 +213,12 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               }),
             )}
           </div>
+
+          {aRolar && (
+            <p className={`${vazio} text-sm lg:col-start-1 lg:row-start-3`}>
+              Esse fut ainda não rolou. A seleção sai quando o resultado for lançado.
+            </p>
+          )}
 
           {escalados.length > 0 && (
             <ol className={`${painel} divide-y divide-linha lg:col-start-1 lg:row-start-3`}>

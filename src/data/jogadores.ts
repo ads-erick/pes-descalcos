@@ -5,6 +5,7 @@ import { connection } from "next/server";
 import { sql } from "./db";
 import { requireAdmin } from "./auth";
 import { apagarFoto, enviarFoto } from "./fotos";
+import { futARolar } from "./futs";
 import type { Posicao } from "@/lib/jogador";
 import { type AtuacaoNoFut, grupoDa, nivel, nota, variacoesPorFut } from "@/lib/nivel";
 
@@ -64,10 +65,13 @@ const listarCartas = cache(async (): Promise<(JogadorResumo & { ativo: boolean }
         coalesce(sum(p.gols), 0)::int as gols,
         coalesce(sum(p.assistencias), 0)::int as assistencias
       from jogador j
-      left join participacao p on p.jogador_id = j.id
+      left join (
+        participacao p join fut f on f.id = p.fut_id and not ${futARolar()}
+      ) on p.jogador_id = j.id
       group by j.id
     `,
-    // Todo mundo que jogou cada fut, na ordem em que os futs aconteceram
+    // Todo mundo que jogou cada fut, na ordem em que os futs aconteceram (o que ainda
+    // não rolou fica de fora, igual nos jogos acima)
     sql<
       {
         jogadorId: string;
@@ -89,7 +93,7 @@ const listarCartas = cache(async (): Promise<(JogadorResumo & { ativo: boolean }
       from participacao p
       join fut f on f.id = p.fut_id
       join jogador j on j.id = p.jogador_id
-      where p.presente
+      where p.presente and not ${futARolar()}
       order by f.data, f.criado_em
     `,
   ]);

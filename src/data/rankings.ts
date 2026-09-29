@@ -1,6 +1,7 @@
 import "server-only";
 import { connection } from "next/server";
 import { sql } from "./db";
+import { futARolar } from "./futs";
 import { buscarEscolhasDeTodos } from "./selecao";
 import type { Posicao } from "@/lib/jogador";
 import { inicioDoPeriodo, type Periodo } from "@/lib/ranking";
@@ -55,7 +56,8 @@ function contarSelecoes(
   return { selecoes, craques };
 }
 
-// Arquivados entram: os gols deles continuam valendo no período em que jogaram
+// Arquivados entram: os gols deles continuam valendo no período em que jogaram.
+// Fut que ainda não rolou fica de fora, senão todo mundo escalado ganhava um jogo
 export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
   await connection();
   const desde = inicioDoPeriodo(periodo);
@@ -63,8 +65,8 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
   const [[{ futs }], jogadores, atuacoes, escolhas] = await Promise.all([
     sql<{ futs: number }[]>`
       select count(*)::int as futs
-      from fut
-      where ${desde}::date is null or data >= ${desde}::date
+      from fut f
+      where (${desde}::date is null or f.data >= ${desde}::date) and not ${futARolar()}
     `,
     sql<Omit<EstatisticaDoPeriodo, "selecoes" | "craques">[]>`
       select
@@ -83,7 +85,7 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
       from participacao p
       join fut f on f.id = p.fut_id
       join jogador j on j.id = p.jogador_id
-      where ${desde}::date is null or f.data >= ${desde}::date
+      where (${desde}::date is null or f.data >= ${desde}::date) and not ${futARolar()}
       group by j.id
     `,
     sql<AtuacaoDoFut[]>`
@@ -100,7 +102,7 @@ export async function buscarRankings(periodo: Periodo): Promise<Rankings> {
       from participacao p
       join fut f on f.id = p.fut_id
       join jogador j on j.id = p.jogador_id
-      where ${desde}::date is null or f.data >= ${desde}::date
+      where (${desde}::date is null or f.data >= ${desde}::date) and not ${futARolar()}
     `,
     buscarEscolhasDeTodos(),
   ]);

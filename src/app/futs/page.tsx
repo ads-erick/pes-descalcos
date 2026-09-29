@@ -5,14 +5,9 @@ import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
 import { botaoPequeno, botaoPrimario, larguraPadrao, painel, vazio } from "@/lib/estilo";
-import { NOME_TIME, vencedor } from "@/lib/selecao";
+import { resultadoDoFut } from "@/lib/selecao";
 
 export const metadata: Metadata = { title: "Futs" };
-
-function resultado(placarBranco: number, placarPreto: number) {
-  const venceu = vencedor(placarBranco, placarPreto);
-  return venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate";
-}
 
 export default async function FutsPage() {
   const [futs, admin] = await Promise.all([listarFuts(), isAdmin()]);
@@ -50,8 +45,10 @@ export default async function FutsPage() {
                 >
                   {fut.data}
                 </Link>
-                <p className="mt-1 text-sm text-apagado">
-                  {resultado(fut.placarBranco, fut.placarPreto)}
+                <p
+                  className={`mt-1 text-sm ${fut.faltamDias !== null ? "font-semibold text-ouro" : "text-apagado"}`}
+                >
+                  {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias)}
                   {fut.craque && (
                     <>
                       {" · craque: "}
@@ -64,7 +61,7 @@ export default async function FutsPage() {
                   )}
                 </p>
               </div>
-              <Placar branco={fut.placarBranco} preto={fut.placarPreto} />
+              <Placar branco={fut.placarBranco} preto={fut.placarPreto} aRolar={fut.faltamDias !== null} />
               {admin && (
                 <Link href={`/futs/${fut.id}/editar`} className={`${botaoPequeno} relative shrink-0`}>
                   Editar

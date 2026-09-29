@@ -7,11 +7,30 @@ import { requireAdmin } from "./auth";
 import { buscarEscolhas, buscarEscolhasDeTodos } from "./selecao";
 import { craqueDoFut, escalarSelecao, type Atuacao, type AtuacaoPontuada } from "@/lib/selecao";
 
+// Fut cadastrado antes de acontecer (quadra alugada, times separados): é de hoje pra frente
+// e ainda não tem resultado nenhum lançado. Não entra em estatística nem no nível das
+// cartinhas, e não tem seleção. A consulta precisa chamar o fut de "f".
+export const futARolar = () => sql`(
+  f.data >= (now() at time zone 'America/Sao_Paulo')::date
+  and f.placar_branco = 0 and f.placar_preto = 0
+  and not exists (
+    select 1 from participacao pa
+    where pa.fut_id = f.id and (pa.gols > 0 or pa.assistencias > 0)
+  )
+)`;
+
+// Quantos dias faltam pro fut, só se ele ainda não rolou (senão null)
+const faltamDias = () => sql`
+  case when ${futARolar()} then f.data - (now() at time zone 'America/Sao_Paulo')::date end
+`;
+
 export type FutResumo = {
   id: string;
   data: string;
   placarBranco: number;
   placarPreto: number;
+  // null = já rolou
+  faltamDias: number | null;
   jogadores: number;
   craque: AtuacaoPontuada | null;
 };
@@ -26,6 +45,8 @@ export type DetalheFut = {
   data: string;
   placarBranco: number;
   placarPreto: number;
+  // null = já rolou
+  faltamDias: number | null;
   // Craque escolhido na mão (nulo = vale a conta); ver craqueDoFut
   craqueId: string | null;
   atuacoes: AtuacaoNoFut[];
@@ -45,16 +66,25 @@ export type NovoFut = {
   participacoes: NovaParticipacao[];
 };
 
+type LinhaFut = {
+  id: string;
+  data: string;
+  placar_branco: number;
+  placar_preto: number;
+  craque_id: string | null;
+  faltamDias: number | null;
+};
+
 export async function listarFuts(): Promise<FutResumo[]> {
   await connection();
 
   const [futs, atuacoes, escolhas] = await Promise.all([
-    sql<
-      { id: string; data: string; placar_branco: number; placar_preto: number; craque_id: string | null }[]
-    >`
-      select id, to_char(data, 'DD/MM/YYYY') as data, placar_branco, placar_preto, craque_id
-      from fut
-      order by fut.data desc, criado_em desc
+    sql<LinhaFut[]>`
+      select
+        f.id, to_char(f.data, 'DD/MM/YYYY') as data, f.placar_branco, f.placar_preto, f.craque_id,
+        ${faltamDias()} as "faltamDias"
+      from fut f
+      order by f.data desc, f.criado_em desc
     `,
     sql<(Atuacao & { futId: string })[]>`
       select
@@ -74,7 +104,8 @@ export async function listarFuts(): Promise<FutResumo[]> {
 
   return futs.map((fut) => {
     const doFut = porFut.get(fut.id) ?? [];
-    const craque = craqueDoFut(
+    // Fut que ainda não rolou não tem craque
+    const craque = fut.faltamDias !== null ? null : craqueDoFut(
       doFut,
       fut.placar_branco,
       fut.placar_preto,
@@ -86,6 +117,7 @@ export async function listarFuts(): Promise<FutResumo[]> {
       data: fut.data,
       placarBranco: fut.placar_branco,
       placarPreto: fut.placar_preto,
+      faltamDias: fut.faltamDias,
       jogadores: doFut.length,
       craque: craque?.atuacao ?? null,
     };
@@ -97,12 +129,12 @@ export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | n
   await connection();
 
   const [[fut], atuacoes] = await Promise.all([
-    sql<
-      { id: string; data: string; placar_branco: number; placar_preto: number; craque_id: string | null }[]
-    >`
-      select id, to_char(data, 'DD/MM/YYYY') as data, placar_branco, placar_preto, craque_id
-      from fut
-      where id = ${id}
+    sql<LinhaFut[]>`
+      select
+        f.id, to_char(f.data, 'DD/MM/YYYY') as data, f.placar_branco, f.placar_preto, f.craque_id,
+        ${faltamDias()} as "faltamDias"
+      from fut f
+      where f.id = ${id}
     `,
     sql<AtuacaoNoFut[]>`
       select
@@ -126,6 +158,7 @@ export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | n
     data: fut.data,
     placarBranco: fut.placar_branco,
     placarPreto: fut.placar_preto,
+    faltamDias: fut.faltamDias,
     craqueId: fut.craque_id,
     atuacoes,
   };
@@ -133,13 +166,13 @@ export const buscarDetalheFut = cache(async (id: string): Promise<DetalheFut | n
 
 // Torna o jogador o craque do fut, ou volta pra conta (sem jogador). Só vale quem está
 // na seleção do fut agora: o resto é ignorado, igual a tela só oferece a troca nas cartas
-// do campo.
+// do campo. Fut que ainda não rolou não tem seleção, então também não tem craque.
 export async function escolherCraque(futId: string, jogadorId: string | null) {
   await requireAdmin();
 
   if (jogadorId) {
     const [fut, escolhas] = await Promise.all([buscarDetalheFut(futId), buscarEscolhas(futId)]);
-    if (!fut) return;
+    if (!fut || fut.faltamDias !== null) return;
     const vagas = escalarSelecao(fut.atuacoes, fut.placarBranco, fut.placarPreto, escolhas);
     const naSelecao = vagas.some((v) => v.atuacao?.jogadorId === jogadorId);
     if (!naSelecao) return;
