@@ -25,6 +25,17 @@ export function vencedor(placarBranco: number, placarPreto: number): CorTime | n
   return placarBranco > placarPreto ? "branco" : "preto";
 }
 
+// O que aparece embaixo do placar
+export function resultadoDoFut(placarBranco: number, placarPreto: number, faltamDias: number | null) {
+  if (faltamDias !== null) {
+    const quando =
+      faltamDias === 0 ? "é hoje" : faltamDias === 1 ? "é amanhã" : `daqui a ${faltamDias} dias`;
+    return `Ainda vai rolar · ${quando}`;
+  }
+  const venceu = vencedor(placarBranco, placarPreto);
+  return venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate";
+}
+
 export function saldoDoTime(corTime: CorTime, placarBranco: number, placarPreto: number) {
   return corTime === "branco" ? placarBranco - placarPreto : placarPreto - placarBranco;
 }

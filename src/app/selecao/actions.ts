@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { escolherCraque } from "@/data/futs";
+import { buscarDetalheFut, escolherCraque } from "@/data/futs";
 import { escolherVaga } from "@/data/selecao";
 import { TOTAL_VAGAS } from "@/lib/selecao";
 
@@ -22,6 +22,10 @@ export async function trocarVaga(formData: FormData) {
   if (!troca.success) return;
 
   const { futId, vaga, jogadorId } = troca.data;
+  // Fut que ainda não rolou não tem seleção pra trocar
+  const fut = await buscarDetalheFut(futId);
+  if (!fut || fut.faltamDias !== null) return;
+
   await escolherVaga(futId, vaga, jogadorId || null);
   revalidatePath("/selecao");
 }

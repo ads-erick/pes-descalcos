@@ -13,8 +13,8 @@ import {
   NOME_TIME,
   TAMANHO_SELECAO,
   craqueDoFut,
+  resultadoDoFut,
   selecaoDoFut,
-  vencedor,
   type CorTime,
 } from "@/lib/selecao";
 
@@ -35,7 +35,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
   ]);
   if (!fut) notFound();
 
-  const venceu = vencedor(fut.placarBranco, fut.placarPreto);
+  const aRolar = fut.faltamDias !== null;
   // O craque abre os destaques. Sem escolha do admin ele já é o primeiro; escolhido na
   // mão, sobe pro topo (mesmo sem ter pontuado) e o resto segue pelos números
   const craque = craqueDoFut(
@@ -65,22 +65,28 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
         <h1 className={tituloPagina}>Fut de {fut.data}</h1>
         <div className="mt-5 flex items-center justify-center gap-3 font-numero text-xl tracking-wider uppercase sm:gap-5">
           <span className="w-16 text-right sm:w-20">Branco</span>
-          <Placar branco={fut.placarBranco} preto={fut.placarPreto} grande />
+          <Placar branco={fut.placarBranco} preto={fut.placarPreto} grande aRolar={aRolar} />
           <span className="w-16 text-left sm:w-20">Preto</span>
         </div>
-        <p className="mt-4 font-script text-2xl text-apagado">
-          {venceu ? `Vitória do ${NOME_TIME[venceu].toLowerCase()}` : "Empate"}
+        <p className={`mt-4 font-script text-2xl ${aRolar ? "text-ouro" : "text-apagado"}`}>
+          {resultadoDoFut(fut.placarBranco, fut.placarPreto, fut.faltamDias)}
         </p>
       </section>
 
       <section className="mb-8">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-slab text-xl uppercase">Destaques do fut</h2>
-          <Link href={`/selecao?fut=${fut.id}`} className={botaoPequeno}>
-            Ver a seleção no campo →
-          </Link>
+          {!aRolar && (
+            <Link href={`/selecao?fut=${fut.id}`} className={botaoPequeno}>
+              Ver a seleção no campo →
+            </Link>
+          )}
         </div>
-        {selecao.length === 0 ? (
+        {aRolar ? (
+          <p className={`${vazio} text-sm`}>
+            Esse fut ainda não rolou. Os destaques aparecem quando o resultado for lançado.
+          </p>
+        ) : selecao.length === 0 ? (
           <p className={`${vazio} text-sm`}>
             Ninguém pontuou nesse fut.
           </p>
