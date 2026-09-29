@@ -25,10 +25,10 @@ export function vencedor(placarBranco: number, placarPreto: number): CorTime | n
   return placarBranco > placarPreto ? "branco" : "preto";
 }
 
-// "20:00" vira "20h" e "19:30" vira "19h30", do jeito que se fala
+// "20:00" vira "20h00" e "19:30" vira "19h30": sempre com os minutos, pra lista ficar igual
 export function formatarHorario(horario: string) {
   const [hora, minuto] = horario.split(":");
-  return `${Number(hora)}h${minuto === "00" ? "" : minuto}`;
+  return `${hora}h${minuto}`;
 }
 
 // O que aparece embaixo do placar. O horário só aparece no fut que ainda vai rolar
