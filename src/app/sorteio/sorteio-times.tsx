@@ -5,7 +5,7 @@ import { useState } from "react";
 import { botaoChip, botaoPrimario, botaoSecundario, faixaTime, painel } from "@/lib/estilo";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
 import { NOME_TIME, type CorTime } from "@/lib/selecao";
-import { forca, sortearTimes, type Times } from "@/lib/sorteio";
+import { media, sortearTimes, type Times } from "@/lib/sorteio";
 
 type JogadorSorteavel = { id: string; nome: string; posicao: Posicao | null; nivel: number };
 
@@ -119,7 +119,11 @@ export function SorteioTimes({
 }
 
 function Time({ cor, jogadores }: { cor: CorTime; jogadores: JogadorSorteavel[] }) {
-  const total = forca(jogadores);
+  // Uma casa decimal: arredondando, 81,4 x 81,6 apareceria como 81 x 82
+  const valor = media(jogadores).toLocaleString("pt-BR", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
   return (
     <div className={`${painel} overflow-hidden`}>
       <h3
@@ -130,8 +134,7 @@ function Time({ cor, jogadores }: { cor: CorTime; jogadores: JogadorSorteavel[] 
           <span className="ml-2 opacity-60">({jogadores.length})</span>
         </span>
         <span className="text-base opacity-70">
-          força <span className="text-xl opacity-100">{total}</span> · média{" "}
-          {Math.round(total / jogadores.length)}
+          média <span className="text-xl opacity-100">{valor}</span>
         </span>
       </h3>
       <ul className="divide-y divide-linha">

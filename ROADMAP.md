@@ -75,6 +75,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 ### Estatísticas e sorteio
 
+- [x] **Sorteio pela média** — o sorteio igualava a soma dos níveis, e com 19 confirmados o time com um a mais ficava com gente mais fraca pra compensar (média 81 x 87 no primeiro fut sorteado). Como só 7 jogam por vez e o resto reveza, agora o que se iguala é a média. A força saiu da tela; cada time mostra só a média, com uma casa decimal
 - [x] **Estatísticas** — gols, assistências, vitórias (com aproveitamento), seleções e craques, nessa ordem, filtrando por mês, ano ou desde sempre. Empate divide a colocação. Cada tabela tem uma frase explicando o que conta (#8, #17, #43)
 - [x] **Mais vezes na seleção** — tabela "Seleções": quantas vezes cada um entrou na seleção do fut (os 7 do campo), contando as trocas que o admin fez na mão, igual aparece na tela da seleção. Com 5 tabelas, a tela passou a mostrar 3 em cima e 2 embaixo (5 lado a lado ficava apertado demais) (#43)
 - [x] **Rankings viraram Estatísticas** — a aba e a página mudaram de nome e o endereço agora é `/estatisticas`; link antigo pra `/rankings` redireciona sozinho. No celular estreito (abaixo de 360px) a fonte do menu encolhe um pouco pro nome maior caber sem rolar (#43)

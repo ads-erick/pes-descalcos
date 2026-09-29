@@ -7,16 +7,19 @@ import type { Posicao } from "./jogador";
 const ORDEM: (Posicao | null)[] = ["goleiro", "zagueiro", "meio", "atacante", null];
 // Quantas divisões aleatórias são testadas a cada sorteio
 const TENTATIVAS = 200;
-// Diferença de força aceita acima da melhor encontrada. Com folga o "sortear de novo"
+// Diferença de média aceita acima da melhor encontrada. Com folga o "sortear de novo"
 // traz times diferentes, e não sempre a mesma divisão perfeita.
-const FOLGA = 2;
+const FOLGA = 0.25;
 
 export type Sorteavel = { id: string; nivel: number; posicao: Posicao | null };
 
 export type Times<T> = { branco: T[]; preto: T[] };
 
-export function forca(time: Sorteavel[]) {
-  return time.reduce((soma, j) => soma + j.nivel, 0);
+// Compara pela média, não pela soma: com número ímpar um time fica com um a mais, e igualar
+// a soma deixaria esse time mais fraco jogador a jogador (só 7 jogam por vez, o resto reveza)
+export function media(time: Sorteavel[]) {
+  if (time.length === 0) return 0;
+  return time.reduce((soma, j) => soma + j.nivel, 0) / time.length;
 }
 
 function embaralhar<T>(itens: T[], aleatorio: () => number) {
@@ -44,9 +47,12 @@ function dividir<T extends Sorteavel>(jogadores: T[], aleatorio: () => number): 
   return times;
 }
 
-// Troca jogadores da mesma posição entre os times enquanto isso aproximar a força dos dois
+// Troca jogadores da mesma posição entre os times enquanto isso aproximar a média dos dois.
+// A troca não muda o tamanho dos times, então dá pra calcular a nova diferença direto.
 function equilibrar<T extends Sorteavel>(times: Times<T>) {
-  let diferenca = forca(times.branco) - forca(times.preto);
+  if (times.branco.length === 0 || times.preto.length === 0) return times;
+  const peso = 1 / times.branco.length + 1 / times.preto.length;
+  let diferenca = media(times.branco) - media(times.preto);
   let melhorou = true;
   while (melhorou && diferenca !== 0) {
     melhorou = false;
@@ -55,8 +61,8 @@ function equilibrar<T extends Sorteavel>(times: Times<T>) {
         const b = times.branco[i];
         const p = times.preto[k];
         if (b.posicao !== p.posicao) continue;
-        const nova = diferenca - 2 * (b.nivel - p.nivel);
-        if (Math.abs(nova) < Math.abs(diferenca)) {
+        const nova = diferenca - peso * (b.nivel - p.nivel);
+        if (Math.abs(nova) < Math.abs(diferenca) - 1e-9) {
           times.branco[i] = p;
           times.preto[k] = b;
           diferenca = nova;
@@ -69,9 +75,9 @@ function equilibrar<T extends Sorteavel>(times: Times<T>) {
 }
 
 const diferencaEntre = (times: Times<Sorteavel>) =>
-  Math.abs(forca(times.branco) - forca(times.preto));
+  Math.abs(media(times.branco) - media(times.preto));
 
-// Monta branco x preto com a força (soma dos níveis) mais parecida possível, respeitando as
+// Monta branco x preto com a média dos níveis mais parecida possível, respeitando as
 // posições. Entre as divisões boas, escolhe uma ao acaso.
 export function sortearTimes<T extends Sorteavel>(
   jogadores: T[],
