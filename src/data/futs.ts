@@ -33,6 +33,7 @@ export type FutResumo = {
   faltamDias: number | null;
   jogadores: number;
   craque: AtuacaoPontuada | null;
+  atuacoes: Atuacao[];
 };
 
 export type AtuacaoNoFut = Atuacao & {
@@ -120,6 +121,7 @@ export async function listarFuts(): Promise<FutResumo[]> {
       faltamDias: fut.faltamDias,
       jogadores: doFut.length,
       craque: craque?.atuacao ?? null,
+      atuacoes: doFut,
     };
   });
 }

@@ -4,8 +4,9 @@ import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { Placar } from "@/components/placar";
 import { isAdmin } from "@/data/auth";
 import { listarFuts } from "@/data/futs";
-import { botaoPequeno, botaoPrimario, larguraPadrao, painel, vazio } from "@/lib/estilo";
+import { botaoChip, botaoPequeno, botaoPrimario, larguraPadrao, painel, vazio } from "@/lib/estilo";
 import { resultadoDoFut } from "@/lib/selecao";
+import { BotaoCopiarTimes } from "./botao-copiar-times";
 
 export const metadata: Metadata = { title: "Futs" };
 
@@ -60,6 +61,15 @@ export default async function FutsPage() {
                     </>
                   )}
                 </p>
+                {/* relative: fica por cima do ::after do link, senão o clique abria o fut */}
+                {fut.faltamDias !== null && (
+                  <BotaoCopiarTimes
+                    futId={fut.id}
+                    data={fut.data}
+                    atuacoes={fut.atuacoes.map(({ nome, posicao, corTime }) => ({ nome, posicao, corTime }))}
+                    className={`${botaoChip} relative mt-2.5`}
+                  />
+                )}
               </div>
               <Placar branco={fut.placarBranco} preto={fut.placarPreto} aRolar={fut.faltamDias !== null} />
               {admin && (

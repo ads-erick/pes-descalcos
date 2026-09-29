@@ -17,6 +17,7 @@ import {
   selecaoDoFut,
   type CorTime,
 } from "@/lib/selecao";
+import { BotaoCopiarTimes } from "../botao-copiar-times";
 
 export async function generateMetadata({ params }: PageProps<"/futs/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -130,7 +131,17 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
       </section>
 
       <section>
-        <h2 className="mb-4 font-slab text-xl uppercase">Escalação</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-slab text-xl uppercase">Escalação</h2>
+          {aRolar && (
+            <BotaoCopiarTimes
+              futId={fut.id}
+              data={fut.data}
+              atuacoes={fut.atuacoes.map(({ nome, posicao, corTime }) => ({ nome, posicao, corTime }))}
+              className={botaoPequeno}
+            />
+          )}
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {(["branco", "preto"] as const).map((cor) => (
             <Escalacao
