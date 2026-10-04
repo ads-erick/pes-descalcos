@@ -150,7 +150,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <CabecalhoPagina titulo="Seleção do fut" />
           </div>
 
-          <div className="flex w-full items-end gap-3 lg:col-start-1 lg:row-start-2">
+          <div className="flex w-full items-center gap-3 lg:col-start-1 lg:row-start-2">
             <SeletorFut
               atual={fut.id}
               futs={futs.map((f) => {

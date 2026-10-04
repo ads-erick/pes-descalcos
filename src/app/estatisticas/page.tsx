@@ -68,7 +68,8 @@ export default async function EstatisticasPage({ searchParams }: PageProps<"/est
   const { futs, jogadores } = await buscarRankings(periodo);
 
   return (
-    <main className={larguraLarga}>
+    // No desktop as 5 tabelas ficam lado a lado: precisa de mais largura que as outras telas
+    <main className={`${larguraLarga} lg:max-w-7xl`}>
       <CabecalhoPagina
         titulo="Estatísticas"
         subtitulo={`${descreverPeriodo(periodo)} · ${plural(futs, "fut", "futs")}`}
@@ -90,20 +91,22 @@ export default async function EstatisticasPage({ searchParams }: PageProps<"/est
         </nav>
       </CabecalhoPagina>
 
-      {/* 5 tabelas em 3 + 2: as de cima com um terço da largura, as de baixo com metade */}
-      <div className="grid gap-4 md:grid-cols-6">
+      {/* No tablet, 5 tabelas em 3 + 2: as de cima com um terço da largura, as de baixo com
+          metade. No desktop, as 5 numa linha só */}
+      <div className="grid gap-4 md:grid-cols-6 lg:grid-cols-5">
         {COLUNAS.map((coluna, i) => {
           const ranking = rankear(jogadores, coluna.valor);
           return (
             <section
               key={coluna.titulo}
-              className={`${painel} overflow-hidden ${i < 3 ? "md:col-span-2" : "md:col-span-3"}`}
+              className={`${painel} overflow-hidden ${i < 3 ? "md:col-span-2" : "md:col-span-3"} lg:col-span-1`}
             >
               <h2 className="border-b-2 border-dourado bg-faixa px-4 pt-2 pb-1.5 font-slab text-lg text-sobre-faixa uppercase">
                 {coluna.titulo}
               </h2>
-              {/* Altura de 2 linhas pra todas: as listas lado a lado começam alinhadas */}
-              <p className="px-4 pt-3 text-xs text-apagado md:min-h-[calc(2lh+0.75rem)]">
+              {/* Mesma altura pra todas (3 linhas no desktop, onde a coluna é mais estreita):
+                  as listas lado a lado começam alinhadas */}
+              <p className="px-4 pt-3 text-xs text-apagado md:min-h-[calc(2lh+0.75rem)] lg:min-h-[calc(3lh+0.75rem)]">
                 {coluna.explicacao}
               </p>
               {ranking.length === 0 ? (

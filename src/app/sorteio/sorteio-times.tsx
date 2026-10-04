@@ -82,9 +82,10 @@ export function SorteioTimes({
         </ul>
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-3">
+      {/* O aviso vem em cima do botão, os dois no meio da tela */}
+      <div className="flex flex-col items-center gap-3">
         {confirmados.size < 2 && (
-          <p className="mr-auto text-sm text-apagado">Marque pelo menos dois jogadores.</p>
+          <p className="text-sm text-apagado">Marque pelo menos dois jogadores.</p>
         )}
         <button
           type="button"
@@ -103,7 +104,7 @@ export function SorteioTimes({
             <Time cor="preto" jogadores={times.preto} />
           </div>
           {admin && (
-            <div className="flex justify-end">
+            <div className="flex justify-center">
               <Link
                 href={`/futs/novo?branco=${ids(times.branco)}&preto=${ids(times.preto)}`}
                 className={botaoSecundario}
