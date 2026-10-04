@@ -86,6 +86,7 @@ Resumo do que está no ar, agrupado por tela. O detalhe de cada mudança está n
 
 ### Visual e celular
 
+- [x] **Ajustes na seleção, nas estatísticas e no sorteio** — na seleção saiu o rótulo "Fut" de cima da lista de futs, que agora tem a mesma altura do "Ver fut" e fica alinhada com ele. Nas estatísticas, a partir de 1024px as 5 tabelas ficam lado a lado (a página fica mais larga, como a da seleção); no tablet continua 3 + 2 e no celular uma embaixo da outra. No sorteio, título, aviso e botões ficam no centro. Conferido em 1920, 900 e 428px
 - [x] **Cabeçalho e rodapé de ponta a ponta** — com a largura própria (a da seleção), a faixa ficava quase alinhada com o conteúdo das outras páginas, que são mais estreitas, e isso incomodava. Agora vão até a borda da tela (32px de respiro a partir de 1024px): o escudo fica na esquerda, as ações na direita e o menu continua no centro, junto com o conteúdo. Abaixo de 1024px nada mudou. Conferido no preview
 - [x] **Fundo igual em todas as telas** — a estampa era medida pela janela e dava um zoom quando a barra de rolagem aparecia ou a barra de endereço do celular sumia; agora vai por `vw`/`lvh`, que não mudam nessas horas (#34)
 - [x] **Menu parado no lugar** — o menu andava uns 7px pro lado nas páginas curtas (como a lista de futs), que não tinham barra de rolagem e por isso ficavam mais largas. Agora a barra aparece sempre, vazia quando não tem o que rolar, e o menu fica na mesma posição em todas as telas. O bloco Admin/Sair não influenciava. No celular a barra não ocupa espaço, então nada muda lá (#40)

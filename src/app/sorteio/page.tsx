@@ -14,6 +14,7 @@ export default async function SorteioPage() {
     <main className={larguraPadrao}>
       <CabecalhoPagina
         titulo="Sorteio"
+        centralizado
         subtitulo="Marque quem vai jogar e o sorteio divide branco x preto pelo nível das cartinhas."
       />
 
