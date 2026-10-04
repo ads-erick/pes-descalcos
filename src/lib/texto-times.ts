@@ -1,24 +1,15 @@
-import { POSICOES, type Posicao } from "./jogador";
+import { POSICAO_SIGLA, POSICOES } from "./jogador";
 import { NOME_TIME, formatarHorario, type Atuacao, type CorTime } from "./selecao";
 
 const DIAS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
 
 const EMOJI_TIME: Record<CorTime, string> = { branco: "⚪", preto: "⚫" };
 
-// Do jeito que se fala no grupo, não o rótulo formal das cartas
-const SETOR: Record<Posicao, string> = {
-  goleiro: "🧤 Goleiro",
-  zagueiro: "🛡️ Zaga",
-  meio: "🎯 Meio",
-  atacante: "⚡ Ataque",
-};
-
 type Escalado = Pick<Atuacao, "nome" | "posicao" | "corTime">;
 
 // Os times do fut em texto, pra colar no grupo do WhatsApp e fixar lá.
-// *assim* é negrito no WhatsApp. Cada time sai dividido por setor, na ordem do
-// campo (goleiro, zaga, meio, ataque); setor vazio não aparece e quem tá sem
-// posição fecha a lista.
+// *assim* é negrito no WhatsApp. Um nome por linha com a sigla da posição na
+// frente, na ordem do campo (GOL, ZAG, MEI, ATA); quem tá sem posição fecha a lista.
 // A data chega como DD/MM/AAAA e o horário (opcional) como HH:MM, igual o banco devolve pras telas.
 export function textoDosTimes(
   data: string,
@@ -30,20 +21,16 @@ export function textoDosTimes(
   const semana = DIAS[new Date(Date.UTC(ano, mes - 1, dia)).getUTCDay()];
 
   const time = (cor: CorTime) => {
-    const escalados = atuacoes.filter((a) => a.corTime === cor);
-    const nomes = (posicao: Posicao | null) =>
-      escalados
-        .filter((a) => a.posicao === posicao)
-        .map((a) => a.nome)
-        .sort((a, b) => a.localeCompare(b, "pt-BR"))
-        .join(", ");
-    const setores = [...POSICOES, null]
-      .map((posicao) => [posicao ? SETOR[posicao] : "❔ Sem posição", nomes(posicao)])
-      .filter(([, lista]) => lista)
-      .map(([setor, lista]) => `${setor}: ${lista}`);
+    const ordem = (a: Escalado) => (a.posicao ? POSICOES.indexOf(a.posicao) : POSICOES.length);
+    const escalados = atuacoes
+      .filter((a) => a.corTime === cor)
+      .sort((a, b) => ordem(a) - ordem(b) || a.nome.localeCompare(b.nome, "pt-BR"));
+    const linhas = escalados.map(
+      (a) => `${a.posicao ? POSICAO_SIGLA[a.posicao] : "???"} - ${a.nome}`,
+    );
     return [
       `${EMOJI_TIME[cor]} *${NOME_TIME[cor]}*${escalados.length > 0 ? ` (${escalados.length})` : ""}`,
-      ...(setores.length > 0 ? setores : ["Ninguém escalado ainda"]),
+      ...(linhas.length > 0 ? linhas : ["Ninguém escalado ainda"]),
     ].join("\n");
   };
 
