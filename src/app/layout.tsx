@@ -39,8 +39,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <header className="border-b-2 border-dourado bg-faixa text-sobre-faixa">
           {/* Até 1023px: marca + ações em cima, menu embaixo. A partir de 1024px: marca | menu | ações
-              (antes disso, em tablet, a marca invadia o menu) */}
-          <nav className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-3 px-4 py-3 sm:gap-x-4 lg:grid-cols-[1fr_auto_1fr]">
+              (antes disso, em tablet, a marca invadia o menu).
+              De ponta a ponta, sem max-w: cada página tem uma largura, e uma faixa com largura própria
+              ficava quase alinhada com o conteúdo, o que incomoda mais que não alinhar. O menu no
+              meio continua no centro, junto com o conteúdo */}
+          <nav className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-3 px-4 py-3 sm:gap-x-4 lg:grid-cols-[1fr_auto_1fr] lg:px-8">
             {/* min-w-0 + truncate: em tela muito estreita o nome corta em vez de
                 empurrar a faixa e dar rolagem lateral na página inteira. O truncate corta o que
                 passa da linha, então ela precisa de folga pro acento do É */}
@@ -97,8 +100,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
         <footer className="mt-12 border-t-2 border-dourado bg-faixa text-sobre-faixa">
           {/* Até 767px empilhado e centralizado; a partir daí marca | direitos | símbolo, com os
-              direitos no meio de verdade (as duas pontas dividem o que sobra) */}
-          <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-3 px-4 py-6 text-center text-sm md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4">
+              direitos no meio de verdade (as duas pontas dividem o que sobra). De ponta a ponta, como a nav */}
+          <div className="flex w-full flex-col items-center gap-3 px-4 py-6 text-center text-sm md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4 lg:px-8">
             <span className="flex items-center gap-2 font-slab uppercase md:justify-self-start">
               <span className="escudo h-8 text-dourado" aria-hidden />
               Pés Descalços FC
