@@ -65,37 +65,6 @@ As cores são tokens em `src/app/globals.css` (`bg-fundo`, `text-tinta`, `text-a
 
 A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ouro, prata ou bronze pelo nível, foto num medalhão redondo e todas as medidas em `cqw` pra escalar com a largura da carta, do elenco no desktop ao campo no celular. O cabeçalho e o rodapé levam o símbolo da barra da camisa (`src/components/bardo.tsx`), azul com aro branco no claro e dourado no escuro.
 
-## Como foi feito
-
-O projeto saiu em uma semana (de 14 a 21 de setembro de 2026), com quase 30 pull requests e mais de 70 commits, sempre neste ritmo:
-
-```mermaid
-flowchart LR
-    A["Eu peço<br/>(em português, do jeito que falo)"] --> B["Claude Code<br/>lê o código e reproduz"]
-    B --> C["Implementa numa<br/>branch nova"]
-    C --> D["Testa: lint, build e<br/>navegador de verdade"]
-    D --> E["Abre o PR<br/>e atualiza o roadmap"]
-    E --> F["Eu testo no celular,<br/>reviso e faço o merge"]
-    F --> G["Vercel publica"]
-    F -. "achei um bug" .-> A
-```
-
-**1. O pedido.** Eu escrevo o que quero do jeito que falaria com um amigo, muitas vezes testando no celular: *"no mobile tá cortando o placar"*, *"a seleção devia ser pelos gols e assistências"*, *"sobe o localhost e o IP pro celular"*.
-
-**2. Entender e reproduzir.** Antes de mexer em qualquer coisa, o Claude Code lê o código envolvido e a documentação da versão do Next.js que está instalada (o [`AGENTS.md`](AGENTS.md) pede isso, porque o Next 16 mudou bastante). Bug relatado é reproduzido primeiro: ele abre o site num Chrome headless com a tela do tamanho de um celular, mede os elementos e tira print do antes. Quando um bug não aparecia no teste, ele foi atrás no log do servidor. Foi assim que descobriu que o botão "Admin" continuava aparecendo depois do login só em abas que já estavam abertas antes.
-
-**3. Implementar.** Cada mudança numa branch própria (`feat/`, `fix/`, `docs/`), com commits no padrão [Conventional Commits](https://www.conventionalcommits.org/) e comentários no código explicando o *porquê* das decisões menos óbvias.
-
-**4. Testar de verdade.** Lint, TypeScript e build passando não bastam: ele roda um script de navegador contra o site, tira print do depois e testa os fluxos de admin de ponta a ponta, com um cookie de sessão assinado no próprio teste. Os dados de teste têm um prefixo próprio e são apagados no final.
-
-**5. Abrir o PR.** Ele abre o pull request pelo `gh` com a descrição no [template do projeto](.github/pull_request_template.md) (o que muda, como testar, checklist) e atualiza o [`ROADMAP.md`](ROADMAP.md), com uma regra de honestidade: `[x]` só pro que foi testado, `[~]` pro que está pronto mas ainda não foi testado.
-
-**6. Revisar e aprovar.** Eu testo no celular (o Claude Code sobe o servidor de desenvolvimento e me passa o IP da rede), reviso e faço o merge. O merge é sempre meu, nunca dele. Se encontro algum problema, volto pro passo 1 na mesma branch. O CI roda lint e build em todo PR, e a Vercel publica a cada merge na `main`.
-
-Entre uma conversa e outra, o Claude Code guarda notas sobre como eu gosto de trabalhar (quem abre e quem faz merge dos PRs, como testar, as armadilhas que já apareceram). Assim cada sessão continua de onde a outra parou.
-
-Antes de subir pra Vercel, também pedi uma revisão de segurança: segredos no histórico do git, `requireAdmin()` em toda escrita, RLS no banco, validação do upload, redirecionamento aberto e `npm audit`.
-
 ## Como funciona por dentro
 
 ### Modelo de dados
