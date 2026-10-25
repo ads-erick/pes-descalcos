@@ -12,7 +12,7 @@ import { buscarEscolhas } from "@/data/selecao";
 import { botaoSecundario, larguraCampo, larguraPadrao, painel, sombraCartao, sombraTarja, vazio, zoomCarta } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
 import { POSICAO_SIGLA, type Posicao } from "@/lib/jogador";
-import { craqueDoFut, escalarSelecao, rankingDoFut } from "@/lib/selecao";
+import { craqueDoFut, escalarSelecao, placarOrdenado, rankingDoFut } from "@/lib/selecao";
 import { trocarCraque } from "./actions";
 import { AlvoPrevia, Previa, PreviaCartas } from "./previa-carta";
 import { SeletorFut } from "./seletor-fut";
@@ -157,9 +157,9 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
               futs={futs.map((f) => {
                 // Fut que ainda não rolou leva traço no placar, igual no Placar. Aqui vai o
                 // travessão longo: nessa fonte e nesse tamanho o curto some do lado do "·"
-                const [branco, preto] =
-                  f.faltamDias !== null ? ["—", "—"] : [f.placarBranco, f.placarPreto];
-                return { id: f.id, rotulo: `${f.data} · ${branco} x ${preto}` };
+                const { a, b } = placarOrdenado(f.placarBranco, f.placarPreto);
+                const [x, y] = f.faltamDias !== null ? ["—", "—"] : [a, b];
+                return { id: f.id, rotulo: `${f.data} · ${x} x ${y}` };
               })}
             />
             <Link href={`/futs/${fut.id}`} className={botaoSecundario}>

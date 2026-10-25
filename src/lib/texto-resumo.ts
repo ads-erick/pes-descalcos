@@ -1,4 +1,4 @@
-import { NOME_TIME, vencedor, type CorTime } from "./selecao";
+import { NOME_TIME, placarOrdenado, vencedor, type CorTime } from "./selecao";
 import { diaDaSemana } from "./texto-times";
 
 const EMOJI_TIME: Record<CorTime, string> = { branco: "⚪", preto: "⚫" };
@@ -6,7 +6,7 @@ const EMOJI_TIME: Record<CorTime, string> = { branco: "⚪", preto: "⚫" };
 type Craque = { nome: string; gols: number; assistencias: number };
 
 // O resumo do fut que já rolou em texto, pra colar no grupo do WhatsApp (a imagem da seleção
-// vai à parte, o WhatsApp não cola texto e imagem juntos). *assim* é negrito lá.
+// vai junto na cópia quando o navegador deixa). *assim* é negrito lá.
 // A data chega como DD/MM/AAAA, igual o banco devolve pras telas.
 export function textoDoResumo(
   data: string,
@@ -16,7 +16,8 @@ export function textoDoResumo(
   link: string,
 ) {
   const venceu = vencedor(placarBranco, placarPreto);
-  const placar = `${placarBranco} x ${placarPreto}`;
+  const { a, b } = placarOrdenado(placarBranco, placarPreto);
+  const placar = `${a} x ${b}`;
   const resultado = venceu
     ? `${EMOJI_TIME[venceu]} *Vitória do ${NOME_TIME[venceu].toLowerCase()}*: ${placar}`
     : `🤝 *Empate*: ${placar}`;

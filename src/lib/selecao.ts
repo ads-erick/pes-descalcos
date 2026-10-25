@@ -32,6 +32,13 @@ export function formatarHorario(horario: string) {
 }
 
 // O que aparece embaixo do placar. O horário só aparece no fut que ainda vai rolar
+// Placar com o vencedor na frente (7 x 6, nunca 6 x 7); empate fica branco x preto
+export function placarOrdenado(placarBranco: number, placarPreto: number) {
+  return placarPreto > placarBranco
+    ? { primeiro: "preto" as CorTime, a: placarPreto, b: placarBranco }
+    : { primeiro: "branco" as CorTime, a: placarBranco, b: placarPreto };
+}
+
 export function resultadoDoFut(
   placarBranco: number,
   placarPreto: number,
