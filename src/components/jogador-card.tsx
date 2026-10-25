@@ -76,7 +76,7 @@ export function JogadorCard({
     { label: "GOL", valor: jogador.gols },
     { label: "AST", valor: jogador.assistencias },
   ];
-  const variacao = jogador.nivel - jogador.nivelBase;
+  const variacao = jogador.nivelAnterior === null ? 0 : jogador.nivel - jogador.nivelAnterior;
   const nomeNaCarta = jogador.apelido ?? jogador.nome;
 
   return (
@@ -137,7 +137,7 @@ export function JogadorCard({
             <p
               // Some na carta pequena (o campo no celular): lá isso dá 4px de letra
               className="mt-[0.5cqw] font-numero text-[5.5cqw] leading-none opacity-75 @max-[7rem]:hidden"
-              title={`Nível escolhido: ${jogador.nivelBase}`}
+              title={`Nível anterior: ${jogador.nivelAnterior}`}
             >
               {variacao > 0 ? `▲${variacao}` : `▼${-variacao}`}
             </p>

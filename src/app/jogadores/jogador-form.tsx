@@ -51,7 +51,6 @@ export function JogadorForm({
     apelido: jogador?.apelido ?? "",
     numero: jogador?.numero?.toString() ?? "",
     posicao: jogador?.posicao ?? "",
-    // O campo mostra o nível da carta hoje; digitar outro troca o nível a partir de agora
     nivelBase: String(carta?.nivel ?? jogador?.nivelBase ?? NIVEL_PADRAO),
   };
 
@@ -87,15 +86,14 @@ export function JogadorForm({
     jogos: carta?.jogos ?? 0,
     gols: carta?.gols ?? 0,
     assistencias: carta?.assistencias ?? 0,
-    nivelBase,
     nivel: nivelBase,
+    nivelAnterior: carta?.nivelAnterior ?? null,
   };
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-24 xl:gap-32">
       <form ref={formRef} onChange={espelhar} action={enviar} className="space-y-4">
         {jogador && <input type="hidden" name="id" value={jogador.id} />}
-        {carta && <input type="hidden" name="nivelAtual" value={carta.nivel} />}
         {removerFoto && <input type="hidden" name="removerFoto" value="on" />}
 
         <CampoFoto
@@ -176,8 +174,8 @@ export function JogadorForm({
             className={campo}
           />
           <p id="nivelBase-ajuda" className="mt-1 text-xs text-apagado">
-            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80). Dá pra
-            trocar quando quiser; depois disso cada fut sobe ou desce no máximo 2.
+            De {NIVEL_MIN} a {NIVEL_MAX} (bronze até 75, prata até 79, ouro a partir de 80). Ao
+            trocar, a carta passa a mostrar se subiu ou desceu em relação ao nível de antes.
           </p>
         </Campo>
 

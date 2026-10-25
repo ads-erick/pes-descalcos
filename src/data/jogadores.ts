@@ -7,7 +7,6 @@ import { requireAdmin } from "./auth";
 import { apagarFoto, enviarFoto } from "./fotos";
 import { futARolar } from "./futs";
 import type { Posicao } from "@/lib/jogador";
-import { type AtuacaoNoFut, grupoDa, nivel, nota, variacoesPorFut } from "@/lib/nivel";
 
 export type JogadorResumo = {
   id: string;
@@ -19,8 +18,9 @@ export type JogadorResumo = {
   jogos: number;
   gols: number;
   assistencias: number;
-  nivelBase: number;
   nivel: number;
+  // Nível antes da última troca (null = nunca foi trocado)
+  nivelAnterior: number | null;
 };
 
 export type JogadorEscalavel = {
@@ -54,77 +54,28 @@ const colunas = (j: NovoJogador) => ({
 // Cartinhas de todo mundo, arquivados inclusive (a seleção de um fut antigo pode ter quem já saiu)
 const listarCartas = cache(async (): Promise<(JogadorResumo & { ativo: boolean })[]> => {
   await connection();
-  const [jogadores, participacoes] = await Promise.all([
-    sql<(Omit<JogadorResumo, "nivel"> & { ativo: boolean; nivelBaseEm: Date })[]>`
-      select
-        j.id, j.nome, j.apelido, j.numero, j.posicao, j.ativo,
-        j.foto_url as "fotoUrl",
-        j.nivel_base as "nivelBase",
-        j.nivel_base_em as "nivelBaseEm",
-        count(p.id) filter (where p.presente)::int as jogos,
-        coalesce(sum(p.gols), 0)::int as gols,
-        coalesce(sum(p.assistencias), 0)::int as assistencias
-      from jogador j
-      left join (
-        participacao p join fut f on f.id = p.fut_id and not ${futARolar()}
-      ) on p.jogador_id = j.id
-      group by j.id
-    `,
-    // Todo mundo que jogou cada fut, na ordem em que os futs aconteceram (o que ainda
-    // não rolou fica de fora, igual nos jogos acima)
-    sql<
-      {
-        jogadorId: string;
-        futId: string;
-        futCriadoEm: Date;
-        posicao: Posicao | null;
-        gols: number;
-        assistencias: number;
-        saldo: number;
-      }[]
-    >`
-      select
-        p.jogador_id as "jogadorId", p.fut_id as "futId", f.criado_em as "futCriadoEm",
-        j.posicao, p.gols, p.assistencias,
-        coalesce(case p.cor_time
-          when 'branco' then f.placar_branco - f.placar_preto
-          when 'preto' then f.placar_preto - f.placar_branco
-        end, 0)::int as saldo
-      from participacao p
-      join fut f on f.id = p.fut_id
-      join jogador j on j.id = p.jogador_id
-      where p.presente and not ${futARolar()}
-      order by f.data, f.criado_em
-    `,
-  ]);
-
-  const atuacoes = participacoes.map((p) => ({
-    ...p,
-    grupo: grupoDa(p.posicao),
-    pontos: nota(p, p.posicao),
-  })) satisfies AtuacaoNoFut[];
-  const variacoes = variacoesPorFut(atuacoes);
-
-  const porJogador = Map.groupBy(atuacoes, (a) => a.jogadorId);
-
-  return jogadores
-    .map(({ nivelBaseEm, ...j }) => ({
-      ...j,
-      // Só conta o que o jogador fez depois da última vez que o nível foi escolhido na mão
-      nivel: nivel(
-        j.nivelBase,
-        (porJogador.get(j.id) ?? [])
-          .filter((a) => a.futCriadoEm > nivelBaseEm)
-          .map((a) => variacoes.get(a)!),
-      ),
-    }))
-    .sort(
-      (a, b) =>
-        b.nivel - a.nivel ||
-        b.gols - a.gols ||
-        b.assistencias - a.assistencias ||
-        a.nome.localeCompare(b.nome, "pt-BR"),
-    );
+  const cartas = await sql<(JogadorResumo & { ativo: boolean })[]>`
+    select
+      j.id, j.nome, j.apelido, j.numero, j.posicao, j.ativo,
+      j.foto_url as "fotoUrl",
+      j.nivel_base as nivel,
+      j.nivel_anterior as "nivelAnterior",
+      count(p.id) filter (where p.presente)::int as jogos,
+      coalesce(sum(p.gols), 0)::int as gols,
+      coalesce(sum(p.assistencias), 0)::int as assistencias
+    from jogador j
+    left join (
+      participacao p join fut f on f.id = p.fut_id and not ${futARolar()}
+    ) on p.jogador_id = j.id
+    group by j.id
+  `;
+  return cartas.sort(
+    (a, b) =>
+      b.nivel - a.nivel ||
+      b.gols - a.gols ||
+      b.assistencias - a.assistencias ||
+      a.nome.localeCompare(b.nome, "pt-BR"),
+  );
 });
 
 export async function listarJogadores(): Promise<JogadorResumo[]> {
@@ -176,16 +127,12 @@ export async function listarEscalaveis(futId?: string): Promise<JogadorEscalavel
   `;
 }
 
-// Trocar o nível faz ele valer a partir de agora: os futs de antes param de contar
-export async function atualizarJogador(
-  id: string,
-  jogador: NovoJogador,
-  foto: MudancaFoto,
-  mudouNivel: boolean,
-) {
+// Trocar o nível guarda o de antes, pra carta mostrar se subiu ou desceu
+export async function atualizarJogador(id: string, jogador: NovoJogador, foto: MudancaFoto) {
   await requireAdmin();
   const { nivel_base, ...resto } = colunas(jogador);
-  const nivel = mudouNivel ? { nivel_base, nivel_base_em: new Date() } : {};
+  const [atual] = await sql<{ nivel: number }[]>`select nivel_base as nivel from jogador where id = ${id}`;
+  const nivel = atual && atual.nivel !== nivel_base ? { nivel_base, nivel_anterior: atual.nivel } : {};
   if (!foto) {
     await sql`update jogador set ${sql({ ...resto, ...nivel })} where id = ${id}`;
     return;
