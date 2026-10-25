@@ -21,7 +21,7 @@ export function textoDoResumo(
     ? `${EMOJI_TIME[venceu]} *Vitória do ${NOME_TIME[venceu].toLowerCase()}*: ${placar}`
     : `🤝 *Empate*: ${placar}`;
   const mvp = craque
-    ? `⭐ *MVP:* ${craque.nome} (${craque.gols}G/${craque.assistencias}A)`
+    ? `⭐ *MVP:* ${craque.nome}${craque.gols + craque.assistencias > 0 ? ` (${craque.gols}G/${craque.assistencias}A)` : ""}`
     : null;
 
   return [
