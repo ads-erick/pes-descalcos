@@ -3,6 +3,12 @@ import { NOME_TIME, formatarHorario, type Atuacao, type CorTime } from "./seleca
 
 const DIAS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
 
+// Dia da semana de uma data DD/MM/AAAA
+export function diaDaSemana(data: string) {
+  const [dia, mes, ano] = data.split("/").map(Number);
+  return DIAS[new Date(Date.UTC(ano, mes - 1, dia)).getUTCDay()];
+}
+
 const EMOJI_TIME: Record<CorTime, string> = { branco: "⚪", preto: "⚫" };
 
 type Escalado = Pick<Atuacao, "nome" | "posicao" | "corTime">;
@@ -17,8 +23,7 @@ export function textoDosTimes(
   atuacoes: Escalado[],
   link: string,
 ) {
-  const [dia, mes, ano] = data.split("/").map(Number);
-  const semana = DIAS[new Date(Date.UTC(ano, mes - 1, dia)).getUTCDay()];
+  const semana = diaDaSemana(data);
 
   const time = (cor: CorTime) => {
     const ordem = (a: Escalado) => (a.posicao ? POSICOES.indexOf(a.posicao) : POSICOES.length);

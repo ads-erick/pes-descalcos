@@ -71,7 +71,7 @@ A cartinha (`src/components/jogador-card.tsx`) segue o modelo FUT: moldura de ou
 
 Cinco tabelas (o esquema fica em `supabase/migrations/`):
 
-- **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido, se está ativo no grupo)
+- **jogador** — cadastro (nome, apelido, número, foto, posição, nível escolhido e o anterior, se está ativo no grupo)
 - **fut** — cada partida (data, horário se informado, placar time branco x time preto e, se o admin escolheu, o craque)
 - **participacao** — números de um jogador num fut (de que lado jogou, gols, assistências)
 - **selecao_escolha** — as vagas da seleção que o admin trocou na mão
@@ -81,17 +81,7 @@ Não existe tabela de "times": os lados de cada fut são só `branco`/`preto`, e
 
 ### Nível das cartinhas
 
-Os critérios ficam em `src/lib/nivel.ts`.
-
-**Nível (70 a 95):** o admin escolhe o nível de cada jogador no cadastro (bronze até 75, prata até 79, ouro a partir de 80), e cada fut jogado depois disso mexe um pouquinho nele. A carta mostra o nível atual e a variação (▲/▼).
-
-Cada fut dá uma nota ao jogador:
-
-- **Gols e assistências** somam pontos
-- **Defesa**: metade do saldo do time no fut
-- **Peso por posição**: goleiro e zagueiro têm peso alto na defesa; meia e atacante, em gols e assistências
-
-A nota é comparada com a média do grupo dele naquele fut (goleiros + zagueiros, meias + atacantes): acima da média sobe, abaixo desce. Cada fut derruba no máximo 2 pontos e sobe no máximo 2. Subir fica mais difícil quanto mais alto o nível: o ganho máximo cai pela metade a cada 8 níveis. Quando o admin muda o nível na mão, só os futs cadastrados depois disso passam a contar.
+**Nível (70 a 95):** o admin escolhe o nível de cada jogador no cadastro (bronze até 75, prata até 79, ouro a partir de 80) e ele só muda quando o admin troca na mão; os futs não mexem nele. Ao trocar, o nível de antes fica guardado (`nivel_anterior`) e a carta mostra ▲/▼ com a diferença em relação a ele. A raridade da carta sai de `src/lib/nivel.ts`.
 
 ### Seleção do fut
 
