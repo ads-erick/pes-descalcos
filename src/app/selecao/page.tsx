@@ -217,8 +217,6 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                           {
                             nome: atuacao.nome,
                             posicao,
-                            gols: atuacao.gols,
-                            assistencias: atuacao.assistencias,
                             craque: atuacao.jogadorId === craque,
                           },
                         ]

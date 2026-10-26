@@ -19,7 +19,7 @@ export type Resumo = {
   placarPreto: number;
   craque: ({ nome: string } & Numeros) | null;
   // A seleção na ordem do campo (GOL, ZAG, MEI, ATA)
-  selecao: ({ nome: string; posicao: Posicao; craque: boolean } & Numeros)[];
+  selecao: { nome: string; posicao: Posicao; craque: boolean }[];
   // Ex.: "Temporada 2026 · 3 futs"
   periodo: string;
   rankings: TopDoRanking[];
@@ -31,7 +31,7 @@ const numeros = ({ gols, assistencias }: Numeros) =>
   gols + assistencias > 0 ? ` (${gols}G/${assistencias}A)` : "";
 
 // O resumo do fut que já rolou em texto, pra colar no grupo do WhatsApp: resultado, MVP,
-// a seleção por escrito, o top 3 de cada estatística e o link pro site, onde tá o resto.
+// a seleção por escrito (só os nomes), o top 3 de cada estatística e o link pro site, onde tá o resto.
 // *assim* é negrito lá. A data chega como DD/MM/AAAA, igual o banco devolve pras telas.
 export function textoDoResumo({
   data,
@@ -56,7 +56,7 @@ export function textoDoResumo({
       ? [
           "🏟️ *Seleção da semana*",
           ...selecao.map(
-            (j) => `${POSICAO_SIGLA[j.posicao]} - ${j.nome}${numeros(j)}${j.craque ? " ⭐" : ""}`,
+            (j) => `${POSICAO_SIGLA[j.posicao]} - ${j.nome}${j.craque ? " ⭐" : ""}`,
           ),
         ].join("\n")
       : null;
