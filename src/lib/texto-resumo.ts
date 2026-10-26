@@ -6,7 +6,7 @@ const EMOJI_TIME: Record<CorTime, string> = { branco: "⚪", preto: "⚫" };
 type Craque = { nome: string; gols: number; assistencias: number };
 
 // O resumo do fut que já rolou em texto, pra colar no grupo do WhatsApp (a imagem da seleção
-// vai junto na cópia quando o navegador deixa). *assim* é negrito lá.
+// vai junto: de legenda no compartilhar do celular, ou colada à parte no computador). *assim* é negrito lá.
 // A data chega como DD/MM/AAAA, igual o banco devolve pras telas.
 export function textoDoResumo(
   data: string,

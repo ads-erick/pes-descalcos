@@ -145,15 +145,18 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
       {/* No desktop, a coluna da esquerda leva filtro, lista e prévia; o campo fica à direita, bem maior */}
       {/* A escolha some quando o fut muda: a chave remonta a prévia */}
       <PreviaCartas key={fut.id} padrao={craque}>
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_auto_1fr] lg:gap-8">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_auto_auto_1fr] lg:gap-8">
           {/* O cabeçalho já traz margem embaixo: sem isso ele fica longe demais do filtro */}
           <div className="-mb-6 lg:-mb-8">
             <CabecalhoPagina titulo="Seleção do fut" />
           </div>
 
-          <div className="flex w-full items-center gap-3 lg:col-start-1 lg:row-start-2">
+          {/* Seletor, link e o resumo pro grupo numa linha só. No celular não cabem os três: o
+              seletor fica sozinho em cima e os botões descem */}
+          <div className="flex w-full flex-wrap items-center gap-3 lg:col-start-1 lg:row-start-2">
             <SeletorFut
               atual={fut.id}
+              className={aRolar ? "" : "basis-full sm:basis-0"}
               futs={futs.map((f) => {
                 // Fut que ainda não rolou leva traço no placar, igual no Placar. Aqui vai o
                 // travessão longo: nessa fonte e nesse tamanho o curto some do lado do "·"
@@ -165,11 +168,8 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
             <Link href={`/futs/${fut.id}`} className={botaoSecundario}>
               Ver fut
             </Link>
-          </div>
-
-          {/* Mensagem e print pro grupo: só no fut que já rolou */}
-          {!aRolar && (
-            <div className="flex w-full items-center gap-3 lg:col-start-1 lg:row-start-3">
+            {/* Mensagem e print pro grupo: só no fut que já rolou */}
+            {!aRolar && (
               <ResumoFut
                 futId={fut.id}
                 data={fut.data}
@@ -185,11 +185,11 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
                 idCampo="campo-selecao"
                 className={botaoSecundario}
               />
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Na tela grande o campo cresce pela altura da janela, e a largura vem da proporção */}
-          <div id="campo-selecao" className={`${sombraCartao} relative mx-auto aspect-[2/3] w-full overflow-hidden rounded-xl border-2 border-dourado lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:h-[calc(100vh-9rem)] lg:w-auto`}>
+          <div id="campo-selecao" className={`${sombraCartao} relative mx-auto aspect-[2/3] w-full overflow-hidden rounded-xl border-2 border-dourado lg:col-start-2 lg:row-span-4 lg:row-start-1 lg:h-[calc(100vh-9rem)] lg:w-auto`}>
             <CampoFut7 className="absolute inset-0 size-full" />
             {[...porPosicao].map(([posicao, daPosicao]) =>
               daPosicao.map((vaga, i) => {
@@ -246,7 +246,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           )}
 
           {escalados.length > 0 && (
-            <ol className={`${painel} divide-y divide-linha lg:col-start-1 lg:row-start-4`}>
+            <ol className={`${painel} divide-y divide-linha lg:col-start-1 lg:row-start-3`}>
               {vagas.map(
                 (vaga, i) =>
                   vaga.atuacao && (
@@ -281,7 +281,7 @@ export default async function SelecaoPage({ searchParams }: PageProps<"/selecao"
           {/* A carta em tamanho de gente: segue o mouse pelas cartas do campo — a lista é só leitura */}
           {escalados.length > 0 && (
             <Previa
-              className="hidden lg:col-start-1 lg:row-start-5 lg:block"
+              className="hidden lg:col-start-1 lg:row-start-4 lg:block"
               cartas={escalados.flatMap((atuacao) => {
                 const ehCraque = atuacao.jogadorId === craque;
                 const carta = cartinha(atuacao, ehCraque, true);
