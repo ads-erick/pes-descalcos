@@ -5,7 +5,15 @@ import { campo } from "@/lib/estilo";
 
 export type OpcaoFut = { id: string; rotulo: string };
 
-export function SeletorFut({ futs, atual }: { futs: OpcaoFut[]; atual: string }) {
+export function SeletorFut({
+  futs,
+  atual,
+  className = "",
+}: {
+  futs: OpcaoFut[];
+  atual: string;
+  className?: string;
+}) {
   const router = useRouter();
 
   // Sem rótulo visível: a data e o placar já dizem o que é, e assim o campo fica
@@ -16,7 +24,7 @@ export function SeletorFut({ futs, atual }: { futs: OpcaoFut[]; atual: string })
       aria-label="Fut"
       value={atual}
       onChange={(e) => router.push(`/selecao?fut=${encodeURIComponent(e.target.value)}`)}
-      className={`${campo} h-11 min-w-0 flex-1 py-0 font-numero text-lg tracking-wide`}
+      className={`${campo} h-11 min-w-0 flex-1 py-0 font-numero text-lg tracking-wide ${className}`}
     >
       {futs.map((fut) => (
         <option key={fut.id} value={fut.id}>

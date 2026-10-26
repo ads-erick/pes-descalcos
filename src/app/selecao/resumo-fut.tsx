@@ -1,76 +1,39 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cartaParaPng } from "@/lib/carta-imagem";
 import { copiarTexto } from "@/lib/copiar-texto";
-import { textoDoResumo } from "@/lib/texto-resumo";
+import { textoDoResumo, type Resumo } from "@/lib/texto-resumo";
 
-type Estado = "parado" | "copiando" | "copiado" | "so-texto" | "falhou";
+type Estado = "parado" | "copiado" | "falhou";
 
-// O resumo do fut pro grupo: a mensagem (placar e MVP) e o print do campo da seleção,
-// copiados juntos num clique. Se o navegador não aceitar imagem na área de transferência,
-// copia só a mensagem.
+// O resumo do fut pro grupo, só texto: o WhatsApp não cola texto e imagem juntos, então a
+// seleção vai por escrito e o link leva pro site, onde tá o campo e as cartinhas
 export function ResumoFut({
-  futId,
-  data,
-  placarBranco,
-  placarPreto,
-  craque,
-  idCampo,
+  resumo,
   className,
 }: {
-  futId: string;
-  data: string;
-  placarBranco: number;
-  placarPreto: number;
-  craque: { nome: string; gols: number; assistencias: number } | null;
-  // O campo da seleção é o que vira o print
-  idCampo: string;
+  // O link é montado aqui, que a origem (preview, produção, local) só o navegador sabe
+  resumo: Omit<Resumo, "link">;
   className: string;
 }) {
   const [estado, setEstado] = useState<Estado>("parado");
 
-  // Os avisos somem sozinhos, pra dar pra copiar de novo
+  // O aviso some sozinho, pra dar pra copiar de novo
   useEffect(() => {
-    if (estado === "parado" || estado === "copiando") return;
+    if (estado === "parado") return;
     const timer = setTimeout(() => setEstado("parado"), 2500);
     return () => clearTimeout(timer);
   }, [estado]);
 
   async function copiar() {
-    const link = `${location.origin}/selecao?fut=${futId}`;
-    const texto = textoDoResumo(data, placarBranco, placarPreto, craque, link);
-    const campo = document.getElementById(idCampo);
-    setEstado("copiando");
-    try {
-      if (campo && typeof ClipboardItem !== "undefined" && navigator.clipboard?.write) {
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            "text/plain": new Blob([texto], { type: "text/plain" }),
-            "image/png": cartaParaPng(campo),
-          }),
-        ]);
-        setEstado("copiado");
-        return;
-      }
-    } catch {
-      // cai pra cópia só do texto
-    }
-    setEstado((await copiarTexto(texto)) ? "so-texto" : "falhou");
+    const texto = textoDoResumo({ ...resumo, link: location.origin });
+    setEstado((await copiarTexto(texto)) ? "copiado" : "falhou");
   }
 
   return (
-    <button type="button" onClick={copiar} disabled={estado === "copiando"} className={className}>
+    <button type="button" onClick={copiar} className={className}>
       <span aria-live="polite">
-        {estado === "copiando"
-          ? "Gerando…"
-          : estado === "copiado"
-            ? "Copiado!"
-            : estado === "so-texto"
-              ? "Copiei só o texto"
-              : estado === "falhou"
-                ? "Não deu pra copiar"
-                : "Copiar resumo com print"}
+        {estado === "copiado" ? "Copiado!" : estado === "falhou" ? "Não deu pra copiar" : "Copiar resumo"}
       </span>
     </button>
   );
