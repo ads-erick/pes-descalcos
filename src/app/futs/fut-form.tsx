@@ -18,7 +18,7 @@ import {
   link,
   painel,
 } from "@/lib/estilo";
-import { POSICAO_SIGLA, normalizar } from "@/lib/jogador";
+import { POSICAO_SIGLA, normalizar, porPosicao } from "@/lib/jogador";
 import { NOME_TIME, formatarHorario, type CorTime } from "@/lib/selecao";
 
 type Time = CorTime;
@@ -226,7 +226,12 @@ export function FutForm({
             <TabelaTime
               key={cor}
               cor={cor}
-              linhas={linhas.filter((l) => l.corTime === cor)}
+              linhas={linhas
+                .filter((l) => l.corTime === cor)
+                .sort((a, b) => {
+                  const [ja, jb] = [porId.get(a.jogadorId), porId.get(b.jogadorId)];
+                  return ja && jb ? porPosicao(ja, jb) : 0;
+                })}
               porId={porId}
               disponiveis={disponiveis}
               opcoesDe={opcoesDe}

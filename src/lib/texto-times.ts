@@ -1,4 +1,4 @@
-import { POSICAO_SIGLA, POSICOES } from "./jogador";
+import { POSICAO_SIGLA, porPosicao } from "./jogador";
 import { NOME_TIME, formatarHorario, type Atuacao, type CorTime } from "./selecao";
 
 const DIAS = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
@@ -26,10 +26,7 @@ export function textoDosTimes(
   const semana = diaDaSemana(data);
 
   const time = (cor: CorTime) => {
-    const ordem = (a: Escalado) => (a.posicao ? POSICOES.indexOf(a.posicao) : POSICOES.length);
-    const escalados = atuacoes
-      .filter((a) => a.corTime === cor)
-      .sort((a, b) => ordem(a) - ordem(b) || a.nome.localeCompare(b.nome, "pt-BR"));
+    const escalados = atuacoes.filter((a) => a.corTime === cor).sort(porPosicao);
     const linhas = escalados.map(
       (a) => `${a.posicao ? POSICAO_SIGLA[a.posicao] : "???"} - ${a.nome}`,
     );
