@@ -25,12 +25,14 @@ export default async function SorteioPage() {
       ) : (
         <SorteioTimes
           admin={admin}
-          jogadores={jogadores.map((j) => ({
-            id: j.id,
-            nome: j.apelido ?? j.nome,
-            posicao: j.posicao,
-            nivel: j.nivel,
-          }))}
+          jogadores={jogadores
+            .map((j) => ({
+              id: j.id,
+              nome: j.apelido ?? j.nome,
+              posicao: j.posicao,
+              nivel: j.nivel,
+            }))
+            .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))}
         />
       )}
     </main>

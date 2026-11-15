@@ -16,6 +16,15 @@ export const POSICAO_SIGLA: Record<Posicao, string> = {
   atacante: "ATA",
 };
 
+// Ordem do campo: GOL, ZAG, MEI, ATA; quem tá sem posição fecha a lista. Empate vai pelo nome.
+export function porPosicao(
+  a: { nome: string; posicao: Posicao | null },
+  b: { nome: string; posicao: Posicao | null },
+) {
+  const ordem = (p: Posicao | null) => (p ? POSICOES.indexOf(p) : POSICOES.length);
+  return ordem(a.posicao) - ordem(b.posicao) || a.nome.localeCompare(b.nome, "pt-BR");
+}
+
 // "jose" acha "José": acento e caixa não atrapalham a busca
 export const normalizar = (texto: string) =>
   texto

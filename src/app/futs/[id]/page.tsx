@@ -8,7 +8,7 @@ import { buscarDetalheFut, type AtuacaoNoFut } from "@/data/futs";
 import { buscarEscolhas } from "@/data/selecao";
 import { botaoPequeno, faixaTime, larguraPadrao, painel, sombraTarja, tituloPagina, vazio } from "@/lib/estilo";
 import { ehUuid } from "@/lib/id";
-import { POSICAO_SIGLA } from "@/lib/jogador";
+import { POSICAO_SIGLA, porPosicao } from "@/lib/jogador";
 import {
   NOME_TIME,
   TAMANHO_SELECAO,
@@ -148,7 +148,7 @@ export default async function FutPage({ params }: PageProps<"/futs/[id]">) {
             <Escalacao
               key={cor}
               cor={cor}
-              atuacoes={fut.atuacoes.filter((a) => a.corTime === cor)}
+              atuacoes={fut.atuacoes.filter((a) => a.corTime === cor).sort(porPosicao)}
             />
           ))}
         </div>
