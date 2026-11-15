@@ -66,11 +66,14 @@ export function textoDoResumo({
     comAlguem.length > 0
       ? [
           `📊 *Estatísticas* (${periodo})`,
-          ...comAlguem.map(
-            (r) =>
-              `${r.emoji} *${r.titulo}:* ${r.top.map((j) => `${j.colocacao}º ${j.nome} (${j.valor})`).join(" · ")}`,
+          // Um ranking embaixo do outro, cada colocado na sua linha: no celular fica bem mais fácil de ler
+          ...comAlguem.map((r) =>
+            [
+              `${r.emoji} *${r.titulo}*`,
+              ...r.top.map((j) => `${j.colocacao}º ${j.nome} (${j.valor})`),
+            ].join("\n"),
           ),
-        ].join("\n")
+        ].join("\n\n")
       : null;
 
   return [
